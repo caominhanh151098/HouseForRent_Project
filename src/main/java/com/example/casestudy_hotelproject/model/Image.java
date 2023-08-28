@@ -20,5 +20,7 @@ public class Image {
     @JoinColumn(name = "room_Id")
     private Room room;
     private String srcImg;
+    @Column(columnDefinition = "LONGTEXT")
+    private String description;
 
 }

@@ -16,6 +16,8 @@ public class CategoryHotel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    @Column(columnDefinition = "LONGTEXT")
+    private String iconUrl;
 
     @OneToMany(mappedBy = "categoryHotel")
     private Set<CategoryDetail> categoryDetails;

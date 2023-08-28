@@ -20,6 +20,9 @@ public class Comfortable {
     @JoinColumn(name = "comfortableType_Id")
     private ComfortableType type;
 
+    @Column(columnDefinition = "LONGTEXT")
+    private String description;
+
     @OneToMany(mappedBy = "comfortable")
     private Set<ComfortableDetail> comfortableDetails;
 }
