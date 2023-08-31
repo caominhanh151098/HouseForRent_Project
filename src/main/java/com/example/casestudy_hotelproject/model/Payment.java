@@ -17,9 +17,6 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne
-    @JoinColumn(name = "reservation_Id")
-    private Reservation reservation;
     private LocalDate paymentDate;
     private BigDecimal Amount;
     private String paymentMethod;

@@ -43,9 +43,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Review> reviews;
 
-    @OneToOne(mappedBy = "user")
-    private AddressUser address;
-
     @OneToMany(mappedBy = "user")
     private Set<Reservation> reservations;
+
+    @OneToOne
+    @JoinColumn(name = "address_Id")
+    private AddressUser addressUser;
 }

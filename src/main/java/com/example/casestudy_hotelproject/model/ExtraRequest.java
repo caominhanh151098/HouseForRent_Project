@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,13 +15,10 @@ public class ExtraRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
-    @JoinColumn(name = "house_Id")
-    private House house;
-    private int maxAdults;
-    private int maxChildrenAbove13 ;
+    private int maxGuests;
     private int maxBabies;
     private boolean petAllowed;
     private int maxPets;
+
 
 }

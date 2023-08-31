@@ -13,9 +13,6 @@ public class AddressUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne
-    @JoinColumn(name = "user_Id")
-    private User user;
     private String country;
     private String streetAddress;
     private String city;

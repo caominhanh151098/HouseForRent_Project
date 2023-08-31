@@ -17,9 +17,10 @@ public class CrawlData {
             String content = scanner.next();
             // close scanner
             scanner.close();
+//            System.out.println(content);
             // remove all new line
             // regex
-            Pattern p = Pattern.compile("src=\"(.*?)\"");
+            Pattern p = Pattern.compile("<path d=\"(.*?)\"></path>");
             Matcher m = p.matcher(content);
             while (m.find()) {
                 System.out.println(m.group(1));

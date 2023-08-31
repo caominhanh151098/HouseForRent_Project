@@ -9,18 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Image {
+public class ReviewPoint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_Id")
-    private House house;
-    @ManyToOne
-    @JoinColumn(name = "room_Id")
-    private Room room;
-    private String srcImg;
-    @Column(columnDefinition = "LONGTEXT")
-    private String description;
-
+    private int cleanlinessPoint;
+    private int communicationPoint;
+    private int checkInPoint;
+    private int accuracyPoint;
+    private int locationPoint;
+    private int valuePoint;
+    private double avgPoint;
 }

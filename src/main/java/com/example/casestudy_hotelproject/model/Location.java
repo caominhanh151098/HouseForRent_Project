@@ -13,11 +13,7 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "house_Id")
-    private House house;
     private String address;
     private Double longitude;
     private Double latitude;
-
 }

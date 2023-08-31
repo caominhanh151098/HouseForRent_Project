@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,5 +22,12 @@ public class Review {
     @JoinColumn(name = "house_Id")
     private House house;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
+    private LocalDate reviewDate;
+
+    @OneToOne
+    @JoinColumn(name = "review_Point_Id")
+    private ReviewPoint reviewPoint;
+
 }

@@ -16,12 +16,16 @@ public class Comfortable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    private boolean popular;
     @ManyToOne
     @JoinColumn(name = "comfortableType_Id")
     private ComfortableType type;
 
     @Column(columnDefinition = "LONGTEXT")
     private String description;
+
+    @Column(name = "icon_path", columnDefinition = "LONGTEXT")
+    private String icon;
 
     @OneToMany(mappedBy = "comfortable")
     private Set<ComfortableDetail> comfortableDetails;

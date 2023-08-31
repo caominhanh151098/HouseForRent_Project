@@ -25,9 +25,11 @@ public class Reservation {
     private LocalDate checkOutDate;
     private LocalDate reservationDate;
 
-    @OneToOne(mappedBy = "reservation")
+    @OneToOne
+    @JoinColumn(name = "guest_Detail_Id")
     private GuestDetail guestDetail;
 
-    @OneToOne(mappedBy = "reservation")
+    @OneToOne
+    @JoinColumn(name = "payment_Id")
     private Payment payment;
 }

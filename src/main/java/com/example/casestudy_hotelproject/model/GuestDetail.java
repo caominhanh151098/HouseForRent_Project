@@ -13,9 +13,6 @@ public class GuestDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToOne
-    @JoinColumn(name = "reservation_Id")
-    private Reservation reservation;
     private int numAdults;
     private int numChildrenAbove13 ;
     private int numBabies;
