@@ -12,12 +12,12 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/category_hotel")
+@RequestMapping("/api/convenient")
 @CrossOrigin(origins = "http://localhost:3000")
-public class CategoryHotelRestController {
-    public final ConvenientService categoryHotelService;
+public class ConvenientRestController {
+    public final ConvenientService convenientService;
     @GetMapping
-    public List<ListConvenientResponse> getListCategory() {
-        return  categoryHotelService.getListCategory();
+    public List<ListConvenientResponse> getListConvenient() {
+        return  convenientService.getListConvenient();
     }
 }

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class ConvenientService {
     private final ConvenientRepository convenientRepository;
 
-    public List<ListConvenientResponse> getListCategory() {
+    public List<ListConvenientResponse> getListConvenient() {
         return convenientRepository.findAll()
                 .stream()
                 .map(e -> AppUtils.mapper.map(e, ListConvenientResponse.class)).collect(Collectors.toList());
