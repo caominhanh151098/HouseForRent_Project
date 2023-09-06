@@ -1,4 +1,4 @@
-package com.example.casestudy_hotelproject.controller.rest;
+package com.example.casestudy_hotelproject.controller;
 
 import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.service.user.response.UserResponse;

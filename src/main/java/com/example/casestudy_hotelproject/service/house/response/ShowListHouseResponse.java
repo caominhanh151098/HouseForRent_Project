@@ -1,6 +1,7 @@
 package com.example.casestudy_hotelproject.service.house.response;
 
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
+import com.example.casestudy_hotelproject.service.location.response.ShowLocationListHouseResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.List;
 public class ShowListHouseResponse {
     private String id;
     private String title;
-    private String location;
+    private ShowLocationListHouseResponse location;
     private String hotelName;
     private String quantityOfBeds;
     private String price;

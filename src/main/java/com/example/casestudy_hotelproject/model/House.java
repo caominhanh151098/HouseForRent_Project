@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.example.casestudy_hotelproject.model.enums.StatusHouse;
 import com.example.casestudy_hotelproject.model.enums.TypeHouse;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +36,8 @@ public class House {
     private TypeHouse typeHouse;
     @Enumerated(EnumType.STRING)
     private TypeRoom typeRoom;
+    @Enumerated(EnumType.STRING)
+    private StatusHouse status;
 
     @ManyToOne
     @JoinColumn(name = "user_Id")
@@ -42,7 +46,7 @@ public class House {
     private Set<CategoryDetail> CategoryDetails;
 
     @OneToMany(mappedBy = "house")
-    private Set<Room> rooms;
+    private Set<Room> rooms = new HashSet<>();
 
     @OneToMany(mappedBy = "house")
     private Set<ComfortableDetail> comfortableDetails;

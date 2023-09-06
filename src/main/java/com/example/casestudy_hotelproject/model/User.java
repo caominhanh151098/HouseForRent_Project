@@ -31,6 +31,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean status;
+
     @OneToMany(mappedBy = "user")
     private Set<House> hotels;
 

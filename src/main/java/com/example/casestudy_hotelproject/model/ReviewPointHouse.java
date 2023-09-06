@@ -1,33 +1,27 @@
 package com.example.casestudy_hotelproject.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Review {
+public class ReviewPointHouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "user_Id")
-    private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
+    private double cleanlinessPoint;
+    private double communicationPoint;
+    private double checkInPoint;
+    private double accuracyPoint;
+    private double locationPoint;
+    private double valuePoint;
+    private double avgPoint;
+    @OneToOne
     @JoinColumn(name = "house_Id")
     private House house;
-
-    @Column(columnDefinition = "LONGTEXT")
-    private String content;
-    private LocalDate reviewDate;
-
-    @OneToOne
-    @JoinColumn(name = "review_Point_Id")
-    private ReviewPoint reviewPoint;
-
 }

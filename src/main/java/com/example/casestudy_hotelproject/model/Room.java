@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,8 +22,8 @@ public class Room {
     private String name;
 
     @OneToMany(mappedBy = "room")
-    private Set<Bed> beds;
+    private List<Bed> beds;
 
     @OneToMany(mappedBy = "room")
-    private Set<Image> images;
+    private List<Image> images;
 }
