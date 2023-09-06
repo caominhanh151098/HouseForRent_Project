@@ -5,18 +5,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CategoryDetail {
+public class Convenient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
-    @JoinColumn(name ="house_Id")
-    private House house;
-    @ManyToOne
-    @JoinColumn(name ="categoryHotel_Id")
-    private CategoryHotel categoryHotel;
+    private String name;
+    @Column(columnDefinition = "LONGTEXT")
+    private String iconUrl;
+
+    private boolean status;
 }

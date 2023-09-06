@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ShowMiniListComfortable {
+public class ShowMiniListComfortableResponse {
     private String icon;
     private String name;
     private String static_comfortable = "true";

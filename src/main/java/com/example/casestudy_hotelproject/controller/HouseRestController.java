@@ -25,4 +25,9 @@ public class HouseRestController {
         ShowHouseDetailResponse houseResp = houseService.showDetail(id);
         return houseResp;
     }
+
+    @GetMapping("/detail/comfortable/{id}")
+    public void showListComfortable(@PathVariable int id) {
+
+    }
 }

@@ -1,12 +1,15 @@
 package com.example.casestudy_hotelproject.service.house;
 
+import com.example.casestudy_hotelproject.model.Bed;
 import com.example.casestudy_hotelproject.model.Comfortable;
 import com.example.casestudy_hotelproject.model.House;
 import com.example.casestudy_hotelproject.model.Room;
 import com.example.casestudy_hotelproject.repository.*;
-import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortable;
+import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
+import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
+import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -23,8 +27,6 @@ public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
     private final RoomRepository roomRepository;
-    private final ReviewRepository reviewRepository;
-    private final ImageRepository imageRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -32,7 +34,7 @@ public class HouseService {
         Page<ShowListHouseResponse> listPageHouse = listHouse.map(e -> AppUtils.mapper.map(e, ShowListHouseResponse.class));
         for (int index = 0; index < listPageHouse.getContent().size(); index++) {
             House house = listHouse.getContent().get(index);
-            String typeHouse = house.getTypeHouse().getLangVI();
+            String typeHouse = house.getCategoryHotel().getName();
             String addressHouse = house.getLocation().getAddress();
             listPageHouse.getContent().get(index).setTitle(String.format("%s Tại %s", typeHouse, addressHouse));
             if (house.getReviews().size() > 1)
@@ -46,16 +48,18 @@ public class HouseService {
     public ShowHouseDetailResponse showDetail(int idHouse) {
         House house = houseRepository.findById(idHouse);
 
-        List<Room> rooms = roomRepository.findAllByHouse_Id(idHouse);
         ShowHouseDetailResponse houseResp = AppUtils.mapper.map(house, ShowHouseDetailResponse.class);
-//        houseResp.setRooms(rooms);
+        List<Room> rooms = roomRepository.findAllByHouse_Id(idHouse);
+        if (!rooms.isEmpty())
+            houseResp.setRooms(fixInfoRooms(rooms));
+
         switch (house.getTypeRoom()) {
             case ENTIRE_PLACE ->
-                    houseResp.setTitle(String.format("%s %s", house.getTypeRoom().getLangVi(), house.getTypeHouse().getLangVI()));
+                    houseResp.setTitle(String.format("%s %s", house.getTypeRoom().getLangVi(), house.getCategoryHotel().getName()));
             case SHARED_ROOM ->
-                    houseResp.setTitle(String.format("%s tại %s", house.getTypeRoom().getLangVi(), house.getTypeHouse().getLangVI()));
+                    houseResp.setTitle(String.format("%s tại %s", house.getTypeRoom().getLangVi(), house.getCategoryHotel().getName()));
             case ROOM ->
-                    houseResp.setTitle(String.format("%s ở %s", house.getTypeRoom().getLangVi(), house.getTypeHouse().getLangVI()));
+                    houseResp.setTitle(String.format("%s ở %s", house.getTypeRoom().getLangVi(), house.getCategoryHotel().getName()));
         }
         if (house.getReviews().size() <= 1)
             houseResp.setReviewPoint("Mới");
@@ -70,23 +74,23 @@ public class HouseService {
                 house.getQuantityOfBeds(),
                 house.getQuantityOfBathrooms());
         List<Comfortable> listComfortable = comfortableRepository.getListComfortableByHouseId(idHouse);
-        List<ShowMiniListComfortable> miniListComfortable = new ArrayList<>();
+        List<ShowMiniListComfortableResponse> miniListComfortable = new ArrayList<>();
         Comfortable[] comfortable = new Comfortable[2];
         comfortable[0] = comfortableRepository.findByName("Máy báo khói");
         comfortable[1] = comfortableRepository.findByName("Máy phát hiện khí CO");
 
         for (int index = 0; index < 8 && index < listComfortable.size(); index++) {
-            miniListComfortable.add(AppUtils.mapper.map(listComfortable.get(index), ShowMiniListComfortable.class));
+            miniListComfortable.add(AppUtils.mapper.map(listComfortable.get(index), ShowMiniListComfortableResponse.class));
         }
         for (int index = 0; index < 2; index++) {
             if (!checkComfortable(listComfortable, comfortable[index])) {
-                ShowMiniListComfortable miniComfortable = AppUtils.mapper.map(comfortable[index], ShowMiniListComfortable.class);
+                ShowMiniListComfortableResponse miniComfortable = AppUtils.mapper.map(comfortable[index], ShowMiniListComfortableResponse.class);
                 miniComfortable.setStatic_comfortable("false");
                 miniComfortable.setIcon(comfortable[index].getIconNoneActive());
                 miniListComfortable.add(miniComfortable);
             } else {
                 if (miniListComfortable.size() < listComfortable.size()) {
-                    miniListComfortable.add(AppUtils.mapper.map(listComfortable.get(listComfortable.size() - 1), ShowMiniListComfortable.class));
+                    miniListComfortable.add(AppUtils.mapper.map(listComfortable.get(listComfortable.size() - 1), ShowMiniListComfortableResponse.class));
                 }
             }
         }
@@ -104,9 +108,18 @@ public class HouseService {
         return false;
     }
 
-    private void fixInfoRooms(List<Room> rooms) {
-        rooms.stream().map(r -> {
-            return null;
-        });
+    private List<ShowRoomDetailResponse> fixInfoRooms(List<Room> rooms) {
+        return rooms.stream().map(room -> {
+            List<String> stringBedsDetail = new ArrayList();
+            List<ShowBedDetailResponse> bedDetail = new ArrayList<>();
+            String srcImg = !room.getImages().isEmpty() ? room.getImages().get(0).getSrcImg() : null;
+            for (Bed bed : room.getBeds()) {
+                stringBedsDetail.add(String.format("%s %s", bed.getQuantity(), bed.getType().getLangVi()));
+                bedDetail.add(new ShowBedDetailResponse(bed.getType().getIconPath(), String.valueOf(bed.getQuantity())));
+            }
+            String beds = String.join(", ", stringBedsDetail);
+            return new ShowRoomDetailResponse(room.getName(), srcImg, beds, bedDetail);
+        }).collect(Collectors.toList());
+
     }
 }

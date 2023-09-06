@@ -1,6 +1,7 @@
 package com.example.casestudy_hotelproject.service.house.response;
 
-import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortable;
+import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
+import com.example.casestudy_hotelproject.service.location.response.ShowLocationListHouseResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,13 +15,13 @@ import java.util.List;
 public class ShowHouseDetailResponse {
     private String id;
     private String hotelName;
-    private String location;
+    private ShowLocationListHouseResponse location;
     private String title;
     private String requestDetail;
     private String quantityOfRooms;
     private String quantityOfBeds;
     private String description;
-    private List<ShowMiniListComfortable> miniListComfortable;
+    private List<ShowMiniListComfortableResponse> miniListComfortable;
     private String numComfortable;
     private String reviewPoint;
     private String numReview;

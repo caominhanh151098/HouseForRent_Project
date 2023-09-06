@@ -1,5 +1,7 @@
 package com.example.casestudy_hotelproject.model.enums;
 
+import lombok.Data;
+
 public enum BedType {
     SINGER(1, "M24 4a2 2 0 0 1 2 1.85v7.99l1.85 5.54a3 3 0 0 1 .11.46l.03.24.01.24V30h-2v-2H6v2H4v-9.68a3 3 0 0 1 .09-.71l.06-.23L6 13.84V6a2 2 0 0 1 1.7-1.98l.15-.01L8 4zm2 18H6v4h20zm-1.39-6H7.4l-1.34 4h19.9zM24 6H8v8h3v-4a2 2 0 0 1 1.85-2H19a2 2 0 0 1 2 1.85V14h3zm-5 4h-6v4h6z", "giường đơn"),
     KING(2, "M28 2a2 2 0 0 1 2 1.85v9.99l1.85 5.54a3 3 0 0 1 .11.46l.03.24.01.24V30h-2v-2H2v2H0v-9.68a3 3 0 0 1 .09-.71l.06-.23L2 13.84V4a2 2 0 0 1 1.7-1.98L3.85 2H4zm2 20H2v4h28zm-1.39-6H3.4l-1.34 4h27.9zM28 4H4v10h2v-4a2 2 0 0 1 1.85-2H24a2 2 0 0 1 2 1.85V14h2zm-13 6H8v4h7zm9 0h-7v4h7z", "giường king"),
@@ -15,5 +17,13 @@ public enum BedType {
         this.index = index;
         this.iconPath = iconPath;
         this.langVi = langVi;
+    }
+
+    public String getLangVi() {
+        return langVi;
+    }
+
+    public String getIconPath() {
+        return iconPath;
     }
 }

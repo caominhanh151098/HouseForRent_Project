@@ -9,8 +9,9 @@ import java.util.List;
 
 @Repository
 public interface ComfortableRepository extends JpaRepository<Comfortable, Integer> {
-    @Query(value = "SELECT c FROM Comfortable c JOIN ComfortableDetail cd ON c.id = cd.comfortable.id WHERE cd.house.id = :houseId")
+    @Query(value = "SELECT c FROM Comfortable c JOIN ComfortableDetail cd ON c.id = cd.comfortable.id WHERE cd.house.id = :houseId AND cd.status = TRUE")
     List<Comfortable> getListComfortableByHouseId(int houseId);
+
 
     Comfortable findByName(String name);
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 @Entity
 @NoArgsConstructor
@@ -19,4 +20,5 @@ public class ComfortableDetail {
     @ManyToOne
     @JoinColumn(name = "comfortable_Id")
     private Comfortable comfortable;
+    private boolean status;
 }

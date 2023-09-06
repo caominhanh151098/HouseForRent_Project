@@ -1,7 +1,7 @@
 package com.example.casestudy_hotelproject.controller;
 
-import com.example.casestudy_hotelproject.service.category_hotel.CategoryHotelService;
-import com.example.casestudy_hotelproject.service.category_hotel.response.ListCategoryHotelResponse;
+import com.example.casestudy_hotelproject.service.category_hotel.ConvenientService;
+import com.example.casestudy_hotelproject.service.category_hotel.response.ListConvenientResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +15,9 @@ import java.util.List;
 @RequestMapping("/api/category_hotel")
 @CrossOrigin(origins = "http://localhost:3000")
 public class CategoryHotelRestController {
-    public final CategoryHotelService categoryHotelService;
+    public final ConvenientService categoryHotelService;
     @GetMapping
-    public List<ListCategoryHotelResponse> getListCategory() {
+    public List<ListConvenientResponse> getListCategory() {
         return  categoryHotelService.getListCategory();
     }
 }
