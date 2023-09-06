@@ -39,4 +39,8 @@ public class HouseService {
 
         return listPageHouse;
     }
+    public void createHouse(House house){
+        houseRepository.save(house);
+    }
+
 }

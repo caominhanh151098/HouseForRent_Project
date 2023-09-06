@@ -38,16 +38,16 @@ public class House {
     @ManyToOne
     @JoinColumn(name = "user_Id")
     private User user;
-    @OneToMany(mappedBy = "house")
+    @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
     private Set<CategoryDetail> CategoryDetails;
 
     @OneToMany(mappedBy = "house")
     private Set<Room> rooms;
 
-    @OneToMany(mappedBy = "house")
+    @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
     private Set<ComfortableDetail> comfortableDetails;
 
-    @OneToMany(mappedBy = "house")
+    @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
     private List<Image> images;
 
     @OneToOne

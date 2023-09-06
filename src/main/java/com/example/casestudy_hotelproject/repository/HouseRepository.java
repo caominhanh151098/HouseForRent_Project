@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface HouseRepository extends JpaRepository<House, Integer> {
     Page<House> findAll(Pageable pageable);
+
 }
