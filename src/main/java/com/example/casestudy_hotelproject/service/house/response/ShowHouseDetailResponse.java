@@ -1,6 +1,7 @@
 package com.example.casestudy_hotelproject.service.house.response;
 
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
+import com.example.casestudy_hotelproject.service.description.response.ShowDescriptionResponse;
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.location.response.ShowLocationListHouseResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
@@ -23,7 +24,7 @@ public class ShowHouseDetailResponse {
     private String requestDetail;
     private String quantityOfRooms;
     private String quantityOfBeds;
-    private String description;
+    private ShowDescriptionResponse description;
     private List<ShowMiniListComfortableResponse> miniListComfortable;
     private String numComfortable;
     private String reviewPoint;

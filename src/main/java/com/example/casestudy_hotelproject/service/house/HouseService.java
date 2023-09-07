@@ -9,6 +9,7 @@ import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
+import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
     private final RoomRepository roomRepository;
+    private final ReviewRepository reviewRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -122,5 +124,8 @@ public class HouseService {
         }).collect(Collectors.toList());
     }
 
+//    private ShowMiniReviewResponse showMiniReview(int idHouse) {
+//
+//    }
 
 }

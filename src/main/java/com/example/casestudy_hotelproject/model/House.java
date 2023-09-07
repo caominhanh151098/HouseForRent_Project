@@ -22,8 +22,6 @@ public class House {
     private int id;
     @Column(nullable = false)
     private String hotelName;
-    @Column(columnDefinition = "LONGTEXT")
-    private String description;
     private BigDecimal price;
     private int quantityOfGuests;
     private int quantityOfBeds;
@@ -34,6 +32,10 @@ public class House {
     private TypeRoom typeRoom;
     @Enumerated(EnumType.STRING)
     private StatusHouse status;
+
+    @OneToOne
+    @JoinColumn(name = "description_Id")
+    private Description description;
 
     @ManyToOne
     @JoinColumn(name = "user_Id")
