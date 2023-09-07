@@ -17,6 +17,8 @@ public class Comfortable {
     private int id;
     private String name;
     private boolean popular;
+    private boolean configDefault;
+
     @ManyToOne
     @JoinColumn(name = "comfortableType_Id")
     private ComfortableType type;
@@ -26,9 +28,9 @@ public class Comfortable {
 
     @Column(name = "icon_path", columnDefinition = "LONGTEXT")
     private String icon;
+    @OneToMany(mappedBy = "comfortable")
+    private Set<ComfortableDetail> comfortableDetails;
     @Column(name = "icon_path_none_active", columnDefinition = "LONGTEXT")
     private String iconNoneActive;
 
-    @OneToMany(mappedBy = "comfortable")
-    private Set<ComfortableDetail> comfortableDetails;
 }

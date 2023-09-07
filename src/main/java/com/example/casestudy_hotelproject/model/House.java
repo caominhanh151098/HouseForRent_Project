@@ -60,13 +60,16 @@ public class House {
     private Set<Favorite> favorites;
 
     @OneToMany(mappedBy = "house")
-    private List<Review> reviews;
-
-    @OneToMany(mappedBy = "house")
     private Set<Reservation> reservations;
 
     @OneToOne
     @JoinColumn(name = "ex_Request_Id")
     private ExtraRequest extraRequest;
 
+    @OneToMany(mappedBy = "house")
+    private List<Review> reviews;
+
+    @OneToOne
+    @JoinColumn(name = "review_Point_Id")
+    private ReviewPointHouse reviewPointHouse;
 }

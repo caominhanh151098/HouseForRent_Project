@@ -73,7 +73,7 @@ public class HouseService {
                 house.getQuantityOfRooms(),
                 house.getQuantityOfBeds(),
                 house.getQuantityOfBathrooms());
-        List<Comfortable> listComfortable = comfortableRepository.getListComfortableByHouseId(idHouse);
+        List<Comfortable> listComfortable = comfortableRepository.getMiniListComfortableByHouseId(idHouse);
         List<ShowMiniListComfortableResponse> miniListComfortable = new ArrayList<>();
         Comfortable[] comfortable = new Comfortable[2];
         comfortable[0] = comfortableRepository.findByName("Máy báo khói");
@@ -120,6 +120,7 @@ public class HouseService {
             String beds = String.join(", ", stringBedsDetail);
             return new ShowRoomDetailResponse(room.getName(), srcImg, beds, bedDetail);
         }).collect(Collectors.toList());
-
     }
+
+
 }

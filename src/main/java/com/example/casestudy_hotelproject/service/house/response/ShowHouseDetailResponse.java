@@ -1,12 +1,15 @@
 package com.example.casestudy_hotelproject.service.house.response;
 
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
+import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.location.response.ShowLocationListHouseResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowHostAvatarResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,6 +29,7 @@ public class ShowHouseDetailResponse {
     private String reviewPoint;
     private String numReview;
     private List<ShowRoomDetailResponse> rooms;
-
+    private List<ShowImgListResponse> images = new ArrayList<>();
+    private ShowHostAvatarResponse user;
 
 }
