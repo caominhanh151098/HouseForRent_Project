@@ -1,6 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
-import com.example.casestudy_hotelproject.model.enums.BedType;
+import com.example.casestudy_hotelproject.model.enums.IdentityType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,14 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Bed {
+public class IdentityPaper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_Id")
-    private Room room;
-    private int quantity;
     @Enumerated(EnumType.STRING)
-    private BedType type;
+    private IdentityType type;
+    private String srcImgFrontSide;
+    private String srcImgBackSide;
 }

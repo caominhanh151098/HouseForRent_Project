@@ -2,14 +2,13 @@ package com.example.casestudy_hotelproject.model;
 
 import com.example.casestudy_hotelproject.model.enums.StatusHouse;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,6 +22,7 @@ public class House {
     @Column(nullable = false)
     private String hotelName;
     private BigDecimal price;
+    private BigDecimal totalPrice;
     private int quantityOfGuests;
     private int quantityOfBeds;
     private int quantityOfRooms;
@@ -34,6 +34,7 @@ public class House {
     private StatusHouse status;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "description_Id")
     private Description description;
 
@@ -46,30 +47,38 @@ public class House {
     private CategoryHotel categoryHotel;
 
     @OneToMany(mappedBy = "house")
-    private Set<Room> rooms = new HashSet<>();
+    @JsonIgnore
+    private Set<Room> rooms;
 
-    @OneToMany(mappedBy = "house")
+    @OneToMany(mappedBy = "house", fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<ComfortableDetail> comfortableDetails;
 
     @OneToMany(mappedBy = "house")
-    private List<Image> images;
+    @JsonIgnore
+    private Set<Image> images;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "location_Id")
     private Location location;
 
     @OneToMany(mappedBy = "house")
+    @JsonIgnore
     private Set<Favorite> favorites;
 
     @OneToMany(mappedBy = "house")
+    @JsonIgnore
     private Set<Reservation> reservations;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "ex_Request_Id")
     private ExtraRequest extraRequest;
 
     @OneToMany(mappedBy = "house")
-    private List<Review> reviews;
+    @JsonIgnore
+    private Set<Review> reviews;
 
     @OneToOne
     @JoinColumn(name = "review_Point_Id")

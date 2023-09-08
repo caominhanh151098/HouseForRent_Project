@@ -1,29 +1,25 @@
 package com.example.casestudy_hotelproject.model;
-
+import com.example.casestudy_hotelproject.model.enums.InterestType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Set;
+
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Room {
+public class Interest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "house_Id")
-    private House house;
     private String name;
+    @Enumerated(EnumType.STRING)
+    private InterestType type;
 
-    @OneToMany(mappedBy = "room")
-    private List<Bed> beds;
-
-    @OneToMany(mappedBy = "room")
-    private List<Image> images;
+    @OneToMany(mappedBy = "interest")
+    private Set<InterestDetail> interestDetails;
 }

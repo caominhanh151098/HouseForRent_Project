@@ -28,6 +28,7 @@ public class Comfortable {
 
     @Column(name = "icon_path", columnDefinition = "LONGTEXT")
     private String icon;
+
     @OneToMany(mappedBy = "comfortable")
     private Set<ComfortableDetail> comfortableDetails;
     @Column(name = "icon_path_none_active", columnDefinition = "LONGTEXT")

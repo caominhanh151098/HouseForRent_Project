@@ -26,7 +26,6 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String phone;
-    private int idCard;
     private Date dob;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -51,4 +50,11 @@ public class User {
     @OneToOne
     @JoinColumn(name = "address_Id")
     private AddressUser addressUser;
+
+    @OneToOne
+    @JoinColumn(name = "identity_Paper_Id")
+    private IdentityPaper identity;
+
+    @OneToMany(mappedBy = "user")
+    private Set<InterestDetail> interestDetails;
 }

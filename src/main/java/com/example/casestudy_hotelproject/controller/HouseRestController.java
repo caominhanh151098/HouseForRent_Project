@@ -5,10 +5,13 @@ import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetai
 import com.example.casestudy_hotelproject.service.house.HouseService;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
+import com.example.casestudy_hotelproject.service.review.ReviewService;
+import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.List;
 public class HouseRestController {
     private final HouseService houseService;
     private final ComfortableService comfortableService;
+    private final ReviewService reviewService;
 
     @GetMapping
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
@@ -42,5 +46,10 @@ public class HouseRestController {
     public ShowMiniReviewResponse showMiniReview(@PathVariable int id) {
 
         return houseService.showMiniReview(id);
+    }
+
+    @GetMapping("/detail/reviews/{id}")
+    public Page<ContentReviewResponse> showReviews(@PathVariable int id,@PageableDefault(size = 12) Pageable pageable) {
+        return reviewService.showReviews(id, pageable);
     }
 }

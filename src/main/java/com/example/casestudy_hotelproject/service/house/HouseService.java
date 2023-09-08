@@ -9,6 +9,8 @@ import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
+import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
+import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -28,19 +31,29 @@ public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
     private final RoomRepository roomRepository;
+    private final ReviewRepository reviewRepository;
+    private final ImageRepository imageRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
 
+
         Page<ShowListHouseResponse> listPageHouse = listHouse.map(e -> AppUtils.mapper.map(e, ShowListHouseResponse.class));
         for (int index = 0; index < listPageHouse.getContent().size(); index++) {
             House house = listHouse.getContent().get(index);
+            ShowListHouseResponse houseResp = listPageHouse.getContent().get(index);
             String typeHouse = house.getCategoryHotel().getName();
             String addressHouse = house.getLocation().getAddress();
             listPageHouse.getContent().get(index).setTitle(String.format("%s Tại %s", typeHouse, addressHouse));
-            if (house.getReviews().size() > 1)
-                listPageHouse.getContent().get(index).setReview(String.format("%s (%s)", house.getAvgReviewPoint(), house.getReviews().size()));
-            else listPageHouse.getContent().get(index).setReview("Mới");
+            int numReview = reviewRepository.countAllByHouse_Id(house.getId());
+            if (numReview > 1)
+                houseResp.setReview(String.format("%s (%s)", house.getAvgReviewPoint(), numReview));
+            else houseResp.setReview("Mới");
+            houseResp.setImages(imageRepository
+                    .findAllByHouse_Id(house.getId())
+                    .stream()
+                    .map(i -> AppUtils.mapper.map(i, ShowImgListResponse.class))
+                    .collect(Collectors.toList()));
         }
 
         return listPageHouse;
@@ -50,6 +63,8 @@ public class HouseService {
         House house = houseRepository.findById(idHouse);
 
         ShowHouseDetailResponse houseResp = AppUtils.mapper.map(house, ShowHouseDetailResponse.class);
+        houseResp.setImages(imageRepository.findAllByHouse_Id(idHouse).stream().map(i -> AppUtils.mapper.map(i, ShowImgListResponse.class)).collect(Collectors.toList()));
+        houseResp.setNumReview(reviewRepository.countAllByHouse_Id(idHouse));
         List<Room> rooms = roomRepository.findAllByHouse_Id(idHouse);
         if (!rooms.isEmpty())
             houseResp.setRooms(fixInfoRooms(rooms));
@@ -66,15 +81,13 @@ public class HouseService {
             houseResp.setReviewPoint("Mới");
         else
             houseResp.setReviewPoint(String.valueOf(house.getAvgReviewPoint()));
-        houseResp.setNumReview(house.getReviews().size());
-
 
         String requestDetail = String.format("%s khách. %s phòng ngủ. %s giường. %s phòng tắm",
                 house.getQuantityOfGuests(),
                 house.getQuantityOfRooms(),
                 house.getQuantityOfBeds(),
                 house.getQuantityOfBathrooms());
-        List<Comfortable> listComfortable = comfortableRepository.getMiniListComfortableByHouseId(idHouse);
+        List<Comfortable> listComfortable = comfortableRepository.getListComfortableByHouseId(idHouse);
         List<ShowMiniListComfortableResponse> miniListComfortable = new ArrayList<>();
         Comfortable[] comfortable = new Comfortable[2];
         comfortable[0] = comfortableRepository.findByName("Máy báo khói");
@@ -127,6 +140,10 @@ public class HouseService {
         House house = houseRepository.findById(idHouse);
 
         ShowMiniReviewResponse reviewResp = AppUtils.mapper.map(house, ShowMiniReviewResponse.class);
+        reviewResp.setReviews(reviewRepository.getAllByHouse_Id(idHouse)
+                .stream()
+                .map(r -> AppUtils.mapper.map(r, ContentReviewResponse.class))
+                .collect(Collectors.toList()));
         return reviewResp;
     }
 
