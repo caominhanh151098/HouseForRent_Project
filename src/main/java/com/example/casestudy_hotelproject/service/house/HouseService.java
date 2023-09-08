@@ -140,7 +140,7 @@ public class HouseService {
         House house = houseRepository.findById(idHouse);
 
         ShowMiniReviewResponse reviewResp = AppUtils.mapper.map(house, ShowMiniReviewResponse.class);
-        reviewResp.setReviews(reviewRepository.getAllByHouse_Id(idHouse)
+        reviewResp.setReviews(reviewRepository.getMiniReview(idHouse)
                 .stream()
                 .map(r -> AppUtils.mapper.map(r, ContentReviewResponse.class))
                 .collect(Collectors.toList()));
