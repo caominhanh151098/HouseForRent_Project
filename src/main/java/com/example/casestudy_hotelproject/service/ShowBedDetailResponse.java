@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class ShowBedDetailResponse {
     private String iconPath;
-    private String quantity;
+    private int quantity;
 
 }

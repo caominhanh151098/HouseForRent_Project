@@ -44,7 +44,7 @@ public class ComfortableService {
                         .stream()
                         .map(c -> {
                             ShowComfortableDetailResponse comfortableDetail = AppUtils.mapper.map(c, ShowComfortableDetailResponse.class);
-                            comfortableDetail.setStatus("false");
+                            comfortableDetail.setStatus(false);
                             comfortableDetail.setIcon(c.getIconNoneActive());
                             return comfortableDetail;
                         }).collect(Collectors.toList())));

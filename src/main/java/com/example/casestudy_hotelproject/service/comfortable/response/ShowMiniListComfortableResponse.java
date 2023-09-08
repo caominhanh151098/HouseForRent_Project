@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 public class ShowMiniListComfortableResponse {
     private String icon;
     private String name;
-    private String static_comfortable = "true";
+    private boolean static_comfortable = true;
 }

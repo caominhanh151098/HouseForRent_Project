@@ -66,7 +66,7 @@ public class HouseService {
             houseResp.setReviewPoint("Mới");
         else
             houseResp.setReviewPoint(String.valueOf(house.getAvgReviewPoint()));
-        houseResp.setNumReview(String.valueOf(house.getReviews().size()));
+        houseResp.setNumReview(house.getReviews().size());
 
 
         String requestDetail = String.format("%s khách. %s phòng ngủ. %s giường. %s phòng tắm",
@@ -86,7 +86,7 @@ public class HouseService {
         for (int index = 0; index < 2; index++) {
             if (!checkComfortable(listComfortable, comfortable[index])) {
                 ShowMiniListComfortableResponse miniComfortable = AppUtils.mapper.map(comfortable[index], ShowMiniListComfortableResponse.class);
-                miniComfortable.setStatic_comfortable("false");
+                miniComfortable.setStatic_comfortable(false);
                 miniComfortable.setIcon(comfortable[index].getIconNoneActive());
                 miniListComfortable.add(miniComfortable);
             } else {
@@ -99,7 +99,7 @@ public class HouseService {
         houseResp.setMiniListComfortable(miniListComfortable);
         houseResp.setTitle(String.format("%s. Chủ nhà %s", houseResp.getTitle(), house.getUser().getLastName()));
         houseResp.setRequestDetail(requestDetail);
-        houseResp.setNumComfortable(String.valueOf(listComfortable.size()));
+        houseResp.setNumComfortable(listComfortable.size());
         return houseResp;
     }
 
@@ -116,7 +116,7 @@ public class HouseService {
             String srcImg = !room.getImages().isEmpty() ? room.getImages().get(0).getSrcImg() : null;
             for (Bed bed : room.getBeds()) {
                 stringBedsDetail.add(String.format("%s %s", bed.getQuantity(), bed.getType().getLangVi()));
-                bedDetail.add(new ShowBedDetailResponse(bed.getType().getIconPath(), String.valueOf(bed.getQuantity())));
+                bedDetail.add(new ShowBedDetailResponse(bed.getType().getIconPath(), bed.getQuantity()));
             }
             String beds = String.join(", ", stringBedsDetail);
             return new ShowRoomDetailResponse(room.getName(), srcImg, beds, bedDetail);

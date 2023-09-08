@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class AverageReviewPointResponse {
-    private String cleanlinessPoint;
-    private String communicationPoint;
-    private String checkInPoint;
-    private String accuracyPoint;
-    private String locationPoint;
-    private String valuePoint;
-    private String avgPoint;
+    private double cleanlinessPoint;
+    private double communicationPoint;
+    private double checkInPoint;
+    private double accuracyPoint;
+    private double locationPoint;
+    private double valuePoint;
+    private double avgPoint;
 }

@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 public class ShowComfortableDetailResponse {
         private String name;
         private String icon;
-        private String status = "true";
+        private boolean status = true;
         private String description;
 }
