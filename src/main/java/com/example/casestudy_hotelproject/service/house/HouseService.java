@@ -28,7 +28,6 @@ public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
     private final RoomRepository roomRepository;
-    private final ReviewRepository reviewRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -124,8 +123,11 @@ public class HouseService {
         }).collect(Collectors.toList());
     }
 
-//    private ShowMiniReviewResponse showMiniReview(int idHouse) {
-//
-//    }
+    public ShowMiniReviewResponse showMiniReview(int idHouse) {
+        House house = houseRepository.findById(idHouse);
+
+        ShowMiniReviewResponse reviewResp = AppUtils.mapper.map(house, ShowMiniReviewResponse.class);
+        return reviewResp;
+    }
 
 }

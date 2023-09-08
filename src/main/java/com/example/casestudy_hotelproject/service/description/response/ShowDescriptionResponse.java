@@ -13,5 +13,4 @@ public class ShowDescriptionResponse {
     private String space;
     private String guestAccess;
     private String other;
-    private String interaction;
 }

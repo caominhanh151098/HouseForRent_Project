@@ -39,8 +39,8 @@ public class HouseRestController {
     }
 
     @GetMapping("/detail/review/{id}")
-    public List<ShowMiniReviewResponse> showMiniReview(@PathVariable int id) {
+    public ShowMiniReviewResponse showMiniReview(@PathVariable int id) {
 
-        return null;
+        return houseService.showMiniReview(id);
     }
 }
