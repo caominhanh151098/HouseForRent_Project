@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository<User , Integer> {
             "and lower(u.lastName) like lower(:search) " +
             "and lower(u.email) like lower(:search)")
     Page<User> findAllWithSearchAndPaging(String search , Pageable pageable);
+User findById(int id);
 }

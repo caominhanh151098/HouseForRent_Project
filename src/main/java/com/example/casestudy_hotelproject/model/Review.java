@@ -18,7 +18,7 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "user_Id")
     private User user;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "house_Id")
     private House house;
 

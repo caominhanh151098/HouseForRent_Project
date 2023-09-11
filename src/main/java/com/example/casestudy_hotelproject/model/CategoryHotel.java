@@ -20,5 +20,5 @@ public class CategoryHotel {
     private String iconUrl;
 
     @OneToMany(mappedBy = "categoryHotel")
-    private Set<CategoryDetail> categoryDetails;
+    private Set<House> houses;
 }

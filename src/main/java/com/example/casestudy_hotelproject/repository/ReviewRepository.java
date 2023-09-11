@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Set;
 
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
-    List<Review> findAllByHouse_Id(int house_Id);
+    Set<Review> findAllByHouse_Id(int house_Id);
 }

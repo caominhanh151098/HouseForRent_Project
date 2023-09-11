@@ -5,13 +5,12 @@ import com.example.casestudy_hotelproject.repository.UserRepository;
 import com.example.casestudy_hotelproject.service.user.response.UserResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,4 +29,7 @@ public class UserService {
 
 
     }
+   public User findById(int id){
+        return userRepository.findById(id);
+   }
 }

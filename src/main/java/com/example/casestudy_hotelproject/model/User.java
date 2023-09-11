@@ -1,6 +1,7 @@
 package com.example.casestudy_hotelproject.model;
 
 import com.example.casestudy_hotelproject.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,22 +32,30 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean status;
+
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<House> hotels;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<EmergencyContact> emergencyContacts;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Favorite> favorites;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Review> reviews;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private Set<Reservation> reservations;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "address_Id")
     private AddressUser addressUser;
 }
