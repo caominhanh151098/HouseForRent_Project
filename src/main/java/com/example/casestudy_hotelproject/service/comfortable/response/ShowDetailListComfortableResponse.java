@@ -12,14 +12,5 @@ import java.util.List;
 @Data
 public class ShowDetailListComfortableResponse {
     private String nameComfortableType;
-    private List<ComfortableDetail> comfortableDetailList = new ArrayList<>();
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @Data
-    static class ComfortableDetail {
-        private String name;
-        private String icon;
-        private String status = "false";
-    }
+    private List<ShowComfortableDetailResponse> comfortableDetailList = new ArrayList<>();
 }

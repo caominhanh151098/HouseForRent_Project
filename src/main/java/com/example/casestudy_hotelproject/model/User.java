@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,7 +28,6 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String phone;
-    private int idCard;
     private Date dob;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -35,27 +35,29 @@ public class User {
     private boolean status;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private Set<House> hotels;
+    private List<House> hotels;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private Set<EmergencyContact> emergencyContacts;
+    private List<EmergencyContact> emergencyContacts;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private Set<Favorite> favorites;
+    private List<Favorite> favorites;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private Set<Review> reviews;
+    private List<Review> reviews;
 
     @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private Set<Reservation> reservations;
+    private List<Reservation> reservations;
 
     @OneToOne
     @JsonIgnore
     @JoinColumn(name = "address_Id")
     private AddressUser addressUser;
+
+    @OneToOne
+    @JoinColumn(name = "identity_Paper_Id")
+    private IdentityPaper identity;
+
+    @OneToMany(mappedBy = "user")
+    private List<InterestDetail> interestDetails;
 }

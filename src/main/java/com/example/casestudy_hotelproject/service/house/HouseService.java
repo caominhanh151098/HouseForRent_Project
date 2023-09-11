@@ -7,6 +7,7 @@ import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniL
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
+import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
 import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.util.AppUtils;
@@ -25,21 +26,22 @@ import java.util.stream.Collectors;
 public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
-    private final RoomRepository roomRepository;
-    private final UserService userService;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
 
+
         Page<ShowListHouseResponse> listPageHouse = listHouse.map(e -> AppUtils.mapper.map(e, ShowListHouseResponse.class));
         for (int index = 0; index < listPageHouse.getContent().size(); index++) {
             House house = listHouse.getContent().get(index);
+            ShowListHouseResponse houseResp = listPageHouse.getContent().get(index);
             String typeHouse = house.getCategoryHotel().getName();
             String addressHouse = house.getLocation().getAddress();
             listPageHouse.getContent().get(index).setTitle(String.format("%s Tại %s", typeHouse, addressHouse));
-            if (house.getReviews().size() > 1)
-                listPageHouse.getContent().get(index).setReview(String.format("%s (%s)", house.getAvgReviewPoint(), house.getReviews().size()));
-            else listPageHouse.getContent().get(index).setReview("Mới");
+            int numReview = house.getReviews().size();
+            if (numReview > 1)
+                houseResp.setReview(String.format("%s (%s)", house.getAvgReviewPoint(), numReview));
+            else houseResp.setReview("Mới");
         }
 
         return listPageHouse;
@@ -70,9 +72,9 @@ public class HouseService {
         House house = houseRepository.findById(idHouse);
 
         ShowHouseDetailResponse houseResp = AppUtils.mapper.map(house, ShowHouseDetailResponse.class);
-        List<Room> rooms = roomRepository.findAllByHouse_Id(idHouse);
-        if (!rooms.isEmpty())
-            houseResp.setRooms(fixInfoRooms(rooms));
+        houseResp.setNumReview(house.getReviews().size());
+        if (!house.getRooms().isEmpty())
+            houseResp.setRooms(fixInfoRooms(house.getRooms()));
 
         switch (house.getTypeRoom()) {
             case ENTIRE_PLACE ->
@@ -86,15 +88,16 @@ public class HouseService {
             houseResp.setReviewPoint("Mới");
         else
             houseResp.setReviewPoint(String.valueOf(house.getAvgReviewPoint()));
-        houseResp.setNumReview(String.valueOf(house.getReviews().size()));
-
 
         String requestDetail = String.format("%s khách. %s phòng ngủ. %s giường. %s phòng tắm",
                 house.getQuantityOfGuests(),
                 house.getQuantityOfRooms(),
                 house.getQuantityOfBeds(),
                 house.getQuantityOfBathrooms());
-        List<Comfortable> listComfortable = comfortableRepository.getListComfortableByHouseId(idHouse);
+        List<Comfortable> listComfortable = new ArrayList<>();
+        for (ComfortableDetail comfortableDetail : house.getComfortableDetails()){
+            listComfortable.add(comfortableDetail.getComfortable());
+        }
         List<ShowMiniListComfortableResponse> miniListComfortable = new ArrayList<>();
         Comfortable[] comfortable = new Comfortable[2];
         comfortable[0] = comfortableRepository.findByName("Máy báo khói");
@@ -106,7 +109,7 @@ public class HouseService {
         for (int index = 0; index < 2; index++) {
             if (!checkComfortable(listComfortable, comfortable[index])) {
                 ShowMiniListComfortableResponse miniComfortable = AppUtils.mapper.map(comfortable[index], ShowMiniListComfortableResponse.class);
-                miniComfortable.setStatic_comfortable("false");
+                miniComfortable.setStatic_comfortable(false);
                 miniComfortable.setIcon(comfortable[index].getIconNoneActive());
                 miniListComfortable.add(miniComfortable);
             } else {
@@ -119,7 +122,7 @@ public class HouseService {
         houseResp.setMiniListComfortable(miniListComfortable);
         houseResp.setTitle(String.format("%s. Chủ nhà %s", houseResp.getTitle(), house.getUser().getLastName()));
         houseResp.setRequestDetail(requestDetail);
-        houseResp.setNumComfortable(String.valueOf(listComfortable.size()));
+        houseResp.setNumComfortable(listComfortable.size());
         return houseResp;
     }
 
@@ -136,15 +139,21 @@ public class HouseService {
             String srcImg = !room.getImages().isEmpty() ? room.getImages().get(0).getSrcImg() : null;
             for (Bed bed : room.getBeds()) {
                 stringBedsDetail.add(String.format("%s %s", bed.getQuantity(), bed.getType().getLangVi()));
-                bedDetail.add(new ShowBedDetailResponse(bed.getType().getIconPath(), String.valueOf(bed.getQuantity())));
+                bedDetail.add(new ShowBedDetailResponse(bed.getType().getIconPath(), bed.getQuantity()));
             }
             String beds = String.join(", ", stringBedsDetail);
             return new ShowRoomDetailResponse(room.getName(), srcImg, beds, bedDetail);
         }).collect(Collectors.toList());
-
     }
    public List<House> getHouseOfHost(int id){
             List<House> list=houseRepository.findByUser_Id(id);
         return list;
    }
+
+    public ShowMiniReviewResponse showMiniReview(int idHouse) {
+        House house = houseRepository.findById(idHouse);
+
+        ShowMiniReviewResponse reviewResp = AppUtils.mapper.map(house, ShowMiniReviewResponse.class);
+        return reviewResp;
+    }
 }

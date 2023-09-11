@@ -1,25 +1,21 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.example.casestudy_hotelproject.model.enums.IdentityType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-import java.util.Set;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CategoryHotel {
+public class IdentityPaper {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
-    @Column(columnDefinition = "LONGTEXT")
-    private String iconUrl;
-
-    @OneToMany(mappedBy = "categoryHotel")
-    private List<House> houses;
+    @Enumerated(EnumType.STRING)
+    private IdentityType type;
+    private String srcImgFrontSide;
+    private String srcImgBackSide;
 }

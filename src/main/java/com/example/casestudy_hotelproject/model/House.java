@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +22,8 @@ public class House {
     private int id;
     @Column(nullable = false)
     private String hotelName;
-    @Column(columnDefinition = "LONGTEXT")
-    private String description;
     private BigDecimal price;
+    private BigDecimal totalPrice;
     private int quantityOfGuests;
     private int quantityOfBeds;
     private int quantityOfRooms;
@@ -37,6 +35,11 @@ public class House {
     @Enumerated(EnumType.STRING)
     private StatusHouse status;
 
+    @OneToOne
+    @JsonIgnore
+    @JoinColumn(name = "description_Id")
+    private Description description;
+
     @ManyToOne
     @JoinColumn(name = "user_Id")
     private User user;
@@ -44,13 +47,11 @@ public class House {
     @ManyToOne
     @JoinColumn(name = "category_Id")
     private CategoryHotel categoryHotel;
-
-    @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private Set<Room> rooms = new HashSet<>();
-
     @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
     @JsonIgnore
+    private List<Room> rooms;
+
+    @OneToMany(mappedBy = "house")
     private List<ComfortableDetail> comfortableDetails;
 
     @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
@@ -63,20 +64,20 @@ public class House {
     private Location location;
 
     @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private Set<Favorite> favorites;
+    private List<Favorite> favorites;
 
     @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private List<Review> reviews;
-
-    @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private Set<Reservation> reservations;
+    private List<Reservation> reservations;
 
     @OneToOne
     @JsonIgnore
     @JoinColumn(name = "ex_Request_Id")
     private ExtraRequest extraRequest;
 
+    @OneToMany(mappedBy = "house")
+    private List<Review> reviews;
+
+    @OneToOne
+    @JoinColumn(name = "review_Point_Id")
+    private ReviewPointHouse reviewPointHouse;
 }

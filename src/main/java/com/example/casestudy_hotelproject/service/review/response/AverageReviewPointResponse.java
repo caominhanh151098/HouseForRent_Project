@@ -1,19 +1,13 @@
-package com.example.casestudy_hotelproject.model;
+package com.example.casestudy_hotelproject.service.review.response;
 
-
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class ReviewPointHouse {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class AverageReviewPointResponse {
     private double cleanlinessPoint;
     private double communicationPoint;
     private double checkInPoint;
