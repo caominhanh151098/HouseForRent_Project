@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -21,5 +22,5 @@ public class Interest {
     private InterestType type;
 
     @OneToMany(mappedBy = "interest")
-    private Set<InterestDetail> interestDetails;
+    private List<InterestDetail> interestDetails;
 }

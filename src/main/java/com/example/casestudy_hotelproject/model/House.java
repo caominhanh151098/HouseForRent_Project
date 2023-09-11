@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -47,38 +48,30 @@ public class House {
     private CategoryHotel categoryHotel;
 
     @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private Set<Room> rooms;
-
-    @OneToMany(mappedBy = "house", fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<ComfortableDetail> comfortableDetails;
+    private List<Room> rooms;
 
     @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private Set<Image> images;
+    private List<ComfortableDetail> comfortableDetails;
+
+    @OneToMany(mappedBy = "house")
+    private List<Image> images;
 
     @OneToOne
-    @JsonIgnore
     @JoinColumn(name = "location_Id")
     private Location location;
 
     @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private Set<Favorite> favorites;
+    private List<Favorite> favorites;
 
     @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private Set<Reservation> reservations;
+    private List<Reservation> reservations;
 
     @OneToOne
-    @JsonIgnore
     @JoinColumn(name = "ex_Request_Id")
     private ExtraRequest extraRequest;
 
     @OneToMany(mappedBy = "house")
-    @JsonIgnore
-    private Set<Review> reviews;
+    private List<Review> reviews;
 
     @OneToOne
     @JoinColumn(name = "review_Point_Id")

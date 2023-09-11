@@ -14,6 +14,7 @@ public class AppUtils {
     static {
         mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        mapper.getConfiguration().setFieldMatchingEnabled(true);
         Converter<String, LocalDate> toStringDate = new AbstractConverter<>() {
             @Override
             protected LocalDate convert(String source) {

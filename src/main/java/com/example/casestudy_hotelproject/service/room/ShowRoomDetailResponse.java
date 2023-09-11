@@ -15,6 +15,6 @@ import java.util.List;
 public class ShowRoomDetailResponse {
     private String name;
     private String image;
-    private String beds;
+    private String bed;
     private List<ShowBedDetailResponse> bedDetail = new ArrayList<>();
 }

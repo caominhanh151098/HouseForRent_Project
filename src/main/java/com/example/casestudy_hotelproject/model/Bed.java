@@ -14,7 +14,7 @@ public class Bed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "room_Id")
     private Room room;
     private int quantity;

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,5 +19,5 @@ public class ComfortableType {
     private String name;
 
     @OneToMany(mappedBy = "type")
-    private Set<Comfortable> comfortables;
+    private List<Comfortable> comfortables;
 }

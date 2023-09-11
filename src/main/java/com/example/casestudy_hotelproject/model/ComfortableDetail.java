@@ -15,7 +15,7 @@ public class ComfortableDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "house_Id")
     private House house;
     @ManyToOne

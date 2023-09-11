@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,19 +34,19 @@ public class User {
     private boolean status;
 
     @OneToMany(mappedBy = "user")
-    private Set<House> hotels;
+    private List<House> hotels;
 
     @OneToMany(mappedBy = "user")
-    private Set<EmergencyContact> emergencyContacts;
+    private List<EmergencyContact> emergencyContacts;
 
     @OneToMany(mappedBy = "user")
-    private Set<Favorite> favorites;
+    private List<Favorite> favorites;
 
     @OneToMany(mappedBy = "user")
-    private Set<Review> reviews;
+    private List<Review> reviews;
 
     @OneToMany(mappedBy = "user")
-    private Set<Reservation> reservations;
+    private List<Reservation> reservations;
 
     @OneToOne
     @JoinColumn(name = "address_Id")
@@ -56,5 +57,5 @@ public class User {
     private IdentityPaper identity;
 
     @OneToMany(mappedBy = "user")
-    private Set<InterestDetail> interestDetails;
+    private List<InterestDetail> interestDetails;
 }
