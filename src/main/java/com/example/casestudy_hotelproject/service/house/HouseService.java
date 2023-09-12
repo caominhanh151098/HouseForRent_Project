@@ -6,6 +6,7 @@ import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
+import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
@@ -26,6 +27,9 @@ import java.util.stream.Collectors;
 public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
+    private final RoomRepository roomRepository;
+    private final LocationRepository locationRepository;
+    private final CategoryHouseRepository categoryHouseRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -155,5 +159,19 @@ public class HouseService {
 
         ShowMiniReviewResponse reviewResp = AppUtils.mapper.map(house, ShowMiniReviewResponse.class);
         return reviewResp;
+    }
+
+    public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(Pageable pageable){
+
+        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAll(pageable)
+                .map(e -> {
+                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
+                    house.setLocation(AppUtils.mapper.map(locationRepository.findById(e.getId()), ShowListHouseForAdminResponse.LocationResponseForAdmin.class));
+                    house.setCategoryHotel(AppUtils.mapper.map(categoryHouseRepository.findById(e.getId()), ShowListHouseForAdminResponse.CategoryResponseForAdmin.class));
+
+                    return house;
+                });
+
+        return responses;
     }
 }

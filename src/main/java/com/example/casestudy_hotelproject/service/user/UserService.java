@@ -20,7 +20,7 @@ public class UserService {
 
     public Page<UserResponse> findAll(String search , Pageable pageable){
         search = "%" + search + "%";
-        List<User> users = userRepository.findAll();
+
 
         Page<UserResponse> responses = userRepository.findAllWithSearchAndPaging(search, pageable)
                 .map(e-> AppUtils.mapper.map(e , UserResponse.class));
