@@ -22,4 +22,8 @@ public class CategoryHotel {
 
     @OneToMany(mappedBy = "categoryHotel")
     private List<House> houses;
+
+    public CategoryHotel(int id) {
+        this.id = id;
+    }
 }

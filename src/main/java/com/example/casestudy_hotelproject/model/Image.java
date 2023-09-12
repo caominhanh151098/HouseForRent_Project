@@ -23,4 +23,8 @@ public class Image {
     @Column(columnDefinition = "LONGTEXT")
     private String description;
 
+    public Image(House house, String srcImg) {
+        this.house = house;
+        this.srcImg = srcImg;
+    }
 }

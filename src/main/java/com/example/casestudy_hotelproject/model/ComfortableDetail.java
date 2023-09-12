@@ -22,4 +22,9 @@ public class ComfortableDetail {
     @JoinColumn(name = "comfortable_Id")
     private Comfortable comfortable;
     private boolean status;
+
+    public ComfortableDetail(House house, Comfortable comfortable) {
+        this.house = house;
+        this.comfortable = comfortable;
+    }
 }

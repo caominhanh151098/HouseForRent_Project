@@ -23,4 +23,8 @@ public class Description {
     private String other;
     @Column(columnDefinition = "LONGTEXT")
     private String interaction;
+
+    public Description(String listingDescription) {
+        this.listingDescription = listingDescription;
+    }
 }

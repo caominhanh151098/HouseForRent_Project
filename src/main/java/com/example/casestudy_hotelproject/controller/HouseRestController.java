@@ -4,6 +4,7 @@ import com.example.casestudy_hotelproject.model.House;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.HouseService;
+import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
@@ -32,8 +33,9 @@ public class HouseRestController {
         return houseService.showDisplayHome(pageable);
     }
     @PostMapping
-    public  void createHouse(@RequestBody House house) {
-        houseService.createHouse(house);
+    public void createHouse(@RequestBody HouseRequest house) {
+
+       houseService.createHouse(house);
     }
     @GetMapping("houseOfHost")
     public List<HouseOfHostReponse> getHouseOfHost(){
@@ -50,6 +52,11 @@ public class HouseRestController {
     public List<ShowDetailListComfortableResponse> showListComfortable(@PathVariable int id) {
         List<ShowDetailListComfortableResponse> listComfortableResp = comfortableService.showListComfortableByHouseId(id);
         return listComfortableResp;
+    }
+    @GetMapping("houseOfHostDetail/{id}")
+    public HouseOfHostReponse getHouseOfHostDetail(@PathVariable int id){
+        HouseOfHostReponse house = houseService.getHouseOfHostDetail(id);
+        return house;
     }
 
     @GetMapping("/detail/review/{id}")

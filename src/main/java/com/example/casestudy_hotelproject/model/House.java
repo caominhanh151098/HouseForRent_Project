@@ -35,7 +35,7 @@ public class House {
     @Enumerated(EnumType.STRING)
     private StatusHouse status;
 
-    @OneToOne
+    @OneToOne(cascade =CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(name = "description_Id")
     private Description description;
@@ -52,6 +52,7 @@ public class House {
     private List<Room> rooms;
 
     @OneToMany(mappedBy = "house")
+    @JsonIgnore
     private List<ComfortableDetail> comfortableDetails;
 
     @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
@@ -80,4 +81,8 @@ public class House {
     @OneToOne
     @JoinColumn(name = "review_Point_Id")
     private ReviewPointHouse reviewPointHouse;
+
+    public House(int id) {
+        this.id = id;
+    }
 }

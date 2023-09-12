@@ -16,4 +16,8 @@ public class Location {
     private String address;
     private Double longitude;
     private Double latitude;
+
+    public Location(String address) {
+        this.address = address;
+    }
 }

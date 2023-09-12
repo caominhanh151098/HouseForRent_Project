@@ -3,7 +3,9 @@ package com.example.casestudy_hotelproject.service.house;
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.repository.*;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
+import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
+import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
+    private final ComfortableService comfortableService;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -51,23 +54,32 @@ public class HouseService {
         List<HouseOfHostReponse> reponseList=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseOfHostReponse.class)).collect(Collectors.toList());
         return reponseList;
     }
-    public void createHouse(House house){
-        try{
-            for (var item:house.getImages()
-            ) {
-                item.setHouse(house);
-            }
-        }catch (Exception e){}
-        try{
-            for (var item: house.getComfortableDetails()
-            ) {
-                item.setHouse(house);
-            }
-        }catch (Exception e){}
+    public void createHouse(HouseRequest houseRequest){
+        House house= AppUtils.mapper.map(houseRequest,House.class);
+        house.setDescription(new Description(houseRequest.getDescriptions()));
+        house.setCategoryHotel(new CategoryHotel(Integer.parseInt(houseRequest.getCategoryHotel()) ));
+        house.setLocation(new Location(houseRequest.getAddress()));
+        List<Image> images=new ArrayList<>();
+        for (var item:houseRequest.getImageList()
+             ) {
+            images.add(new Image(house, item));
+        }
+        house.setImages(images);
+//        List<ComfortableDetail> comfortables=new ArrayList<>();
+//
+//        house.setComfortableDetails(comfortables);
         houseRepository.save(house);
+        for (var item:houseRequest.getComfortableDetailList()
+        ) {
+            comfortableService.createComfortableDetail(new ComfortableDetail(house,new Comfortable(Integer.parseInt(item))));
+        }
     }
 
-
+    public HouseOfHostReponse  getHouseOfHostDetail(int id){
+        House house =houseRepository.findById(id);
+        HouseOfHostReponse houseRespone = AppUtils.mapper.map(house,HouseOfHostReponse.class);
+        return houseRespone;
+    }
     public ShowHouseDetailResponse showDetail(int idHouse) {
         House house = houseRepository.findById(idHouse);
 
