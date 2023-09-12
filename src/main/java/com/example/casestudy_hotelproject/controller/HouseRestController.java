@@ -13,7 +13,9 @@ import com.example.casestudy_hotelproject.service.review.response.ShowMiniReview
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,12 +56,11 @@ public class HouseRestController {
 
     @GetMapping("/detail/review/{id}")
     public ShowMiniReviewResponse showMiniReview(@PathVariable int id) {
-
         return houseService.showMiniReview(id);
     }
 
     @GetMapping("/detail/reviews/{id}")
-    public Page<ContentReviewResponse> showReviews(@PathVariable int id,@PageableDefault(size = 12) Pageable pageable) {
+    public Page<ContentReviewResponse> showReviews(@PathVariable int id,@SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 12) Pageable pageable) {
         return reviewService.showReviews(id, pageable);
     }
 }

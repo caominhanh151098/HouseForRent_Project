@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ public class House {
     private TypeRoom typeRoom;
     @Enumerated(EnumType.STRING)
     private StatusHouse status;
+    private LocalDate createDate;
 
     @OneToOne
     @JsonIgnore
@@ -80,4 +82,9 @@ public class House {
     @OneToOne
     @JoinColumn(name = "review_Point_Id")
     private ReviewPointHouse reviewPointHouse;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

@@ -23,4 +23,8 @@ public class Image {
     @Column(columnDefinition = "LONGTEXT")
     private String description;
 
+    @Override
+    public String toString() {
+        return "";
+    }
 }

@@ -21,4 +21,9 @@ public class ReviewPointHouse {
     private double locationPoint;
     private double valuePoint;
     private double avgPoint;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

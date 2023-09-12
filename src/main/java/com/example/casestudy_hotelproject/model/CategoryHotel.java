@@ -22,4 +22,9 @@ public class CategoryHotel {
 
     @OneToMany(mappedBy = "categoryHotel")
     private List<House> houses;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

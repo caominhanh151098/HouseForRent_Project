@@ -19,4 +19,9 @@ public class Favorite {
     @ManyToOne
     @JoinColumn(name = "house_Id")
     private House house;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

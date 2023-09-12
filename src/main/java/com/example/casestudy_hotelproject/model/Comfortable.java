@@ -35,4 +35,8 @@ public class Comfortable {
     @Column(name = "icon_path_none_active", columnDefinition = "LONGTEXT")
     private String iconNoneActive;
 
+    @Override
+    public String toString() {
+        return "";
+    }
 }

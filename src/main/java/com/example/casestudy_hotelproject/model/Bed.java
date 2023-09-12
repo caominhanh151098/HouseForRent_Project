@@ -20,4 +20,9 @@ public class Bed {
     private int quantity;
     @Enumerated(EnumType.STRING)
     private BedType type;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

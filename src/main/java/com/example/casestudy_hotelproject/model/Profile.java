@@ -18,4 +18,9 @@ public class Profile {
     private String accommodation;
     @Column(columnDefinition = "LONGTEXT")
     private String aboutMe;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

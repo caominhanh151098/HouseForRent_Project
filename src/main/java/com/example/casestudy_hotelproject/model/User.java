@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -31,8 +32,8 @@ public class User {
     private Date dob;
     @Enumerated(EnumType.STRING)
     private Role role;
-
     private boolean status;
+    private LocalDate createDay;
 
     @OneToMany(mappedBy = "user")
     private List<House> hotels;
@@ -60,4 +61,14 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<InterestDetail> interestDetails;
+
+    @OneToOne
+    @JoinColumn(name = "profile_Id")
+    private Profile profile;
+
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

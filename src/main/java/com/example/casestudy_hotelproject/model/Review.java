@@ -16,11 +16,11 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_Id")
     @JsonIgnore
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "house_Id")
     @JsonIgnore
     private House house;
@@ -33,4 +33,9 @@ public class Review {
     @JoinColumn(name = "review_Point_Id")
     private ReviewPoint reviewPoint;
 
+    private boolean status;
+    @Override
+    public String toString() {
+        return "";
+    }
 }

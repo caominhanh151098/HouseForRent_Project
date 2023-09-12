@@ -19,4 +19,8 @@ public class AddressUser {
     private String state;
     private int zipcode;
 
+    @Override
+    public String toString() {
+        return "";
+    }
 }

@@ -23,4 +23,9 @@ public class Description {
     private String other;
     @Column(columnDefinition = "LONGTEXT")
     private String interaction;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

@@ -22,4 +22,9 @@ public class ComfortableDetail {
     @JoinColumn(name = "comfortable_Id")
     private Comfortable comfortable;
     private boolean status;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -28,4 +27,9 @@ public class Room {
 
     @OneToMany(mappedBy = "room")
     private List<Image> images;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

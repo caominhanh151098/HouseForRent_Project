@@ -7,9 +7,9 @@ import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniL
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
+import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
-import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
+    private final ReviewRepository reviewRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -154,6 +155,10 @@ public class HouseService {
         House house = houseRepository.findById(idHouse);
 
         ShowMiniReviewResponse reviewResp = AppUtils.mapper.map(house, ShowMiniReviewResponse.class);
+        reviewResp.setReviews(reviewRepository.getMiniReview(idHouse)
+                .stream()
+                .map(r -> AppUtils.mapper.map(r, ContentReviewResponse.class))
+                .collect(Collectors.toList()));
         return reviewResp;
     }
 }
