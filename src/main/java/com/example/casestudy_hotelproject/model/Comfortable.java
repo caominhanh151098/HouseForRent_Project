@@ -40,4 +40,9 @@ public class Comfortable {
     public Comfortable(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

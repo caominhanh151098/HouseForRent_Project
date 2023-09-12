@@ -18,4 +18,9 @@ public class IdentityPaper {
     private IdentityType type;
     private String srcImgFrontSide;
     private String srcImgBackSide;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

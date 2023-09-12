@@ -20,4 +20,9 @@ public class ReviewPoint {
     private int locationPoint;
     private int valuePoint;
     private double avgPoint;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

@@ -27,4 +27,9 @@ public class Image {
         this.house = house;
         this.srcImg = srcImg;
     }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

@@ -23,4 +23,12 @@ public class Interest {
 
     @OneToMany(mappedBy = "interest")
     private List<InterestDetail> interestDetails;
+
+    @Column(name = "icon_path", columnDefinition = "LONGTEXT")
+    private String icon;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

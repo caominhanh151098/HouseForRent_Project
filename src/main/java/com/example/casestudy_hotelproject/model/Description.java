@@ -27,4 +27,9 @@ public class Description {
     public Description(String listingDescription) {
         this.listingDescription = listingDescription;
     }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

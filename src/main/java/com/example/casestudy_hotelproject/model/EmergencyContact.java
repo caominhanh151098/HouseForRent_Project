@@ -22,4 +22,9 @@ public class EmergencyContact {
     private String email;
     private String countryCode;
     private String phone;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

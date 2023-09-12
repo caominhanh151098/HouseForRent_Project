@@ -22,4 +22,9 @@ public class Payment {
     private String paymentMethod;
     @Enumerated(EnumType.STRING)
     private StatusPayment status;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

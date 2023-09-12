@@ -20,4 +20,9 @@ public class ComfortableType {
 
     @OneToMany(mappedBy = "type")
     private List<Comfortable> comfortables;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

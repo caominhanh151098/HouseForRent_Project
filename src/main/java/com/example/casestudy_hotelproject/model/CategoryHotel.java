@@ -26,4 +26,9 @@ public class CategoryHotel {
     public CategoryHotel(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

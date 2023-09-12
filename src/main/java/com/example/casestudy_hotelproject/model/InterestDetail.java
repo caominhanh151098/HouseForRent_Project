@@ -20,4 +20,9 @@ public class InterestDetail {
     @ManyToOne
     @JoinColumn(name = "interest_Id")
     private Interest interest;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

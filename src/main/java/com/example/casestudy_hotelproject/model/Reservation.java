@@ -32,4 +32,9 @@ public class Reservation {
     @OneToOne
     @JoinColumn(name = "payment_Id")
     private Payment payment;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

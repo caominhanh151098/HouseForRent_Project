@@ -17,4 +17,9 @@ public class GuestDetail {
     private int numChildrenAbove13 ;
     private int numBabies;
     private int numPets;
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

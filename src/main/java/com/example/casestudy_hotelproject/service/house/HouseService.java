@@ -8,10 +8,11 @@ import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniL
 import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
+import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
+import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
-import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,9 @@ public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
     private final ComfortableService comfortableService;
+    private final ReviewRepository reviewRepository;
+    private final LocationRepository locationRepository;
+    private final CategoryHouseRepository categoryHouseRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -166,6 +170,24 @@ public class HouseService {
         House house = houseRepository.findById(idHouse);
 
         ShowMiniReviewResponse reviewResp = AppUtils.mapper.map(house, ShowMiniReviewResponse.class);
+        reviewResp.setReviews(reviewRepository.getMiniReview(idHouse)
+                .stream()
+                .map(r -> AppUtils.mapper.map(r, ContentReviewResponse.class))
+                .collect(Collectors.toList()));
         return reviewResp;
+    }
+
+    public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(Pageable pageable){
+
+        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAll(pageable)
+                .map(e -> {
+                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
+                    house.setLocation(AppUtils.mapper.map(locationRepository.findById(e.getId()), ShowListHouseForAdminResponse.LocationResponseForAdmin.class));
+                    house.setCategoryHotel(AppUtils.mapper.map(categoryHouseRepository.findById(e.getId()), ShowListHouseForAdminResponse.CategoryResponseForAdmin.class));
+
+                    return house;
+                });
+
+        return responses;
     }
 }

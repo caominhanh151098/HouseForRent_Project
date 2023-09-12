@@ -27,4 +27,9 @@ public class ComfortableDetail {
         this.house = house;
         this.comfortable = comfortable;
     }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

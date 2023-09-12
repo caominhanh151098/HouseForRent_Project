@@ -20,5 +20,8 @@ public class ExtraRequest {
     private boolean petAllowed;
     private int maxPets;
 
-
+    @Override
+    public String toString() {
+        return "";
+    }
 }

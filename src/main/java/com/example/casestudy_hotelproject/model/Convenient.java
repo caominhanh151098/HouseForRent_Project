@@ -16,8 +16,13 @@ public class Convenient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String name;
+    private boolean status;
+
     @Column(columnDefinition = "LONGTEXT")
     private String iconUrl;
 
-    private boolean status;
+    @Override
+    public String toString() {
+        return "";
+    }
 }
