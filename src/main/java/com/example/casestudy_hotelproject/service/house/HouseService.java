@@ -9,6 +9,7 @@ import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetail
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
+import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
@@ -28,8 +29,7 @@ public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
     private final ReviewRepository reviewRepository;
-    private final LocationRepository locationRepository;
-    private final CategoryHouseRepository categoryHouseRepository;
+    private final ImageRepository imageRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -167,12 +167,12 @@ public class HouseService {
 
     public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(Pageable pageable){
 
-        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAll(pageable)
-                .map(e -> {
-                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
-                    house.setLocation(AppUtils.mapper.map(locationRepository.findById(e.getId()), ShowListHouseForAdminResponse.LocationResponseForAdmin.class));
-                    house.setCategoryHotel(AppUtils.mapper.map(categoryHouseRepository.findById(e.getId()), ShowListHouseForAdminResponse.CategoryResponseForAdmin.class));
 
+        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable)
+                .map(e -> {
+                    List<Image> images = imageRepository.findAllByHouse_Id(e.getId());
+                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
+                    house.setImages(images.stream().map(i -> AppUtils.mapper.map(i , ShowImgListResponse.class)).toList());
                     return house;
                 });
 

@@ -13,7 +13,10 @@ import java.util.List;
 @Repository
 public interface HouseRepository extends JpaRepository<House, Integer> {
     Page<House> findAll(Pageable pageable);
-    
+
     House findById(int id);
     List<House> findByUser_Id(int user_id);
+
+    @Query(value = "select h from House h where h.status = 'WAITING'")
+    Page<House> findAllHouseForAdminWithStatusWaiting(Pageable pageable);
 }
