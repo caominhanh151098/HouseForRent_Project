@@ -7,6 +7,7 @@ import com.example.casestudy_hotelproject.service.house.HouseService;
 import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
+import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
@@ -69,5 +70,10 @@ public class HouseRestController {
     @GetMapping("/detail/reviews/{id}")
     public Page<ContentReviewResponse> showReviews(@PathVariable int id,@SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 12) Pageable pageable) {
         return reviewService.showReviews(id, pageable);
+    }
+
+    @GetMapping("/admin")
+    Page<ShowListHouseForAdminResponse> showAll(Pageable pageable){
+        return houseService.showListHouseForAdmin(pageable);
     }
 }
