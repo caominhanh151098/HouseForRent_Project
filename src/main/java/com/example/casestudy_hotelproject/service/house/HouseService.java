@@ -34,6 +34,7 @@ public class HouseService {
     private final ComfortableRepository comfortableRepository;
     private final ComfortableService comfortableService;
     private final ReviewRepository reviewRepository;
+    private final ComfortableDetailRepository comfortableDetailRepository;
     private final ImageRepository imageRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
@@ -90,8 +91,8 @@ public class HouseService {
         houseRespone.setComfortableDetails(list);
         return houseRespone;
     }
-    public ShowHouseDetailResponse showDetail(int idHouse) {
-        House house = houseRepository.findById(idHouse);
+    public ShowHouseDetailResponse showDetail(int houseId) {
+        House house = houseRepository.findById(houseId);
 
         ShowHouseDetailResponse houseResp = AppUtils.mapper.map(house, ShowHouseDetailResponse.class);
         houseResp.setNumReview(house.getReviews().size());
@@ -121,19 +122,14 @@ public class HouseService {
             listComfortable.add(comfortableDetail.getComfortable());
         }
         List<ShowMiniListComfortableResponse> miniListComfortable = new ArrayList<>();
-        Comfortable[] comfortable = new Comfortable[2];
-        comfortable[0] = comfortableRepository.findByName("Máy báo khói");
-        comfortable[1] = comfortableRepository.findByName("Máy phát hiện khí CO");
 
         for (int index = 0; index < 8 && index < listComfortable.size(); index++) {
             miniListComfortable.add(AppUtils.mapper.map(listComfortable.get(index), ShowMiniListComfortableResponse.class));
         }
-        for (int index = 0; index < 2; index++) {
-            if (!checkComfortable(listComfortable, comfortable[index])) {
-                ShowMiniListComfortableResponse miniComfortable = AppUtils.mapper.map(comfortable[index], ShowMiniListComfortableResponse.class);
-                miniComfortable.setStatic_comfortable(false);
-                miniComfortable.setIcon(comfortable[index].getIconNoneActive());
-                miniListComfortable.add(miniComfortable);
+        List<ShowMiniListComfortableResponse> safeList = showSafetyAndAccommodation(houseId);
+        for (int index = 0; index < safeList.size(); index++) {
+            if (safeList.get(index).isStatic_comfortable() == false){
+                miniListComfortable.add(safeList.get(index));
             } else {
                 if (miniListComfortable.size() < listComfortable.size()) {
                     miniListComfortable.add(AppUtils.mapper.map(listComfortable.get(listComfortable.size() - 1), ShowMiniListComfortableResponse.class));
@@ -195,5 +191,23 @@ public class HouseService {
                 });
 
         return responses;
+    }
+
+    public List<ShowMiniListComfortableResponse> showSafetyAndAccommodation(int houseId) {
+        List<ShowMiniListComfortableResponse> safetyListResp = new ArrayList<>();
+        Comfortable[] comfortable = new Comfortable[2];
+        comfortable[0] = comfortableRepository.findByName("Máy báo khói");
+        comfortable[1] = comfortableRepository.findByName("Máy phát hiện khí CO");
+
+        for (Comfortable com : comfortable) {
+            ShowMiniListComfortableResponse comfortableResponse = AppUtils.mapper.map(com, ShowMiniListComfortableResponse.class);
+            ComfortableDetail comfortableDetail = comfortableDetailRepository.findByComfortable_IdAndHouse_Id(com.getId(), houseId);
+            if (comfortableDetail == null || comfortableDetail.isStatus() == false) {
+                comfortableResponse.setIcon(com.getIconNoneActive());
+                comfortableResponse.setStatic_comfortable(false);
+            }
+            safetyListResp.add(comfortableResponse);
+        }
+        return safetyListResp;
     }
 }

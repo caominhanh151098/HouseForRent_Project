@@ -3,7 +3,7 @@ package com.example.casestudy_hotelproject.service.comfortable;
 import com.example.casestudy_hotelproject.model.Comfortable;
 import com.example.casestudy_hotelproject.model.ComfortableDetail;
 import com.example.casestudy_hotelproject.model.ComfortableType;
-import com.example.casestudy_hotelproject.repository.ComforTableDetailRepository;
+import com.example.casestudy_hotelproject.repository.ComfortableDetailRepository;
 import com.example.casestudy_hotelproject.repository.ComfortableRepository;
 import com.example.casestudy_hotelproject.repository.ComfortableTypeRepository;
 import com.example.casestudy_hotelproject.repository.HouseRepository;
@@ -22,9 +22,8 @@ import java.util.stream.Collectors;
 public class ComfortableService {
     private final ComfortableTypeRepository comfortableTypeRepository;
     private final ComfortableRepository comfortableRepository;
-    private  final ComforTableDetailRepository comforTableDetailRepository;
     private  final HouseRepository houseRepository;
-
+    private final ComfortableDetailRepository comfortableDetailRepository;
 
     public List<ShowDetailListComfortableResponse> showListComfortableByHouseId(int idHouse) {
         List<ComfortableType> comfortableTypes = comfortableTypeRepository.findAll();
@@ -58,25 +57,25 @@ public class ComfortableService {
         return comfortableListResp;
     }
     public void createComfortableDetail(ComfortableDetail comfortableDetail){
-        comforTableDetailRepository.save(comfortableDetail);
+        comfortableDetailRepository.save(comfortableDetail);
     }
     public void deleteComfortableDetail(int houseId,int comfortableID){
 
-       ComfortableDetail comfortableDetail= comforTableDetailRepository.findByHouseIdAndComfortableId(houseId,comfortableID);
+       ComfortableDetail comfortableDetail= comfortableDetailRepository.findByHouseIdAndComfortableId(houseId,comfortableID);
         if(comfortableDetail==null){
-            comforTableDetailRepository.save(new ComfortableDetail(houseRepository.findById(houseId),comfortableRepository.findById(comfortableID),false));
+            comfortableDetailRepository.save(new ComfortableDetail(houseRepository.findById(houseId),comfortableRepository.findById(comfortableID),false));
         }else {
             comfortableDetail.setStatus(false);
-            comforTableDetailRepository.save(comfortableDetail);
+            comfortableDetailRepository.save(comfortableDetail);
         }
     }
     public  void addComfortableDetail(int houseId,int comfortableId){
-        ComfortableDetail comfortableDetail= comforTableDetailRepository.findByHouseIdAndComfortableId(houseId,comfortableId);
+        ComfortableDetail comfortableDetail= comfortableDetailRepository.findByHouseIdAndComfortableId(houseId,comfortableId);
         if(comfortableDetail==null){
-            comforTableDetailRepository.save(new ComfortableDetail(houseRepository.findById(houseId),comfortableRepository.findById(comfortableId),true));
+            comfortableDetailRepository.save(new ComfortableDetail(houseRepository.findById(houseId),comfortableRepository.findById(comfortableId),true));
         }else {
             comfortableDetail.setStatus(true);
-            comforTableDetailRepository.save(comfortableDetail);
+            comfortableDetailRepository.save(comfortableDetail);
         }
     }
     public List<Comfortable> getComfortable(){

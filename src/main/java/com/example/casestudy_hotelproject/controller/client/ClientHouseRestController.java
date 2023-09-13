@@ -1,15 +1,10 @@
-package com.example.casestudy_hotelproject.controller;
+package com.example.casestudy_hotelproject.controller.client;
 
-import com.example.casestudy_hotelproject.model.House;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
-import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.HouseService;
-import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
-import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
@@ -28,9 +23,9 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/house")
+@RequestMapping("/api/client/house")
 @CrossOrigin(origins = "http://localhost:3000")
-public class HouseRestController {
+public class ClientHouseRestController {
     private final HouseService houseService;
     private final ComfortableService comfortableService;
     private final ReviewService reviewService;
@@ -39,16 +34,6 @@ public class HouseRestController {
     @GetMapping
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         return houseService.showDisplayHome(pageable);
-    }
-    @PostMapping
-    public void createHouse(@RequestBody HouseRequest house) {
-
-       houseService.createHouse(house);
-    }
-    @GetMapping("houseOfHost")
-    public List<HouseOfHostReponse> getHouseOfHost(){
-        List<HouseOfHostReponse> list=houseService.showHouseOfHost(2);
-        return list;
     }
     @GetMapping("/detail/{id}")
     public ShowHouseDetailResponse showDetail(@PathVariable int id) {
@@ -60,11 +45,6 @@ public class HouseRestController {
     public List<ShowDetailListComfortableResponse> showListComfortable(@PathVariable int id) {
         List<ShowDetailListComfortableResponse> listComfortableResp = comfortableService.showListComfortableByHouseId(id);
         return listComfortableResp;
-    }
-    @GetMapping("/houseOfHostDetail/{id}")
-    public HouseOfHostReponse getHouseOfHostDetail(@PathVariable int id){
-        HouseOfHostReponse house = houseService.getHouseOfHostDetail(id);
-        return house;
     }
 
     @GetMapping("/detail/review/{id}")
@@ -85,18 +65,5 @@ public class HouseRestController {
     @GetMapping("/detail/safety/{id}")
     public List<ShowMiniListComfortableResponse> getSafety(@PathVariable int id) {
         return houseService.showSafetyAndAccommodation(id);
-    }
-
-    @GetMapping("/admin")
-    Page<ShowListHouseForAdminResponse> showAll(Pageable pageable){
-        return houseService.showListHouseForAdmin(pageable);
-    }
-    @GetMapping("/deleteComfortable/{houseID}/{comfortableID}")
-    public void deleteComfortable(@PathVariable int houseID,@PathVariable int comfortableID){
-        comfortableService.deleteComfortableDetail(houseID,comfortableID);
-    }
-    @GetMapping("/addComfortable/{houseID}/{comfortableID}")
-    public void addComfortable(@PathVariable int houseID,@PathVariable int comfortableID){
-        comfortableService.addComfortableDetail(houseID,comfortableID);
     }
 }
