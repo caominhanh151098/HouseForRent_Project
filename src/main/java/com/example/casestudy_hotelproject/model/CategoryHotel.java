@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class CategoryHotel {
     private String iconUrl;
 
     @OneToMany(mappedBy = "categoryHotel")
+    @JsonIgnore
     private List<House> houses;
 
     public CategoryHotel(int id) {

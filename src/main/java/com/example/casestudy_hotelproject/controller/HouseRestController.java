@@ -56,7 +56,7 @@ public class HouseRestController {
         List<ShowDetailListComfortableResponse> listComfortableResp = comfortableService.showListComfortableByHouseId(id);
         return listComfortableResp;
     }
-    @GetMapping("houseOfHostDetail/{id}")
+    @GetMapping("/houseOfHostDetail/{id}")
     public HouseOfHostReponse getHouseOfHostDetail(@PathVariable int id){
         HouseOfHostReponse house = houseService.getHouseOfHostDetail(id);
         return house;
@@ -76,11 +76,11 @@ public class HouseRestController {
     Page<ShowListHouseForAdminResponse> showAll(Pageable pageable){
         return houseService.showListHouseForAdmin(pageable);
     }
-    @GetMapping("deleteComfortable/{houseID}/{comfortableID}")
+    @GetMapping("/deleteComfortable/{houseID}/{comfortableID}")
     public void deleteComfortable(@PathVariable int houseID,@PathVariable int comfortableID){
         comfortableService.deleteComfortableDetail(houseID,comfortableID);
     }
-    @GetMapping("addComfortable/{houseID}/{comfortableID}")
+    @GetMapping("/addComfortable/{houseID}/{comfortableID}")
     public void addComfortable(@PathVariable int houseID,@PathVariable int comfortableID){
         comfortableService.addComfortableDetail(houseID,comfortableID);
     }
