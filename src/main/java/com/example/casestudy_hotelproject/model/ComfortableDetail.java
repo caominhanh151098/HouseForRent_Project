@@ -23,6 +23,11 @@ public class ComfortableDetail {
     private Comfortable comfortable;
     private boolean status;
 
+    public ComfortableDetail(House house, Comfortable comfortable) {
+        this.house = house;
+        this.comfortable = comfortable;
+    }
+
     @Override
     public String toString() {
         return "";

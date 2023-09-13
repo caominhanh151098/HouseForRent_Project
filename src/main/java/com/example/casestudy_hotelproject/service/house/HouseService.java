@@ -3,13 +3,15 @@ package com.example.casestudy_hotelproject.service.house;
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.repository.*;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
-import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
+import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
+import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
+import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
@@ -28,10 +30,10 @@ import java.util.stream.Collectors;
 public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
+    private final ComfortableService comfortableService;
     private final ReviewRepository reviewRepository;
-    private final LocationRepository locationRepository;
-    private final CategoryHouseRepository categoryHouseRepository;
     private final ComfortableDetailRepository comfortableDetailRepository;
+    private final ImageRepository imageRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -57,23 +59,32 @@ public class HouseService {
         List<HouseOfHostReponse> reponseList=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseOfHostReponse.class)).collect(Collectors.toList());
         return reponseList;
     }
-    public void createHouse(House house){
-        try{
-            for (var item:house.getImages()
-            ) {
-                item.setHouse(house);
-            }
-        }catch (Exception e){}
-        try{
-            for (var item: house.getComfortableDetails()
-            ) {
-                item.setHouse(house);
-            }
-        }catch (Exception e){}
+    public void createHouse(HouseRequest houseRequest){
+        House house= AppUtils.mapper.map(houseRequest,House.class);
+        house.setDescription(new Description(houseRequest.getDescriptions()));
+        house.setCategoryHotel(new CategoryHotel(Integer.parseInt(houseRequest.getCategoryHotel()) ));
+        house.setLocation(new Location(houseRequest.getAddress()));
+        List<Image> images=new ArrayList<>();
+        for (var item:houseRequest.getImageList()
+             ) {
+            images.add(new Image(house, item));
+        }
+        house.setImages(images);
+//        List<ComfortableDetail> comfortables=new ArrayList<>();
+//
+//        house.setComfortableDetails(comfortables);
         houseRepository.save(house);
+        for (var item:houseRequest.getComfortableDetailList()
+        ) {
+            comfortableService.createComfortableDetail(new ComfortableDetail(house,new Comfortable(Integer.parseInt(item))));
+        }
     }
 
-
+    public HouseOfHostReponse  getHouseOfHostDetail(int id){
+        House house =houseRepository.findById(id);
+        HouseOfHostReponse houseRespone = AppUtils.mapper.map(house,HouseOfHostReponse.class);
+        return houseRespone;
+    }
     public ShowHouseDetailResponse showDetail(int houseId) {
         House house = houseRepository.findById(houseId);
 
@@ -164,12 +175,12 @@ public class HouseService {
 
     public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(Pageable pageable){
 
-        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAll(pageable)
-                .map(e -> {
-                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
-                    house.setLocation(AppUtils.mapper.map(locationRepository.findById(e.getId()), ShowListHouseForAdminResponse.LocationResponseForAdmin.class));
-                    house.setCategoryHotel(AppUtils.mapper.map(categoryHouseRepository.findById(e.getId()), ShowListHouseForAdminResponse.CategoryResponseForAdmin.class));
 
+        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable)
+                .map(e -> {
+                    List<Image> images = imageRepository.findAllByHouse_Id(e.getId());
+                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
+                    house.setImages(images.stream().map(i -> AppUtils.mapper.map(i , ShowImgListResponse.class)).toList());
                     return house;
                 });
 

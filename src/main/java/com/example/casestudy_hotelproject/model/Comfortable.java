@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,9 +32,14 @@ public class Comfortable {
     private String icon;
 
     @OneToMany(mappedBy = "comfortable")
+    @JsonIgnore
     private List<ComfortableDetail> comfortableDetails;
     @Column(name = "icon_path_none_active", columnDefinition = "LONGTEXT")
     private String iconNoneActive;
+
+    public Comfortable(int id) {
+        this.id = id;
+    }
 
     @Override
     public String toString() {

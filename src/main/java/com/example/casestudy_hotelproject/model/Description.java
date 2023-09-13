@@ -24,6 +24,10 @@ public class Description {
     @Column(columnDefinition = "LONGTEXT")
     private String interaction;
 
+    public Description(String listingDescription) {
+        this.listingDescription = listingDescription;
+    }
+
     @Override
     public String toString() {
         return "";

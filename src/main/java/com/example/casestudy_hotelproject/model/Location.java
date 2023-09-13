@@ -17,6 +17,10 @@ public class Location {
     private Double longitude;
     private Double latitude;
 
+    public Location(String address) {
+        this.address = address;
+    }
+
     @Override
     public String toString() {
         return "";

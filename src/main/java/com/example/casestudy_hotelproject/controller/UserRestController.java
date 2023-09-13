@@ -5,6 +5,7 @@ import com.example.casestudy_hotelproject.service.review.response.ContentReviewR
 import com.example.casestudy_hotelproject.service.review.response.ShowReviewHostDetailResponse;
 import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.service.user.response.ShowUserDetailResponse;
+import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.service.user.response.UserResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,7 @@ public class UserRestController {
     @GetMapping("/client/detail/review/{id}/2")
     public Page<ContentReviewResponse> getReviewDetailByOtherHost(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 10) Pageable pageable) {
         return reviewService.getReviewDetailByOtherHost(id, pageable);
+
     }
 
 }

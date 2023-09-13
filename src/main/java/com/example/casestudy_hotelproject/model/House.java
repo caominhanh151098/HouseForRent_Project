@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -37,7 +36,7 @@ public class House {
     private StatusHouse status;
     private LocalDate createDate;
 
-    @OneToOne
+    @OneToOne(cascade =CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(name = "description_Id")
     private Description description;
@@ -54,6 +53,7 @@ public class House {
     private List<Room> rooms;
 
     @OneToMany(mappedBy = "house")
+    @JsonIgnore
     private List<ComfortableDetail> comfortableDetails;
 
     @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
@@ -84,6 +84,10 @@ public class House {
     @OneToOne
     @JoinColumn(name = "ex_request_Id")
     private ExtraRequest extraRequest;
+
+    public House(int id) {
+        this.id = id;
+    }
 
     @Override
     public String toString() {
