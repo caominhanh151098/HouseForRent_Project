@@ -1,12 +1,9 @@
-package com.example.casestudy_hotelproject.controller;
+package com.example.casestudy_hotelproject.controller.client;
 
-import com.example.casestudy_hotelproject.model.House;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
-import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.HouseService;
-import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
@@ -26,9 +23,9 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/house")
+@RequestMapping("/api/client/house")
 @CrossOrigin(origins = "http://localhost:3000")
-public class HouseRestController {
+public class ClientHouseRestController {
     private final HouseService houseService;
     private final ComfortableService comfortableService;
     private final ReviewService reviewService;
@@ -37,15 +34,6 @@ public class HouseRestController {
     @GetMapping
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         return houseService.showDisplayHome(pageable);
-    }
-    @PostMapping
-    public  void createHouse(@RequestBody House house) {
-        houseService.createHouse(house);
-    }
-    @GetMapping("houseOfHost")
-    public List<HouseOfHostReponse> getHouseOfHost(){
-        List<HouseOfHostReponse> list=houseService.showHouseOfHost(2);
-        return list;
     }
     @GetMapping("/detail/{id}")
     public ShowHouseDetailResponse showDetail(@PathVariable int id) {

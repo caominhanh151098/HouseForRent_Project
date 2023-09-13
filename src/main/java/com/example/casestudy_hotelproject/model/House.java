@@ -71,17 +71,19 @@ public class House {
     @OneToMany(mappedBy = "house")
     private List<Reservation> reservations;
 
-    @OneToOne
-    @JsonIgnore
-    @JoinColumn(name = "ex_Request_Id")
-    private ExtraRequest extraRequest;
-
     @OneToMany(mappedBy = "house")
     private List<Review> reviews;
 
     @OneToOne
     @JoinColumn(name = "review_Point_Id")
     private ReviewPointHouse reviewPointHouse;
+
+    @OneToMany(mappedBy = "house")
+    private List<RuleHouse> ruleList;
+
+    @OneToOne
+    @JoinColumn(name = "ex_request_Id")
+    private ExtraRequest extraRequest;
 
     @Override
     public String toString() {
