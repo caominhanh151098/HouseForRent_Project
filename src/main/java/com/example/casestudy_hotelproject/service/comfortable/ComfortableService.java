@@ -6,6 +6,7 @@ import com.example.casestudy_hotelproject.model.ComfortableType;
 import com.example.casestudy_hotelproject.repository.ComforTableDetailRepository;
 import com.example.casestudy_hotelproject.repository.ComfortableRepository;
 import com.example.casestudy_hotelproject.repository.ComfortableTypeRepository;
+import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
@@ -22,6 +23,8 @@ public class ComfortableService {
     private final ComfortableTypeRepository comfortableTypeRepository;
     private final ComfortableRepository comfortableRepository;
     private  final ComforTableDetailRepository comforTableDetailRepository;
+    private  final HouseRepository houseRepository;
+
 
     public List<ShowDetailListComfortableResponse> showListComfortableByHouseId(int idHouse) {
         List<ComfortableType> comfortableTypes = comfortableTypeRepository.findAll();
@@ -57,7 +60,27 @@ public class ComfortableService {
     public void createComfortableDetail(ComfortableDetail comfortableDetail){
         comforTableDetailRepository.save(comfortableDetail);
     }
-    public List<Comfortable> findAll(){
+    public void deleteComfortableDetail(int houseId,int comfortableID){
+
+       ComfortableDetail comfortableDetail= comforTableDetailRepository.findByHouseIdAndComfortableId(houseId,comfortableID);
+        if(comfortableDetail==null){
+            comforTableDetailRepository.save(new ComfortableDetail(houseRepository.findById(houseId),comfortableRepository.findById(comfortableID),false));
+        }else {
+            comfortableDetail.setStatus(false);
+            comforTableDetailRepository.save(comfortableDetail);
+        }
+    }
+    public  void addComfortableDetail(int houseId,int comfortableId){
+        ComfortableDetail comfortableDetail= comforTableDetailRepository.findByHouseIdAndComfortableId(houseId,comfortableId);
+        if(comfortableDetail==null){
+            comforTableDetailRepository.save(new ComfortableDetail(houseRepository.findById(houseId),comfortableRepository.findById(comfortableId),true));
+        }else {
+            comfortableDetail.setStatus(true);
+            comforTableDetailRepository.save(comfortableDetail);
+        }
+    }
+    public List<Comfortable> getComfortable(){
         return comfortableRepository.findAll();
     }
+
 }

@@ -2,6 +2,8 @@ package com.example.casestudy_hotelproject.service.house.response;
 
 import com.example.casestudy_hotelproject.model.CategoryHotel;
 import com.example.casestudy_hotelproject.service.category_hotel.response.CategoryHotelRespone;
+import com.example.casestudy_hotelproject.service.comfortable.response.ComfortableDetailRespone;
+import com.example.casestudy_hotelproject.service.comfortable.response.ComfortableRespone;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.description.response.DescriptionRepone;
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
@@ -29,6 +31,7 @@ public class HouseOfHostReponse {
     private String typeRoom;
     private CategoryHotelRespone categoryHotel;
     private String bookNow;
-    private String status;
+    private boolean status;
     private List<ShowImgListResponse> images = new ArrayList<>();
+    private List<ComfortableDetailRespone> comfortableDetails;
 }

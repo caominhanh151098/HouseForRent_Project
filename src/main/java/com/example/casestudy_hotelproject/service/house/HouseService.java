@@ -4,6 +4,8 @@ import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.repository.*;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
+import com.example.casestudy_hotelproject.service.comfortable.response.ComfortableDetailRespone;
+import com.example.casestudy_hotelproject.service.comfortable.response.ComfortableRespone;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
@@ -69,19 +71,23 @@ public class HouseService {
             images.add(new Image(house, item));
         }
         house.setImages(images);
-//        List<ComfortableDetail> comfortables=new ArrayList<>();
-//
-//        house.setComfortableDetails(comfortables);
+
         houseRepository.save(house);
         for (var item:houseRequest.getComfortableDetailList()
         ) {
-            comfortableService.createComfortableDetail(new ComfortableDetail(house,new Comfortable(Integer.parseInt(item))));
+            comfortableService.createComfortableDetail(new ComfortableDetail(house,new Comfortable(Integer.parseInt(item)),true));
         }
     }
 
     public HouseOfHostReponse  getHouseOfHostDetail(int id){
         House house =houseRepository.findById(id);
         HouseOfHostReponse houseRespone = AppUtils.mapper.map(house,HouseOfHostReponse.class);
+        List<ComfortableDetailRespone> list=new ArrayList<>();
+        for (var item:house.getComfortableDetails()
+             ) {
+            list.add(new ComfortableDetailRespone(new ComfortableRespone(item.getComfortable().getId()) ,item.isStatus()) );
+        }
+        houseRespone.setComfortableDetails(list);
         return houseRespone;
     }
     public ShowHouseDetailResponse showDetail(int idHouse) {

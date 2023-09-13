@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ComforTableDetailRepository extends JpaRepository<ComfortableDetail, Integer> {
+    ComfortableDetail findByHouseIdAndComfortableId(int house_id, int comfortable_id);
 }

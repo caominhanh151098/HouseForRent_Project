@@ -23,9 +23,12 @@ public class ComfortableDetail {
     private Comfortable comfortable;
     private boolean status;
 
-    public ComfortableDetail(House house, Comfortable comfortable) {
+
+
+    public ComfortableDetail(House house, Comfortable comfortable, boolean status) {
         this.house = house;
         this.comfortable = comfortable;
+        this.status = status;
     }
 
     @Override

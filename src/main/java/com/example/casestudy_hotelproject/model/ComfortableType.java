@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class ComfortableType {
     private String name;
 
     @OneToMany(mappedBy = "type")
+    @JsonIgnore
     private List<Comfortable> comfortables;
 
     @Override

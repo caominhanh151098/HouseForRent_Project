@@ -20,5 +20,6 @@ public interface ComfortableRepository extends JpaRepository<Comfortable, Intege
     List<Comfortable> getDefaultConfigComfortable();
 
     Comfortable findByName(String name);
+    Comfortable findById(int id);
 
 }
