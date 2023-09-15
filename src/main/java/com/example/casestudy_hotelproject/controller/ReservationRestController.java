@@ -1,7 +1,7 @@
 package com.example.casestudy_hotelproject.controller;
 
-import com.example.casestudy_hotelproject.service.Reservation.ReservationService;
-import com.example.casestudy_hotelproject.service.Reservation.request.SaveReservationRequest;
+import com.example.casestudy_hotelproject.service.reservation.ReservationService;
+import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

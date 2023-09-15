@@ -1,7 +1,6 @@
 package com.example.casestudy_hotelproject.controller;
 
-import com.example.casestudy_hotelproject.service.Reservation.response.ShowFeeByHouseResponse;
-import com.example.casestudy_hotelproject.service.Reservation.response.ShowPriceAndFeeByHouseResponse;
+import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;

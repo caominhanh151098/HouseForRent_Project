@@ -1,4 +1,4 @@
-package com.example.casestudy_hotelproject.service.Reservation;
+package com.example.casestudy_hotelproject.service.reservation;
 
 import com.example.casestudy_hotelproject.model.BookingFee;
 import com.example.casestudy_hotelproject.model.House;
@@ -11,15 +11,15 @@ import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.repository.ReservationRepository;
 import com.example.casestudy_hotelproject.repository.SurchargeRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
-import com.example.casestudy_hotelproject.service.Reservation.request.SaveReservationRequest;
+import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.time.ZoneId;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,8 +43,8 @@ public class ReservationService {
         reservation.setWeekendPrice(house.getWeekendPrice());
         reservation.setBookingFees(getCurrentBookingFeesByHouse(reservation, house));
         reservation.setStatus(house.isBookNow() ? StatusReservation.WAIT_FOR_CHECKIN : StatusReservation.AWAITING_APPROVAL);
-        reservation.setTotalPrice(getTotalPrice(reservation));
-//        reservationRepository.save(reservation);
+        reservation.setTotalPrice(getPrice(reservation).setScale(0, RoundingMode.HALF_UP));
+        reservationRepository.save(reservation);
     }
 
     public List<BookingFee> getCurrentBookingFeesByHouse(Reservation reservation, House house) {
@@ -56,18 +56,18 @@ public class ReservationService {
             switch (fee.getFee().getFeeType()) {
                 case CLEANING -> {
                     if (daysBetween > 2)
-                        bookingFees.add(new BookingFee(price, other, fee.getFee().getFeeType()));
+                        bookingFees.add(new BookingFee(price, other, fee.getFee().getFeeType(), reservation));
                 }
                 case SHORT_STAY_CLEANING -> {
                     if (daysBetween <= 2)
-                        bookingFees.add(new BookingFee(price, other, fee.getFee().getFeeType()));
+                        bookingFees.add(new BookingFee(price, other, fee.getFee().getFeeType(), reservation));
                 }
                 case EXTRA_GUESS -> {
                     other = fee.getOther();
-                    bookingFees.add(new BookingFee(price, other, fee.getFee().getFeeType()));
+                    bookingFees.add(new BookingFee(price, other, fee.getFee().getFeeType(), reservation));
                 }
                 case PET -> {
-                    bookingFees.add(new BookingFee(price, other, fee.getFee().getFeeType()));
+                    bookingFees.add(new BookingFee(price, other, fee.getFee().getFeeType(), reservation));
                 }
             }
         });
@@ -78,18 +78,52 @@ public class ReservationService {
 
             bookingFees.add(new
                     BookingFee(percent, other, surcharge.getType() == SurchargeType.TAX ?
-                    BookingFeeType.TAX : BookingFeeType.SERVICE_FEE));
+                    BookingFeeType.TAX : BookingFeeType.SERVICE_FEE, reservation));
         });
         return bookingFees;
     }
 
-    public BigDecimal getTotalPrice(Reservation reservation) {
-        long daysBetween = reservation.getCheckInDate().until(reservation.getCheckOutDate(), ChronoUnit.DAYS);
+    public BigDecimal getPrice(Reservation reservation) {
         if (reservation.getWeekendPrice() == null) {
             reservation.setWeekendPrice(reservation.getPrice());
         }
-        BigDecimal price = getPriceByDate(reservation);
-        return null;
+        BigDecimal priceByDate = getPriceByDate(reservation);
+        BigDecimal totalPrice = getTotalPrice(reservation, priceByDate);
+        return totalPrice;
+    }
+
+    public BigDecimal getTotalPrice(Reservation reservation, BigDecimal priceByDate) {
+        long daysBetween = reservation.getCheckInDate().until(reservation.getCheckOutDate(), ChronoUnit.DAYS);
+        BigDecimal cleaningFee = BigDecimal.ZERO;
+        BigDecimal petFee = BigDecimal.ZERO;
+        BigDecimal taxFee = BigDecimal.ZERO;
+        BigDecimal serviceFee = BigDecimal.ZERO;
+        for (int index = 0; index < reservation.getBookingFees().size(); index++) {
+            BookingFee bookingFee = reservation.getBookingFees().get(index);
+            switch (bookingFee.getType()) {
+                case CLEANING -> {
+                    if (daysBetween > 2)
+                        cleaningFee = bookingFee.getValue();
+                }
+                case SHORT_STAY_CLEANING -> {
+                    if (daysBetween <= 2)
+                        cleaningFee = bookingFee.getValue();
+                }
+                case PET -> {
+                    if (reservation.getGuestDetail().getNumPets() > 0)
+                        petFee = bookingFee.getValue();
+                }
+                case TAX -> {
+                    taxFee = bookingFee.getValue();
+                }
+                case SERVICE_FEE -> {
+                    serviceFee = bookingFee.getValue();
+                }
+            }
+        }
+        BigDecimal price = priceByDate.add(cleaningFee.add(petFee));
+        BigDecimal totalPrice = price.add(price.multiply(serviceFee).divide(new BigDecimal(100)));
+        return totalPrice;
     }
 
     public BigDecimal getPriceByDate(Reservation reservation) {

@@ -1,4 +1,4 @@
-package com.example.casestudy_hotelproject.service.Reservation.response;
+package com.example.casestudy_hotelproject.service.reservation.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

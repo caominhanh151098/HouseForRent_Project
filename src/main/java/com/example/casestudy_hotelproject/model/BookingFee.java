@@ -26,10 +26,11 @@ public class BookingFee {
     @JoinColumn(name = "reservation_Id")
     private Reservation reservation;
 
-    public BookingFee(BigDecimal value, int other, BookingFeeType type) {
+    public BookingFee(BigDecimal value, int other, BookingFeeType type, Reservation reservation) {
         this.value = value;
         this.other = other;
         this.type = type;
+        this.reservation = reservation;
     }
 
     @Override

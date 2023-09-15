@@ -1,11 +1,9 @@
-package com.example.casestudy_hotelproject.service.Reservation.request;
+package com.example.casestudy_hotelproject.service.reservation.request;
 
 import com.example.casestudy_hotelproject.service.guest_detail.response.SaveGuestDetailInReservationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
