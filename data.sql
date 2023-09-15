@@ -71,6 +71,34 @@ INSERT INTO `bed` VALUES (1,1,1,'SINGER'),(2,1,2,'SINGER'),(3,1,3,'SINGER');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `booking_fee`
+--
+
+DROP TABLE IF EXISTS `booking_fee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `booking_fee` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `value` decimal(38,2) DEFAULT NULL,
+  `type` enum('CLEANING','EXTRA_GUESS','PET','SERVICE_FEE','SHORT_STAY_CLEANING','TAX') DEFAULT NULL,
+  `other` int NOT NULL,
+  `reservation_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK8r900svjnfkvp86t0ok47nd2s` (`reservation_id`),
+  CONSTRAINT `FK8r900svjnfkvp86t0ok47nd2s` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `booking_fee`
+--
+
+LOCK TABLES `booking_fee` WRITE;
+/*!40000 ALTER TABLE `booking_fee` DISABLE KEYS */;
+/*!40000 ALTER TABLE `booking_fee` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `cancellation_policy`
 --
 
@@ -117,6 +145,57 @@ LOCK TABLES `category_hotel` WRITE;
 /*!40000 ALTER TABLE `category_hotel` DISABLE KEYS */;
 INSERT INTO `category_hotel` VALUES (1,'Nhà',NULL),(2,'Căn hộ',NULL),(3,'Nhà nông trại',NULL),(4,'Chỗ nghỉ phục vụ bữa sáng',NULL),(5,'Thuyền',NULL),(6,'Cabin',NULL),(7,'Xe cắm trại/RV',NULL),(8,'Casa particular',NULL),(9,'Lâu đài',NULL),(10,'Hang',NULL),(11,'Nhà container',NULL),(12,'Nhà theo phong cách Cycladic',NULL),(13,'Dammuso',NULL),(14,'Nhà vòm',NULL),(15,'Nhà dưới lòng đất',NULL),(16,'Nông trại',NULL),(17,'Nhà khách',NULL),(18,'Khách sạn',NULL),(19,'Nhà thuyền',NULL),(20,'Kezhan',NULL),(21,'Minsu',NULL),(22,'Riad',NULL),(23,'Ryokan',NULL),(24,'Lều mục đồng',NULL),(25,'Lều vải',NULL),(26,'Nhà nhỏ',NULL),(27,'Tháp',NULL),(28,'Nhà trên cây',NULL),(29,'Nhà chỏm nón',NULL),(30,'Cối xay gió',NULL),(31,'Lều yurt',NULL);
 /*!40000 ALTER TABLE `category_hotel` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cleaning_fee`
+--
+
+DROP TABLE IF EXISTS `cleaning_fee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cleaning_fee` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cleaning_fee`
+--
+
+LOCK TABLES `cleaning_fee` WRITE;
+/*!40000 ALTER TABLE `cleaning_fee` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cleaning_fee` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cleaning_fee_house`
+--
+
+DROP TABLE IF EXISTS `cleaning_fee_house`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cleaning_fee_house` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `fee_id` int DEFAULT NULL,
+  `house_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKobhth36qv7e0jl25g9eq0nphp` (`fee_id`),
+  KEY `FK6xprv83dlpun3dk67gy2494wg` (`house_id`),
+  CONSTRAINT `FK6xprv83dlpun3dk67gy2494wg` FOREIGN KEY (`house_id`) REFERENCES `house` (`id`),
+  CONSTRAINT `FKobhth36qv7e0jl25g9eq0nphp` FOREIGN KEY (`fee_id`) REFERENCES `cleaning_fee` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cleaning_fee_house`
+--
+
+LOCK TABLES `cleaning_fee_house` WRITE;
+/*!40000 ALTER TABLE `cleaning_fee_house` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cleaning_fee_house` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -345,6 +424,63 @@ LOCK TABLES `favorite` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `fee`
+--
+
+DROP TABLE IF EXISTS `fee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fee` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `type` enum('CLEANING','EXTRA_GUEST','PET') DEFAULT NULL,
+  `fee_type` enum('CLEANING','EXTRA_GUESS','PET','SERVICE_FEE','SHORT_STAY_CLEANING','TAX') DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fee`
+--
+
+LOCK TABLES `fee` WRITE;
+/*!40000 ALTER TABLE `fee` DISABLE KEYS */;
+INSERT INTO `fee` VALUES (1,'Phí vệ sinh','CLEANING','CLEANING'),(2,'Phí vệ sinh cho kỳ ở ngắn','CLEANING','SHORT_STAY_CLEANING'),(3,'Phí thú cưng','PET','PET'),(4,'Phí khách bổ sung','EXTRA_GUEST','EXTRA_GUESS');
+/*!40000 ALTER TABLE `fee` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `fee_house`
+--
+
+DROP TABLE IF EXISTS `fee_house`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fee_house` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `fee_id` int DEFAULT NULL,
+  `house_id` int DEFAULT NULL,
+  `other` int NOT NULL,
+  `price` decimal(38,2) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKo8sq0tju7l8dtervtt2ds7hsg` (`fee_id`),
+  KEY `FKtm463t83ponxruieny0cd69vr` (`house_id`),
+  CONSTRAINT `FKo8sq0tju7l8dtervtt2ds7hsg` FOREIGN KEY (`fee_id`) REFERENCES `fee` (`id`),
+  CONSTRAINT `FKtm463t83ponxruieny0cd69vr` FOREIGN KEY (`house_id`) REFERENCES `house` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fee_house`
+--
+
+LOCK TABLES `fee_house` WRITE;
+/*!40000 ALTER TABLE `fee_house` DISABLE KEYS */;
+INSERT INTO `fee_house` VALUES (2,1,3,1,3.00),(3,2,3,1,2.00),(4,3,3,1,2.00),(5,4,3,2,2.00);
+/*!40000 ALTER TABLE `fee_house` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `guest_detail`
 --
 
@@ -357,8 +493,9 @@ CREATE TABLE `guest_detail` (
   `num_babies` int NOT NULL,
   `num_children_above13` int NOT NULL,
   `num_pets` int NOT NULL,
+  `num_children_above2` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -367,6 +504,7 @@ CREATE TABLE `guest_detail` (
 
 LOCK TABLES `guest_detail` WRITE;
 /*!40000 ALTER TABLE `guest_detail` DISABLE KEYS */;
+INSERT INTO `guest_detail` VALUES (1,2,0,0,0,0),(2,3,0,1,0,0),(3,2,0,0,0,0),(5,2,0,0,0,0),(6,1,0,0,0,0);
 /*!40000 ALTER TABLE `guest_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -380,7 +518,8 @@ DROP TABLE IF EXISTS `house`;
 CREATE TABLE `house` (
   `id` int NOT NULL AUTO_INCREMENT,
   `hotel_name` varchar(255) NOT NULL,
-  `price` decimal(38,2) DEFAULT NULL,
+  `price` decimal(38,2) NOT NULL,
+  `weekend_price` decimal(38,2) DEFAULT NULL,
   `quantity_of_bathrooms` int NOT NULL,
   `quantity_of_beds` int NOT NULL,
   `quantity_of_rooms` int NOT NULL,
@@ -392,7 +531,6 @@ CREATE TABLE `house` (
   `location_id` int DEFAULT NULL,
   `ex_request_id` int DEFAULT NULL,
   `status` enum('ACCEPTED','CANCEL','WAITING') DEFAULT NULL,
-  `total_price` decimal(38,2) DEFAULT NULL,
   `category_id` int DEFAULT NULL,
   `description_id` int DEFAULT NULL,
   `review_point_id` int DEFAULT NULL,
@@ -420,7 +558,7 @@ CREATE TABLE `house` (
 
 LOCK TABLES `house` WRITE;
 /*!40000 ALTER TABLE `house` DISABLE KEYS */;
-INSERT INTO `house` VALUES (1,'Luxury 3 bedrooms - Nera Garden',42.00,2,3,3,2,7,'APARTMENT','ENTIRE_PLACE',NULL,1,2,NULL,NULL,2,1,NULL,_binary '\0',NULL),(2,'Indochina Touch by Baly Villa',154.00,4,4,3,3,7,'HOUSE','ENTIRE_PLACE',4.92,2,3,NULL,NULL,1,2,1,_binary '\0',NULL),(3,'Apartment-3 bedrooms view Thành Phố +swimming pool',44.00,2,3,3,8,4,'APARTMENT','ENTIRE_PLACE',4.8,3,4,NULL,NULL,2,3,2,_binary '\0',NULL),(4,'Standard Room# NguyenHouse#',13.00,1,1,1,13,2,'HOTEL','ROOM',5,4,5,NULL,NULL,1,4,3,_binary '\0',NULL),(5,'NguyenHouse#StudioRoom in Hue City Center',21.00,1,1,1,13,3,'HOTEL','ROOM',4.91,5,8,NULL,NULL,2,5,4,_binary '\0',NULL),(6,'Nguyen House -Studio Room in Hue City',21.00,1,2,1,13,3,'HOTEL','ROOM',4.97,6,9,NULL,NULL,2,6,6,_binary '\0',NULL);
+INSERT INTO `house` VALUES (1,'Luxury 3 bedrooms - Nera Garden',36.00,43.00,2,3,3,2,7,'APARTMENT','ENTIRE_PLACE',NULL,1,2,NULL,2,1,NULL,_binary '\0',NULL),(2,'Indochina Touch by Baly Villa',148.00,151.00,4,4,3,3,7,'HOUSE','ENTIRE_PLACE',4.92,2,3,NULL,1,2,1,_binary '',NULL),(3,'Apartment-3 bedrooms view Thành Phố +swimming pool',42.00,43.00,2,3,3,8,4,'APARTMENT','ENTIRE_PLACE',4.8,3,4,NULL,2,3,2,_binary '\0',NULL),(4,'Standard Room# NguyenHouse#',13.00,NULL,1,1,1,13,2,'HOTEL','ROOM',5,4,5,NULL,1,4,3,_binary '',NULL),(5,'NguyenHouse#StudioRoom in Hue City Center',21.00,NULL,1,1,1,13,3,'HOTEL','ROOM',4.91,5,8,NULL,2,5,4,_binary '\0',NULL),(6,'Nguyen House -Studio Room in Hue City',21.00,NULL,1,2,1,13,3,'HOTEL','ROOM',4.97,6,9,NULL,2,6,6,_binary '',NULL);
 /*!40000 ALTER TABLE `house` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -631,18 +769,23 @@ CREATE TABLE `reservation` (
   `user_id` int DEFAULT NULL,
   `guest_detail_id` int DEFAULT NULL,
   `payment_id` int DEFAULT NULL,
-  `status` tinyint DEFAULT NULL,
+  `status` enum('AWAITING_APPROVAL','CANCEL','FINISH','WAIT_FOR_CHECKIN') DEFAULT NULL,
+  `booking_fee_id` int DEFAULT NULL,
+  `price` decimal(38,2) DEFAULT NULL,
+  `weekend_price` decimal(38,2) DEFAULT NULL,
+  `total_price` decimal(38,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_4ga4wn4q86wi5d8ulse2vf7en` (`guest_detail_id`),
   UNIQUE KEY `UK_qud8p54c7bqomj3csvmci1ig3` (`payment_id`),
+  UNIQUE KEY `UK_i4s9qexw6ranqpjf5ak051c31` (`booking_fee_id`),
   KEY `FKhuvmnyun00xjxygyva3wlv1mf` (`house_id`),
   KEY `FKm4oimk0l1757o9pwavorj6ljg` (`user_id`),
+  CONSTRAINT `FK85kn7jjv8mo7l2fpc5a226mh1` FOREIGN KEY (`booking_fee_id`) REFERENCES `booking_fee` (`id`),
   CONSTRAINT `FK8g1s9tyunsjdv96dyiobv51bb` FOREIGN KEY (`payment_id`) REFERENCES `payment` (`id`),
   CONSTRAINT `FKhuvmnyun00xjxygyva3wlv1mf` FOREIGN KEY (`house_id`) REFERENCES `house` (`id`),
   CONSTRAINT `FKm4oimk0l1757o9pwavorj6ljg` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `FKmj2ygkn70jgh6hliohpajtted` FOREIGN KEY (`guest_detail_id`) REFERENCES `guest_detail` (`id`),
-  CONSTRAINT `reservation_chk_1` CHECK ((`status` between 0 and 3))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FKmj2ygkn70jgh6hliohpajtted` FOREIGN KEY (`guest_detail_id`) REFERENCES `guest_detail` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -651,6 +794,7 @@ CREATE TABLE `reservation` (
 
 LOCK TABLES `reservation` WRITE;
 /*!40000 ALTER TABLE `reservation` DISABLE KEYS */;
+INSERT INTO `reservation` VALUES (1,'2022-03-16','2022-03-21','2023-03-10',6,29,1,NULL,'WAIT_FOR_CHECKIN',NULL,NULL,NULL,NULL),(2,'2022-04-16','2022-04-10','2023-09-14',6,28,2,NULL,'WAIT_FOR_CHECKIN',NULL,NULL,NULL,NULL),(3,'2022-07-20','2022-08-01','2023-09-14',5,24,3,NULL,'AWAITING_APPROVAL',NULL,NULL,NULL,NULL),(5,'2022-08-15','2022-08-20','2023-09-14',6,27,5,NULL,'WAIT_FOR_CHECKIN',NULL,NULL,NULL,NULL),(6,'2022-08-15','2022-08-28','2023-09-14',5,23,6,NULL,'AWAITING_APPROVAL',NULL,NULL,NULL,NULL);
 /*!40000 ALTER TABLE `reservation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -838,6 +982,32 @@ INSERT INTO `rule_house` VALUES (1,'14:00:00.000000','20:00:00.000000',NULL,_bin
 UNLOCK TABLES;
 
 --
+-- Table structure for table `surcharge`
+--
+
+DROP TABLE IF EXISTS `surcharge`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `surcharge` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `percent` double NOT NULL,
+  `type` enum('SERVICE_FEE','TAX') DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `surcharge`
+--
+
+LOCK TABLES `surcharge` WRITE;
+/*!40000 ALTER TABLE `surcharge` DISABLE KEYS */;
+INSERT INTO `surcharge` VALUES (1,'Thuế',12,'TAX'),(2,'Phí dịch vụ AirBnb',14,'SERVICE_FEE');
+/*!40000 ALTER TABLE `surcharge` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `user`
 --
 
@@ -887,4 +1057,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-09-14  8:10:50
+-- Dump completed on 2023-09-15  8:30:28
