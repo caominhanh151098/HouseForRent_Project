@@ -115,4 +115,5 @@ public class HouseRestController {
     public void addComfortable(@PathVariable int houseID, @PathVariable int comfortableID) {
         comfortableService.addComfortableDetail(houseID, comfortableID);
     }
+
 }

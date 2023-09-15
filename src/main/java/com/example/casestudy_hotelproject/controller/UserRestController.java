@@ -23,11 +23,6 @@ public class UserRestController {
     private final UserService userService;
     private final ReviewService reviewService;
 
-    @GetMapping("/admin")
-    public Page<UserResponse> findAll(@RequestParam(defaultValue = "") String search, Pageable pageable) {
-        return userService.findAll(search, pageable);
-    }
-
     @GetMapping("/client/detail/{id}")
     public ShowUserDetailResponse getUser(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 5) Pageable pageable) {
         return userService.getUserDetail(id, pageable);

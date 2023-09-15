@@ -8,4 +8,6 @@ import java.util.Set;
 
 public interface ImageRepository extends JpaRepository<Image, Integer> {
     List<Image> findAllByHouse_Id(int house_id);
+
+
 }

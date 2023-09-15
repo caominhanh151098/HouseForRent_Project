@@ -40,6 +40,7 @@ public class HouseService {
     private final ComfortableDetailRepository comfortableDetailRepository;
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
+    private final RoomRepository roomRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -189,8 +190,35 @@ public class HouseService {
         Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable)
                 .map(e -> {
                     List<Image> images = imageRepository.findAllByHouse_Id(e.getId());
+
+                    List<ShowListHouseForAdminResponse.ShowImgListResponseForAdmin> imgResponse = images.stream()
+                            .map(i -> {
+                                ShowListHouseForAdminResponse.ShowImgListResponseForAdmin img
+                                        = AppUtils.mapper.map(i , ShowListHouseForAdminResponse.ShowImgListResponseForAdmin.class);
+                                try {
+                                    if (roomRepository.findById(i.getRoom().getId()) != null){
+                                        Room room = roomRepository.findById(i.getRoom().getId()).orElseThrow();
+                                        img.setName(room.getName());
+                                    }
+                                }catch (NullPointerException nullPointerException){
+                                    nullPointerException.getMessage();
+                                }
+
+                                return img;
+                            }).toList();
+
+                    List<ComfortableDetail> comfortableDetails = comfortableDetailRepository.findAllByHouse_Id(e.getId());
+
+                    List<ShowListHouseForAdminResponse.ComfortableResponseForAdmin> comfortableResponseForAdmins = comfortableDetails.stream()
+                            .map(c -> {
+                                ShowListHouseForAdminResponse.ComfortableResponseForAdmin resp
+                                        = AppUtils.mapper.map(c.getComfortable(), ShowListHouseForAdminResponse.ComfortableResponseForAdmin.class);
+                                return resp;
+                            }).toList();
+
                     ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
-                    house.setImages(images.stream().map(i -> AppUtils.mapper.map(i , ShowImgListResponse.class)).toList());
+                    house.setImages(imgResponse);
+                    house.setComfortableList(comfortableResponseForAdmins);
                     return house;
                 });
 
