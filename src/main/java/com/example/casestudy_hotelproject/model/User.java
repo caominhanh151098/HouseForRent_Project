@@ -33,7 +33,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     private boolean status;
-    private LocalDate createDay;
+    private LocalDate createDate;
 
     @OneToMany(mappedBy = "user")
     private List<House> hotels;

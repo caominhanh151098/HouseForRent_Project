@@ -41,7 +41,6 @@ public class UserRestController {
     @GetMapping("/client/detail/review/{id}/2")
     public Page<ContentReviewResponse> getReviewDetailByOtherHost(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 10) Pageable pageable) {
         return reviewService.getReviewDetailByOtherHost(id, pageable);
-
     }
 
 }

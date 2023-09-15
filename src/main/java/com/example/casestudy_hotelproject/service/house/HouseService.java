@@ -2,6 +2,8 @@ package com.example.casestudy_hotelproject.service.house;
 
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.repository.*;
+import com.example.casestudy_hotelproject.service.Reservation.response.ShowFeeByHouseResponse;
+import com.example.casestudy_hotelproject.service.Reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ComfortableDetailRespone;
@@ -16,6 +18,7 @@ import com.example.casestudy_hotelproject.service.review.response.ContentReviewR
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowHostInfoResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,6 +39,7 @@ public class HouseService {
     private final ReviewRepository reviewRepository;
     private final ComfortableDetailRepository comfortableDetailRepository;
     private final ImageRepository imageRepository;
+    private final UserRepository userRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
@@ -209,5 +213,20 @@ public class HouseService {
             safetyListResp.add(comfortableResponse);
         }
         return safetyListResp;
+    }
+
+    public ShowHostInfoResponse getHostInfo(int houseId) {
+        User host = userRepository.findUserByHouseId(houseId);
+        ShowHostInfoResponse hostResp = AppUtils.mapper.map(host, ShowHostInfoResponse.class);
+        hostResp.setNumReview(reviewRepository.countReviewByUser(host.getId()));
+        hostResp.setConfirmIdentity(host.getIdentity() != null ? true : false);
+        hostResp.setCreateDate(String.format("Đã tham gia vào tháng %s năm %s", host.getCreateDate().getMonthValue(), host.getCreateDate().getYear()));
+        return hostResp;
+    }
+
+    public ShowPriceAndFeeByHouseResponse showPriceAndFeeByHouse(int houseId) {
+        House house = houseRepository.findById(houseId);
+        ShowPriceAndFeeByHouseResponse houseResp = AppUtils.mapper.map(house, ShowPriceAndFeeByHouseResponse.class);
+        return houseResp;
     }
 }

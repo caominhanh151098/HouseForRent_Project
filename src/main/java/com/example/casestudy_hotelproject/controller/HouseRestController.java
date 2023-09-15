@@ -1,8 +1,8 @@
 package com.example.casestudy_hotelproject.controller;
 
-import com.example.casestudy_hotelproject.model.House;
+import com.example.casestudy_hotelproject.service.Reservation.response.ShowFeeByHouseResponse;
+import com.example.casestudy_hotelproject.service.Reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
-import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.HouseService;
@@ -16,6 +16,7 @@ import com.example.casestudy_hotelproject.service.review.response.ContentReviewR
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.rule.RuleService;
 import com.example.casestudy_hotelproject.service.rule.response.ShowRuleDetailResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowHostInfoResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,16 +41,19 @@ public class HouseRestController {
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         return houseService.showDisplayHome(pageable);
     }
+
     @PostMapping
     public void createHouse(@RequestBody HouseRequest house) {
 
-       houseService.createHouse(house);
+        houseService.createHouse(house);
     }
+
     @GetMapping("houseOfHost")
-    public List<HouseOfHostReponse> getHouseOfHost(){
-        List<HouseOfHostReponse> list=houseService.showHouseOfHost(2);
+    public List<HouseOfHostReponse> getHouseOfHost() {
+        List<HouseOfHostReponse> list = houseService.showHouseOfHost(2);
         return list;
     }
+
     @GetMapping("/detail/{id}")
     public ShowHouseDetailResponse showDetail(@PathVariable int id) {
         ShowHouseDetailResponse houseResp = houseService.showDetail(id);
@@ -61,8 +65,9 @@ public class HouseRestController {
         List<ShowDetailListComfortableResponse> listComfortableResp = comfortableService.showListComfortableByHouseId(id);
         return listComfortableResp;
     }
+
     @GetMapping("/houseOfHostDetail/{id}")
-    public HouseOfHostReponse getHouseOfHostDetail(@PathVariable int id){
+    public HouseOfHostReponse getHouseOfHostDetail(@PathVariable int id) {
         HouseOfHostReponse house = houseService.getHouseOfHostDetail(id);
         return house;
     }
@@ -73,7 +78,7 @@ public class HouseRestController {
     }
 
     @GetMapping("/detail/reviews/{id}")
-    public Page<ContentReviewResponse> showReviews(@PathVariable int id,@SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 12) Pageable pageable) {
+    public Page<ContentReviewResponse> showReviews(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 12) Pageable pageable) {
         return reviewService.showReviews(id, pageable);
     }
 
@@ -87,16 +92,27 @@ public class HouseRestController {
         return houseService.showSafetyAndAccommodation(id);
     }
 
+    @GetMapping("/detail/host/{id}")
+    public ShowHostInfoResponse getHostInfo(@PathVariable int id) {
+        return houseService.getHostInfo(id);
+    }
+
+    @GetMapping("/detail/price/{id}")
+    public ShowPriceAndFeeByHouseResponse getPriceAndFee(@PathVariable int id) {
+        return houseService.showPriceAndFeeByHouse(id);
+    }
     @GetMapping("/admin")
-    Page<ShowListHouseForAdminResponse> showAll(Pageable pageable){
+    Page<ShowListHouseForAdminResponse> showAll(Pageable pageable) {
         return houseService.showListHouseForAdmin(pageable);
     }
+
     @GetMapping("/deleteComfortable/{houseID}/{comfortableID}")
-    public void deleteComfortable(@PathVariable int houseID,@PathVariable int comfortableID){
-        comfortableService.deleteComfortableDetail(houseID,comfortableID);
+    public void deleteComfortable(@PathVariable int houseID, @PathVariable int comfortableID) {
+        comfortableService.deleteComfortableDetail(houseID, comfortableID);
     }
+
     @GetMapping("/addComfortable/{houseID}/{comfortableID}")
-    public void addComfortable(@PathVariable int houseID,@PathVariable int comfortableID){
-        comfortableService.addComfortableDetail(houseID,comfortableID);
+    public void addComfortable(@PathVariable int houseID, @PathVariable int comfortableID) {
+        comfortableService.addComfortableDetail(houseID, comfortableID);
     }
 }

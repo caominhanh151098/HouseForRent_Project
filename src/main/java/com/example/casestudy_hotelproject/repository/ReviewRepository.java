@@ -27,9 +27,13 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
             "WHERE r.user.id = :userId AND r.status = true ")
     Page<Review> getReviewUserByHost(@Param("userId") int userId, Pageable pageable);
 
-    @Query("SELECT count(1) FROM Review r JOIN House h ON r.house.id = h.id " +
+    @Query("SELECT COUNT(1) FROM Review r JOIN House h ON r.house.id = h.id " +
             "WHERE (r.status = false AND h.user.id = :userId) OR (r.status = true AND r.user.id = :userId)")
-    int getCountReviewByUser(@Param("userId") int userId);
+    int countAllReviewByUser(@Param("userId") int userId);
+
+    @Query("SELECT COUNT(1) FROM Review r JOIN House h ON r.house.id = h.id " +
+            "WHERE h.user.id = :userId")
+    int countReviewByUser(int userId);
 
     int countAllByHouse_Id(int houseId);
 

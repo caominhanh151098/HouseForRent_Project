@@ -22,8 +22,9 @@ public class House {
     private int id;
     @Column(nullable = false)
     private String hotelName;
+    @Column(nullable = false)
     private BigDecimal price;
-    private BigDecimal totalPrice;
+    private BigDecimal weekendPrice;
     private int quantityOfGuests;
     private int quantityOfBeds;
     private int quantityOfRooms;
@@ -84,6 +85,9 @@ public class House {
     @OneToOne
     @JoinColumn(name = "ex_request_Id")
     private ExtraRequest extraRequest;
+
+    @OneToMany(mappedBy = "house")
+    private List<FeeHouse> feeHouses;
 
     public House(int id) {
         this.id = id;

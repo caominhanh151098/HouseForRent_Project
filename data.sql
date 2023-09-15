@@ -71,6 +71,30 @@ INSERT INTO `bed` VALUES (1,1,1,'SINGER'),(2,1,2,'SINGER'),(3,1,3,'SINGER');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `cancellation_policy`
+--
+
+DROP TABLE IF EXISTS `cancellation_policy`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cancellation_policy` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `description` longtext,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cancellation_policy`
+--
+
+LOCK TABLES `cancellation_policy` WRITE;
+/*!40000 ALTER TABLE `cancellation_policy` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cancellation_policy` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `category_hotel`
 --
 
@@ -278,7 +302,6 @@ CREATE TABLE `extra_request` (
   `max_babies` int NOT NULL,
   `max_guests` int NOT NULL,
   `max_pets` int DEFAULT NULL,
-  `pet_allowed` bit(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -289,7 +312,7 @@ CREATE TABLE `extra_request` (
 
 LOCK TABLES `extra_request` WRITE;
 /*!40000 ALTER TABLE `extra_request` DISABLE KEYS */;
-INSERT INTO `extra_request` VALUES (2,5,7,0,_binary '\0'),(3,5,7,0,_binary '\0'),(4,5,4,0,_binary '\0'),(5,5,2,0,_binary '\0'),(8,5,3,0,_binary '\0'),(9,5,3,0,_binary '\0');
+INSERT INTO `extra_request` VALUES (2,5,7,0),(3,5,7,0),(4,5,4,0),(5,5,2,0),(8,5,3,0),(9,5,3,0);
 /*!40000 ALTER TABLE `extra_request` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -374,6 +397,7 @@ CREATE TABLE `house` (
   `description_id` int DEFAULT NULL,
   `review_point_id` int DEFAULT NULL,
   `book_now` bit(1) NOT NULL,
+  `create_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_ekplct0ot20l4u51m38thwgyb` (`location_id`),
   UNIQUE KEY `UK_duw9eitlg390c4hm2w8huylen` (`ex_request_id`),
@@ -396,7 +420,7 @@ CREATE TABLE `house` (
 
 LOCK TABLES `house` WRITE;
 /*!40000 ALTER TABLE `house` DISABLE KEYS */;
-INSERT INTO `house` VALUES (1,'Luxury 3 bedrooms - Nera Garden',42.00,2,3,3,2,7,'APARTMENT','ENTIRE_PLACE',NULL,1,2,NULL,NULL,2,1,NULL,_binary '\0'),(2,'Indochina Touch by Baly Villa',154.00,4,4,3,3,7,'HOUSE','ENTIRE_PLACE',4.92,2,3,NULL,NULL,1,2,1,_binary '\0'),(3,'Apartment-3 bedrooms view Thành Phố +swimming pool',44.00,2,3,3,8,4,'APARTMENT','ENTIRE_PLACE',4.8,3,4,NULL,NULL,2,3,2,_binary '\0'),(4,'Standard Room# NguyenHouse#',13.00,1,1,1,13,2,'HOTEL','ROOM',5,4,5,NULL,NULL,1,4,3,_binary '\0'),(5,'NguyenHouse#StudioRoom in Hue City Center',21.00,1,1,1,13,3,'HOTEL','ROOM',4.91,5,8,NULL,NULL,2,5,4,_binary '\0'),(6,'Nguyen House -Studio Room in Hue City',21.00,1,2,1,13,3,'HOTEL','ROOM',4.97,6,9,NULL,NULL,2,6,NULL,_binary '\0');
+INSERT INTO `house` VALUES (1,'Luxury 3 bedrooms - Nera Garden',42.00,2,3,3,2,7,'APARTMENT','ENTIRE_PLACE',NULL,1,2,NULL,NULL,2,1,NULL,_binary '\0',NULL),(2,'Indochina Touch by Baly Villa',154.00,4,4,3,3,7,'HOUSE','ENTIRE_PLACE',4.92,2,3,NULL,NULL,1,2,1,_binary '\0',NULL),(3,'Apartment-3 bedrooms view Thành Phố +swimming pool',44.00,2,3,3,8,4,'APARTMENT','ENTIRE_PLACE',4.8,3,4,NULL,NULL,2,3,2,_binary '\0',NULL),(4,'Standard Room# NguyenHouse#',13.00,1,1,1,13,2,'HOTEL','ROOM',5,4,5,NULL,NULL,1,4,3,_binary '\0',NULL),(5,'NguyenHouse#StudioRoom in Hue City Center',21.00,1,1,1,13,3,'HOTEL','ROOM',4.91,5,8,NULL,NULL,2,5,4,_binary '\0',NULL),(6,'Nguyen House -Studio Room in Hue City',21.00,1,2,1,13,3,'HOTEL','ROOM',4.97,6,9,NULL,NULL,2,6,6,_binary '\0',NULL);
 /*!40000 ALTER TABLE `house` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -468,7 +492,7 @@ CREATE TABLE `interest` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) DEFAULT NULL,
   `type` enum('INTEREST','SPORT') DEFAULT NULL,
-  `icon_url` varchar(255) DEFAULT NULL,
+  `icon_path` longtext,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -508,7 +532,7 @@ CREATE TABLE `interest_detail` (
 
 LOCK TABLES `interest_detail` WRITE;
 /*!40000 ALTER TABLE `interest_detail` DISABLE KEYS */;
-INSERT INTO `interest_detail` VALUES (1,5,2),(2,6,2),(3,88,2),(4,2,2),(5,3,2);
+INSERT INTO `interest_detail` VALUES (1,5,3),(2,6,3),(3,88,3),(4,2,3),(5,3,3);
 /*!40000 ALTER TABLE `interest_detail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -578,7 +602,7 @@ CREATE TABLE `profile` (
   `pet` varchar(255) DEFAULT NULL,
   `work` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -587,7 +611,7 @@ CREATE TABLE `profile` (
 
 LOCK TABLES `profile` WRITE;
 /*!40000 ALTER TABLE `profile` DISABLE KEYS */;
-INSERT INTO `profile` VALUES (1,NULL,' Hue, Việt Nam','A dog and a cat','Baly Hotel'),(2,NULL,'Hue, Việt Nam',NULL,NULL);
+INSERT INTO `profile` VALUES (1,NULL,'Hue, Việt Nam','A dog and a cat','Baly Hotel'),(2,'House','Hue, Việt Nam',NULL,NULL),(3,NULL,'Hue, Việt Nam','Tôi có 1 chú Mèo tên là Lemon',NULL);
 /*!40000 ALTER TABLE `profile` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -607,6 +631,7 @@ CREATE TABLE `reservation` (
   `user_id` int DEFAULT NULL,
   `guest_detail_id` int DEFAULT NULL,
   `payment_id` int DEFAULT NULL,
+  `status` tinyint DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_4ga4wn4q86wi5d8ulse2vf7en` (`guest_detail_id`),
   UNIQUE KEY `UK_qud8p54c7bqomj3csvmci1ig3` (`payment_id`),
@@ -615,7 +640,8 @@ CREATE TABLE `reservation` (
   CONSTRAINT `FK8g1s9tyunsjdv96dyiobv51bb` FOREIGN KEY (`payment_id`) REFERENCES `payment` (`id`),
   CONSTRAINT `FKhuvmnyun00xjxygyva3wlv1mf` FOREIGN KEY (`house_id`) REFERENCES `house` (`id`),
   CONSTRAINT `FKm4oimk0l1757o9pwavorj6ljg` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `FKmj2ygkn70jgh6hliohpajtted` FOREIGN KEY (`guest_detail_id`) REFERENCES `guest_detail` (`id`)
+  CONSTRAINT `FKmj2ygkn70jgh6hliohpajtted` FOREIGN KEY (`guest_detail_id`) REFERENCES `guest_detail` (`id`),
+  CONSTRAINT `reservation_chk_1` CHECK ((`status` between 0 and 3))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -642,6 +668,7 @@ CREATE TABLE `review` (
   `review_date` date DEFAULT NULL,
   `review_point_id` int DEFAULT NULL,
   `house_id` int DEFAULT NULL,
+  `status` bit(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_r1isnsigf38g7130qs34jgpye` (`review_point_id`),
   KEY `FKiyf57dy48lyiftdrf7y87rnxi` (`user_id`),
@@ -649,7 +676,7 @@ CREATE TABLE `review` (
   CONSTRAINT `FK6ecwggu7yjrhb0buspnijuns0` FOREIGN KEY (`house_id`) REFERENCES `house` (`id`),
   CONSTRAINT `FKiyf57dy48lyiftdrf7y87rnxi` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FKnixvbkd7v1kuirq1yl5wkh8y7` FOREIGN KEY (`review_point_id`) REFERENCES `review_point` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=701 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=702 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -658,7 +685,7 @@ CREATE TABLE `review` (
 
 LOCK TABLES `review` WRITE;
 /*!40000 ALTER TABLE `review` DISABLE KEYS */;
-INSERT INTO `review` VALUES (1,'Vị trí căn hộ rất tiện để đi thăm quan tp Huế. Anh chị chủ nhà vô cùng nhiệt tình và giúp bọn mình rất nhiều. Chắc chắn lần sau mình sẽ tiếp tục ủng hộ Nguyên House.',29,'2022-03-22',13,6),(2,'Homestay đẹp , sạch sẽ , rộng rãi , nội thất hiện đại đầy đủ. Nơi đây ở ví trị thuận tiện cho việc đi lại và tham quan các điểm . Anh chị chủ rất dễ thương và hiếu khách . Bọn mình cảm thấy rất thoải mải và dễ chịu ở đây vì có cảm giác như ở chính ngôi nhà của mình vậy',28,'2022-04-12',14,6),(3,'Vị trí gần trung tâm, đi lai thuận tiện.',24,'2022-08-02',15,5),(4,'Phòng rộng, sạch sẽ, vị trí thuận lợi để di chuyển, view ban công đẹp ❤️',27,'2022-08-21',16,6),(5,'Tuyệt vời mọi thứ',23,'2022-09-01',17,5),(6,'chỗ ở sạch sẽ được dọn dẹp gọn gàng trước khi tụi mình đến, chủ nhà nhiệt tình checkin checkout đều nhanh gọn. nhà từ những dụng cụ bếp nhỏ nhất đều rất đầy đủ nha, có 3 phòng ngủ nhưng 1 phòng hơi nhỏ. phù hợp đi khoảng 4-5 người là đẹp',11,'2022-09-23',6,3),(7,'Hoàn toàn hài lòng với nơi ở và sự nhiệt tình của chủ nhà.',12,'2022-10-21',7,3),(8,'Rất tuyệt vời, chủ nhà còn giúp mình mua quà mang về',10,'2023-01-11',8,3),(9,'chủ nhà rất dễ thương và nhiệt tình hỗ trợ khách hết mình, vị trí gần trung tâm siêu thuận tiện',22,'2023-02-04',18,5),(10,'Phòng rộng rãi, sạch sẽ, thoáng mát, chủ nhà nhiệt tình',26,'2023-02-21',19,6),(11,'Chỗ ở sạch sẽ và đầy đủ, chủ nhà thân thiện',21,'2023-03-03',20,5),(12,'Không gian sạch sẽ, thuận tiện đi lại, chủ nhà thân thiện',20,'2023-04-23',21,5),(13,'Mình thực sự cảm thấy may mắn khi chọn Gems làm nơi lưu trú cho kì nghỉ vừa rồi. Phòng ốc mới, có đầy đủ các thiết bị gia dụng như một ngôi nhà bình thường, rất phù hợp để đi theo nhóm. Chúng mình vừa có không gian sinh hoạt riêng tư trong phòng ngủ vừa có thể cùng nhau xem phim, nghe nhạc, chuyện trò nơi phòng khách. Có đủ đồ bếp để có thể nấu nướng, bảo quản thực phẩm, bàn ăn đủ rộng để 4 người ngồi cùng nhau. View phòng ngủ về đêm siêu đẹp, nhìn thấy cả thành phố bên dưới với rất nhiều đèn điện chiếu sáng lung linh. Phòng ngủ master còn nhìn ra được đồng lúa chín và vườn cây, cảm giác rất nhẹ nhõm, yên bình. Chủ nhà thì rất là thân thiện, nhiệt tình và dễ mến. Nói chung đây là trải nghiệm đẹp của mình tại Huế cũng như tại airbnb. Thực sự là một trải nghiệm xuất sắc mà rất khó để có thể có ở những khách sạn thông thường. Chúc chủ nhà có nhiều khách dễ thương nha <3',9,'2023-05-01',9,3),(14,'Phòng đẹp, chủ nhà thân thiện',19,'2023-05-12',22,5),(15,'sạch sẽ, anh chủ nhiệt tình',25,'2023-06-12',23,6),(16,'Pour ce 2eme séjour à Hué que nous apprécions beaucoup nous avons choisi de nous excentrer de 5-6kms pour ne pas être dans le bouillonnement permanent d’hué. Nous étions en Scooter de location et cela ne nous a pas dérangé du tout. La maison est par ailleurs sublime. Toute neuve. Construite avec des matériaux luxueux et meublée avec goût. L accueil a été très amical et arrangeant. Merci pour ces 2 jours superbes.',5,'2023-07-05',2,2),(17,'Nơi ở rất tiện nghi sạch sẽ & gần trung tâm. Mình ở lầu 3 với view trống & không ai nhìn trộm được, nên rất riêng tư và thoải mái mở rèm.',18,'2023-07-23',24,5),(18,'nice house, nice host. The house is fully furnished and enough for 6 people to stay. There is also a swimming pool and gym for free.',4,'2023-08-01',1,1),(19,'Phòng đẹp, sạch, sáng, ga nệm kh bị rít sạch sẽ. Host dễ thương, nhiệt tình!',17,'2023-08-21',25,5),(20,'Clean and comfortable',16,'2023-08-23',10,4),(21,'amazing host. spectacular spot. will def get again when in hue',6,'2023-08-23',3,2),(22,'Good place',15,'2023-09-02',11,4),(23,'Tung\'s homestay locates at a quiet street but within 5 minutes walk there is a local market and only about 8 minutes walk to the railway station, super convenient if you arrive or depart taking trains. Highly recommend',14,'2023-09-07',12,4);
+INSERT INTO `review` VALUES (1,'Vị trí căn hộ rất tiện để đi thăm quan tp Huế. Anh chị chủ nhà vô cùng nhiệt tình và giúp bọn mình rất nhiều. Chắc chắn lần sau mình sẽ tiếp tục ủng hộ Nguyên House.',29,'2022-03-22',13,6,_binary '\0'),(2,'Homestay đẹp , sạch sẽ , rộng rãi , nội thất hiện đại đầy đủ. Nơi đây ở ví trị thuận tiện cho việc đi lại và tham quan các điểm . Anh chị chủ rất dễ thương và hiếu khách . Bọn mình cảm thấy rất thoải mải và dễ chịu ở đây vì có cảm giác như ở chính ngôi nhà của mình vậy',28,'2022-04-12',14,6,_binary '\0'),(3,'Vị trí gần trung tâm, đi lai thuận tiện.',24,'2022-08-02',15,5,_binary '\0'),(4,'Phòng rộng, sạch sẽ, vị trí thuận lợi để di chuyển, view ban công đẹp ❤️',27,'2022-08-21',16,6,_binary '\0'),(5,'Tuyệt vời mọi thứ',23,'2022-09-01',17,5,_binary '\0'),(6,'chỗ ở sạch sẽ được dọn dẹp gọn gàng trước khi tụi mình đến, chủ nhà nhiệt tình checkin checkout đều nhanh gọn. nhà từ những dụng cụ bếp nhỏ nhất đều rất đầy đủ nha, có 3 phòng ngủ nhưng 1 phòng hơi nhỏ. phù hợp đi khoảng 4-5 người là đẹp',11,'2022-09-23',6,3,_binary '\0'),(7,'Hoàn toàn hài lòng với nơi ở và sự nhiệt tình của chủ nhà.',12,'2022-10-21',7,3,_binary '\0'),(8,'Rất tuyệt vời, chủ nhà còn giúp mình mua quà mang về',10,'2023-01-11',8,3,_binary '\0'),(9,'chủ nhà rất dễ thương và nhiệt tình hỗ trợ khách hết mình, vị trí gần trung tâm siêu thuận tiện',22,'2023-02-04',18,5,_binary '\0'),(10,'Phòng rộng rãi, sạch sẽ, thoáng mát, chủ nhà nhiệt tình',26,'2023-02-21',19,6,_binary '\0'),(11,'Chỗ ở sạch sẽ và đầy đủ, chủ nhà thân thiện',21,'2023-03-03',20,5,_binary '\0'),(12,'Không gian sạch sẽ, thuận tiện đi lại, chủ nhà thân thiện',20,'2023-04-23',21,5,_binary '\0'),(13,'Mình thực sự cảm thấy may mắn khi chọn Gems làm nơi lưu trú cho kì nghỉ vừa rồi. Phòng ốc mới, có đầy đủ các thiết bị gia dụng như một ngôi nhà bình thường, rất phù hợp để đi theo nhóm. Chúng mình vừa có không gian sinh hoạt riêng tư trong phòng ngủ vừa có thể cùng nhau xem phim, nghe nhạc, chuyện trò nơi phòng khách. Có đủ đồ bếp để có thể nấu nướng, bảo quản thực phẩm, bàn ăn đủ rộng để 4 người ngồi cùng nhau. View phòng ngủ về đêm siêu đẹp, nhìn thấy cả thành phố bên dưới với rất nhiều đèn điện chiếu sáng lung linh. Phòng ngủ master còn nhìn ra được đồng lúa chín và vườn cây, cảm giác rất nhẹ nhõm, yên bình. Chủ nhà thì rất là thân thiện, nhiệt tình và dễ mến. Nói chung đây là trải nghiệm đẹp của mình tại Huế cũng như tại airbnb. Thực sự là một trải nghiệm xuất sắc mà rất khó để có thể có ở những khách sạn thông thường. Chúc chủ nhà có nhiều khách dễ thương nha <3',9,'2023-05-01',9,3,_binary '\0'),(14,'Phòng đẹp, chủ nhà thân thiện',19,'2023-05-12',22,5,_binary '\0'),(15,'sạch sẽ, anh chủ nhiệt tình',25,'2023-06-12',23,6,_binary '\0'),(16,'Pour ce 2eme séjour à Hué que nous apprécions beaucoup nous avons choisi de nous excentrer de 5-6kms pour ne pas être dans le bouillonnement permanent d’hué. Nous étions en Scooter de location et cela ne nous a pas dérangé du tout. La maison est par ailleurs sublime. Toute neuve. Construite avec des matériaux luxueux et meublée avec goût. L accueil a été très amical et arrangeant. Merci pour ces 2 jours superbes.',5,'2023-07-05',2,2,_binary '\0'),(17,'Nơi ở rất tiện nghi sạch sẽ & gần trung tâm. Mình ở lầu 3 với view trống & không ai nhìn trộm được, nên rất riêng tư và thoải mái mở rèm.',18,'2023-07-23',24,5,_binary '\0'),(18,'nice house, nice host. The house is fully furnished and enough for 6 people to stay. There is also a swimming pool and gym for free.',4,'2023-08-01',1,1,_binary '\0'),(19,'Phòng đẹp, sạch, sáng, ga nệm kh bị rít sạch sẽ. Host dễ thương, nhiệt tình!',17,'2023-08-21',25,5,_binary '\0'),(20,'Clean and comfortable',16,'2023-08-23',10,4,_binary '\0'),(21,'amazing host. spectacular spot. will def get again when in hue',6,'2023-08-23',3,2,_binary '\0'),(22,'Good place',15,'2023-09-02',11,4,_binary '\0'),(23,'Tung\'s homestay locates at a quiet street but within 5 minutes walk there is a local market and only about 8 minutes walk to the railway station, super convenient if you arrive or depart taking trains. Highly recommend',14,'2023-09-07',12,4,_binary '\0'),(701,'Fantastic guest. We truly enjoyed hosting them and would happily welcome back. Travel safe!',13,'2023-04-21',NULL,2,_binary '');
 /*!40000 ALTER TABLE `review` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -750,6 +777,67 @@ INSERT INTO `room` VALUES (1,'Phòng ngủ 1',3),(2,'Phòng ngủ 2',3),(3,'Phò
 UNLOCK TABLES;
 
 --
+-- Table structure for table `rule`
+--
+
+DROP TABLE IF EXISTS `rule`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rule` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `icon` longtext,
+  `icon_none_active` longtext,
+  `input` enum('BOOLEAN','INT','STRING','TIME') DEFAULT NULL,
+  `type` enum('CHECKIN','HOUSE_RULES') DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rule`
+--
+
+LOCK TABLES `rule` WRITE;
+/*!40000 ALTER TABLE `rule` DISABLE KEYS */;
+INSERT INTO `rule` VALUES (1,'Mang theo thú cưng','M13.7 13.93a4 4 0 0 1 5.28.6l.29.37 4.77 6.75a4 4 0 0 1 .6 3.34 4 4 0 0 1-4.5 2.91l-.4-.08-3.48-.93a1 1 0 0 0-.52 0l-3.47.93a4 4 0 0 1-2.94-.35l-.4-.25a4 4 0 0 1-1.2-5.2l.23-.37 4.77-6.75a4 4 0 0 1 .96-.97zm3.75 1.9a2 2 0 0 0-2.98.08l-.1.14-4.84 6.86a2 2 0 0 0 2.05 3.02l.17-.04 4-1.07a1 1 0 0 1 .5 0l3.97 1.06.15.04a2 2 0 0 0 2.13-2.97l-4.95-7.01zM27 12a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM5 12a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm22 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm6-10a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm10 0a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM11 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z','m3.7 2.3 26 26-1.4 1.4-26-26zm8.17 13.81 1.44 1.44L9.6 22.8a2 2 0 0 0 1.98 3.13l.17-.04 4-1.07a1 1 0 0 1 .38-.03l.13.03 4 1.07a2 2 0 0 0 1.3-.1l1.46 1.47a4 4 0 0 1-3.09.6l-.2-.04-3.73-1-3.73 1a4 4 0 0 1-2.94-.35l-.2-.11-.2-.13a4 4 0 0 1-1.08-5.4l.11-.18zM27 12a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM5 12a4 4 0 1 1 0 8 4 4 0 0 1 0-8zm22 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM21 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM11 4a4 4 0 0 1 3.38 6.14l-1.49-1.5a2 2 0 0 0-2.54-2.53L8.86 4.6A3.98 3.98 0 0 1 11 4zm10 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z','BOOLEAN','HOUSE_RULES'),(2,'Tổ chức sự kiện',NULL,'M5.12 9.36 7 11.25v.05c.12 4.47 2.85 8.2 8.3 11.2l.39.21.27.14.3-.19c.46-.28.89-.57 1.3-.85L19 23.24c-.5.35-1 .7-1.55 1.04l2.2 2.92a1.13 1.13 0 0 1-.9 1.8H17v3h-2v-3h-1.75a1.13 1.13 0 0 1-.9-1.8l2.14-2.86C8.2 20.92 5 16.46 5 11c0-.56.04-1.1.12-1.64zM3.71 2.3l26 26-1.42 1.42-26-26zM16 25.67 15 27h2zM16 0c5.9 0 11 5.28 11 11 0 2.92-1.17 5.68-3.47 8.29l-1.42-1.42c1.79-2.06 2.74-4.17 2.87-6.33l.02-.27V11c0-4.64-4.21-9-9-9a8.98 8.98 0 0 0-6.73 3.03L7.85 3.6A10.97 10.97 0 0 1 16 0z','BOOLEAN','HOUSE_RULES'),(3,'Hút thuốc, sử dụng vape, thuốc lá điện tử','M30 19v8h-2v-8zm-4 0v8H3a2 2 0 0 1-2-1.85V21a2 2 0 0 1 1.85-2H3zm-2 2H3v4h21zM21 3a4 4 0 0 1 3.36 6.18l-.1.14.13.04a8 8 0 0 1 5.6 7.4L30 17h-2a6 6 0 0 0-5.78-6H21V9a2 2 0 0 0 .15-4H21zm-4 0v2a4 4 0 0 0-.2 8H22a4 4 0 0 1 4 3.8v.2h-2a2 2 0 0 0-1.85-2H17a6 6 0 0 1-.23-12z','m3.7 2.3 26 26-1.4 1.4-26-26zM14.77 19l2 2H3v4h17.76l2 2H3a2 2 0 0 1-2-1.85V21a2 2 0 0 1 1.85-2H3zM30 19v6.76l-2-2V19zm-4 0v2.76L23.24 19zM21 3a4 4 0 0 1 3.36 6.18l-.1.14.13.04a8 8 0 0 1 5.6 7.4L30 17h-2a6 6 0 0 0-5.78-6H21V9a2 2 0 0 0 .15-4H21zm1 10a4 4 0 0 1 4 3.8v.2h-2a2 2 0 0 0-1.85-2H19.24l-2-2zM17 3v2a4 4 0 0 0-4 3.76l-1.68-1.69A6 6 0 0 1 16.78 3z','BOOLEAN','HOUSE_RULES'),(4,'Chụp ảnh và quay phim vì mục đích thương mại','M17.59 2a2 2 0 0 1 1.28.47l.13.12L21.42 5H25a5 5 0 0 1 4.98 4.56l.02.22V24a5 5 0 0 1-4.78 5H7a5 5 0 0 1-5-4.78V10a5 5 0 0 1 4.78-5h3.83L13 2.6a2 2 0 0 1 1.07-.57l.17-.02.18-.01zm0 2h-3.17l-2.97 3H7a3 3 0 0 0-3 2.82V24a3 3 0 0 0 2.82 3H25a3 3 0 0 0 3-2.82V10a3 3 0 0 0-2.82-3h-4.59zM16 9a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm0 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM7 9a1 1 0 1 1 0 2 1 1 0 0 1 0-2z','M2.41 3.83 3.83 2.4l25.45 25.46-1.41 1.41zm.49 3.31 1.45 1.45c-.2.37-.32.8-.34 1.23L4 10v14a3 3 0 0 0 2.82 3h15.94l2 2H7a5 5 0 0 1-5-4.78V10c0-1.06.33-2.05.9-2.86zM17.59 2a2 2 0 0 1 1.28.47l.13.12L21.42 5H25a5 5 0 0 1 4.98 4.56l.02.22V24a5 5 0 0 1-.24 1.52L28 23.76V10a3 3 0 0 0-2.82-3h-4.59l-3-3h-3.17l-2.97 3h-.2l-2-2h1.36L13 2.6a2 2 0 0 1 1.07-.57l.17-.02.18-.01zM8.96 13.2l1.5 1.5a6 6 0 0 0 7.84 7.84l1.5 1.5A8 8 0 0 1 8.96 13.2zM16 9a8 8 0 0 1 7.64 10.4l-1.68-1.68a6 6 0 0 0-6.67-6.67L13.6 9.35A8 8 0 0 1 16 9z','BOOLEAN','HOUSE_RULES'),(5,'Khung giờ cần giữ yên lặng','M15.77 1.05a1 1 0 0 1 .94 1.5A12.93 12.93 0 0 0 15 9a13 13 0 0 0 14.07 12.96 1 1 0 0 1 .95 1.49A15 15 0 0 1 17 31a15 15 0 0 1-1.23-29.95zM14.1 3.32A13.01 13.01 0 0 0 17 29a12.98 12.98 0 0 0 9.96-4.64l.22-.28.08-.1h-.2A15 15 0 0 1 13.01 9.63v-.33L13 9c0-1.71.29-3.39.84-4.96L14 3.6z',NULL,'TIME','HOUSE_RULES'),(6,'Khung thời gian nhận phòng','M16 .33a15.67 15.67 0 1 1 0 31.34A15.67 15.67 0 0 1 16 .33zm0 2a13.67 13.67 0 1 0 0 27.34 13.67 13.67 0 0 0 0-27.34zm1 3v10.1l8.74 5.04-1 1.73L15 16.58V5.33z',NULL,'TIME','CHECKIN'),(7,'Thời gian trả phòng','M16 .33a15.67 15.67 0 1 1 0 31.34A15.67 15.67 0 0 1 16 .33zm0 2a13.67 13.67 0 1 0 0 27.34 13.67 13.67 0 0 0 0-27.34zm1 3v10.1l8.74 5.04-1 1.73L15 16.58V5.33z',NULL,'TIME','CHECKIN'),(8,'Số lượng khách','M22 5a6 6 0 0 1 3.64 10.77A9 9 0 0 1 31 23.74V24h-2a7 7 0 0 0-6-6.93v-2.2A4 4 0 0 0 22 7a4 4 0 0 0-3.68 5.57A5 5 0 0 1 21 17a4.99 4.99 0 0 1-1.6 3.67 9 9 0 0 1 5.6 8.06V29h-2a7 7 0 0 0-6-6.93v-2.24a3 3 0 1 0-2 0v2.24a7 7 0 0 0-6 6.69V29H7a9 9 0 0 1 5.6-8.34 5 5 0 0 1 1.08-8.09A4 4 0 1 0 9 14.87v2.2a7 7 0 0 0-6 6.69V24H1a9 9 0 0 1 5.36-8.23A6 6 0 1 1 15.92 10h.16A6 6 0 0 1 22 5z',NULL,'INT','HOUSE_RULES'),(9,'Các nội quy khác','M16 1a4 4 0 0 1 3.81 2.8l.06.2h3.46A3.67 3.67 0 0 1 27 7.47l.01.2v19.66A3.67 3.67 0 0 1 23.53 31l-.2.01H8.67A3.67 3.67 0 0 1 5 27.53l-.01-.2V7.67A3.67 3.67 0 0 1 8.47 4l.2-.01h3.46l.04-.16a4 4 0 0 1 3.42-2.82L15.8 1zM9 6h-.33c-.88 0-1.6.67-1.66 1.52L7 7.67v19.66c0 .88.67 1.6 1.52 1.66l.15.01h14.66c.88 0 1.6-.67 1.66-1.52l.01-.15V7.67c0-.88-.67-1.6-1.52-1.66L23.33 6H23v5H9zm1 13a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm8 0v2h-6v-2zm-8-5a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm10 0v2h-8v-2zM16 3a2 2 0 0 0-2 1.85V6h-3v3h10V6h-2.97L18 4.88A2 2 0 0 0 16 3zm0 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2z',NULL,'STRING','HOUSE_RULES');
+/*!40000 ALTER TABLE `rule` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `rule_house`
+--
+
+DROP TABLE IF EXISTS `rule_house`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `rule_house` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `start_time` time(6) DEFAULT NULL,
+  `end_time` time(6) DEFAULT NULL,
+  `other` longtext,
+  `status` bit(1) NOT NULL,
+  `house_id` int DEFAULT NULL,
+  `rule_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKl4tvcae9360spyeyq3sfk57bt` (`house_id`),
+  KEY `FKhrdmpx0ythl2mjfk0khfttn7h` (`rule_id`),
+  CONSTRAINT `FKhrdmpx0ythl2mjfk0khfttn7h` FOREIGN KEY (`rule_id`) REFERENCES `rule` (`id`),
+  CONSTRAINT `FKl4tvcae9360spyeyq3sfk57bt` FOREIGN KEY (`house_id`) REFERENCES `house` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rule_house`
+--
+
+LOCK TABLES `rule_house` WRITE;
+/*!40000 ALTER TABLE `rule_house` DISABLE KEYS */;
+INSERT INTO `rule_house` VALUES (1,'14:00:00.000000','20:00:00.000000',NULL,_binary '',1,6),(2,NULL,'12:00:00.000000',NULL,_binary '',1,7),(3,NULL,NULL,NULL,_binary '\0',1,1),(4,NULL,NULL,NULL,_binary '',1,4),(5,NULL,NULL,NULL,_binary '\0',1,3),(6,NULL,NULL,'Giữ gìn đồ đạc, nếu hư hại sẽ yêu cầu bồi thường',_binary '',1,9),(7,'15:00:00.000000',NULL,NULL,_binary '',2,6),(9,NULL,'12:00:00.000000',NULL,_binary '',2,7),(10,NULL,NULL,NULL,_binary '\0',2,1),(11,NULL,NULL,NULL,_binary '\0',2,2),(12,NULL,NULL,NULL,_binary '\0',2,3),(13,'14:00:00.000000','22:00:00.000000',NULL,_binary '',3,6),(14,NULL,'12:00:00.000000',NULL,_binary '',3,7),(15,NULL,NULL,NULL,_binary '\0',3,1),(16,'22:00:00.000000','06:00:00.000000',NULL,_binary '',3,5),(17,NULL,NULL,NULL,_binary '\0',3,2),(18,NULL,NULL,NULL,_binary '\0',3,3),(19,NULL,NULL,'1.Quý khách vui lòng xuất trình CMND, thẻ CCCD hoặc hộ chiếu để làm thủ tục nhận phòng. \n2.Bảo quản tài sản trong căn hộ: Không thay đổi, di chuyển đồ đạc trong phòng hoặc từ phòng này sang phòng khác. Trường hợp tài sản, đồ dùng trong phòng bị mất, hỏng do lỗi của Quý khách, Quý khách sẽ phải bồi thường 100% giá trị.\n3. Quý khách vui lòng dọn dẹp vệ sinh sạch sẽ, sau khi sử dụng khu vực bếp và khu vực ăn uống,sinh hoặt cùng mọi người.\n 4. Giữ gìn vệ sinh chung: không vứt giấy vệ sinh và rác thải vào thiết bị vệ sinh gây tắc cống. \n5. Quý khách vui lòng để giày dép gọn gàng ở tủ để giày ngay cửa ra vào.\n6. Không thêm người: Không đưa thêm người vào phòng lưu trú qua đêm khi chưa đăng ký trước với chủ nhà.\n7. Khi ra khỏi phòng, Quý khách vui lòng tắt quạt/đèn, điều hoà, đóng cửa.                                                                          8. Checkout: Báo trước cho chủ nhà giờ checkout.\nThời gian trả phòng là 12:00 AM, nếu muộn hơn sẽ phải thanh toán thêm phụ phí 50.000vnd/giờ. Trong trường hợp cần thiết, xin vui lòng liên hệ với chủ nhà.\n9. Khách có nhu cầu dọn dẹp vệ sinh, setup lại phòng vui lòng báo cho chủ nhà.phí vệ sinh ,setup lại phòng 100.000vnđ, khách tự trả tiền phí này.\n10. Checkout phòng nếu nhà quá bẩn thì chủ nhà sẽ phụ thu thêm phí vệ sinh sau kì ở.',_binary '',3,9),(21,'13:00:00.000000',NULL,NULL,_binary '',5,6),(22,NULL,'12:00:00.000000',NULL,_binary '',5,7),(23,NULL,NULL,NULL,_binary '\0',5,1),(24,NULL,NULL,'Hạn chế gây tiếng ồn lơn sau 23h',_binary '',5,9),(25,'13:00:00.000000',NULL,NULL,_binary '',6,6),(26,NULL,'12:00:00.000000',NULL,_binary '',6,7),(27,NULL,NULL,NULL,_binary '\0',6,1),(28,NULL,NULL,NULL,_binary '\0',6,3);
+/*!40000 ALTER TABLE `rule_house` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `user`
 --
 
@@ -768,13 +856,16 @@ CREATE TABLE `user` (
   `address_id` int DEFAULT NULL,
   `status` bit(1) NOT NULL,
   `identity_paper_id` int DEFAULT NULL,
-  `create_day` date DEFAULT NULL,
+  `create_date` date DEFAULT NULL,
+  `profile_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_dhlcfg8h1drrgu0irs1ro3ohb` (`address_id`),
   UNIQUE KEY `UK_ee9adtuij5ha0i5pidj2t2w8f` (`identity_paper_id`),
+  UNIQUE KEY `UK_1mcjtpxmwom9h9bf2q0k412e0` (`profile_id`),
   CONSTRAINT `FK6jalc21249xg0ngedonce9w55` FOREIGN KEY (`address_id`) REFERENCES `address_user` (`id`),
+  CONSTRAINT `FKof44u64o1d7scaukghm9veo23` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`id`),
   CONSTRAINT `FKpemp3dfw0g3lhwui66we8gfe0` FOREIGN KEY (`identity_paper_id`) REFERENCES `identity_paper` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -783,7 +874,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,NULL,'admin@gmail.com','John','Admin','0123456789','ADMIN',NULL,_binary '',NULL,NULL),(2,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/oobzk08zaahvca46jkqt',NULL,'','','Hue','0366666622','LESSOR',NULL,_binary '',1,NULL),(3,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/jig2yadz7mfmrc01qtje',NULL,' ','Mai Ly','( Miley)','0362222222','LESSOR',NULL,_binary '',2,NULL),(4,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/mgvopnrwrxya8o7it1ex',NULL,'','','Được','0111111111','LESSOR',NULL,_binary '',NULL,NULL),(5,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/eiabzquebtetr6z98dya',NULL,'agathe@gmail.com',' ','Agathe','0123123123','LESSOR',NULL,_binary '',NULL,NULL),(6,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/mwpv7bumydpoyckclrqe',NULL,'','','Kennald','0321432125','LESSOR',NULL,_binary '',NULL,NULL),(7,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/zi82tyxtptc3yfwlhkpe',NULL,'','','Trang','0512142312','LESSOR',NULL,_binary '',NULL,NULL),(8,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/b0o6xdoswn7avvrcntmn',NULL,'','','Gems','0412512512','LESSOR',NULL,_binary '',3,NULL),(9,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/e0brqrkgqppjjuxyiy5k',NULL,'','','Ngọc','0512312512','STAFF',NULL,_binary '',NULL,NULL),(10,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/wqyzlvyywkmthhctsmkk',NULL,'','','Phung','0531121234','STAFF',NULL,_binary '',NULL,NULL),(11,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/m91mgd9tsgrxvl2bftfx',NULL,'','','Bình','0234112412','STAFF',NULL,_binary '',NULL,NULL),(12,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/f969fwtrdxvxwytnshhz',NULL,'','','Hạnh','0125123151','STAFF',NULL,_binary '',NULL,NULL),(13,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/fnd27aubc3g9jy3t334z',NULL,'tung@gmail.com',' ','Tùng','0366423411','LESSOR',NULL,_binary '',4,'2020-03-02'),(14,NULL,NULL,'sarah@gmail.com',NULL,'Sarah','0374125125','STAFF',NULL,_binary '',NULL,'2023-01-03'),(15,NULL,NULL,'thinh@gmail.com',NULL,'Thịnh','0362312412','STAFF',NULL,_binary '',NULL,'2023-04-06'),(16,NULL,NULL,'soul@gmail.com',NULL,'SouL','0372341224','STAFF',NULL,_binary '',NULL,'2023-02-01'),(17,NULL,NULL,NULL,NULL,'Gia Ky',NULL,'STAFF',NULL,_binary '',NULL,'2023-04-03'),(18,NULL,NULL,NULL,NULL,'Hải',NULL,'STAFF',NULL,_binary '',NULL,'2023-01-20'),(19,NULL,NULL,NULL,NULL,'Trâm',NULL,'STAFF',NULL,_binary '',NULL,'2023-01-21'),(20,NULL,NULL,NULL,NULL,'Vinh',NULL,'STAFF',NULL,_binary '',NULL,'2023-03-20'),(21,NULL,NULL,NULL,NULL,'Thao',NULL,'STAFF',NULL,_binary '',NULL,NULL),(22,NULL,NULL,NULL,NULL,'Caitlin',NULL,'STAFF',NULL,_binary '',NULL,NULL),(23,NULL,NULL,NULL,NULL,'Hiep',NULL,'STAFF',NULL,_binary '',NULL,NULL),(24,NULL,NULL,NULL,NULL,'Hanh',NULL,'STAFF',NULL,_binary '',NULL,NULL),(25,NULL,NULL,NULL,NULL,'My Huyen',NULL,'STAFF',NULL,_binary '',NULL,NULL),(26,NULL,NULL,NULL,NULL,'Nguyễn',NULL,'STAFF',NULL,_binary '',NULL,NULL),(27,NULL,NULL,NULL,NULL,'Cam',NULL,'STAFF',NULL,_binary '',NULL,NULL),(28,NULL,NULL,NULL,NULL,'Mai',NULL,'STAFF',NULL,_binary '',NULL,NULL),(29,NULL,NULL,NULL,NULL,'Thuy Linh',NULL,'STAFF',NULL,_binary '',NULL,NULL);
+INSERT INTO `user` VALUES (1,NULL,NULL,'admin@gmail.com','John','Admin','0123456789','ADMIN',NULL,_binary '',NULL,NULL,NULL),(2,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/oobzk08zaahvca46jkqt',NULL,NULL,'','Hue','0366666622','LESSOR',NULL,_binary '',1,'2020-02-01',NULL),(3,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/jig2yadz7mfmrc01qtje',NULL,NULL,'Mai Ly','( Miley)','0362222222','LESSOR',NULL,_binary '',2,'2021-02-21',1),(4,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/mgvopnrwrxya8o7it1ex',NULL,NULL,NULL,'Được','0111111111','LESSOR',NULL,_binary '',NULL,'2021-02-01',NULL),(5,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/eiabzquebtetr6z98dya',NULL,'agathe@gmail.com',NULL,'Agathe','0123123123','LESSOR',NULL,_binary '',NULL,'2020-10-23',NULL),(6,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/mwpv7bumydpoyckclrqe',NULL,NULL,NULL,'Kennald','0321432125','LESSOR',NULL,_binary '',NULL,'2020-02-01',NULL),(7,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/zi82tyxtptc3yfwlhkpe',NULL,NULL,NULL,'Trang','0512142312','LESSOR',NULL,_binary '',NULL,'2022-02-01',NULL),(8,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/b0o6xdoswn7avvrcntmn',NULL,NULL,NULL,'Gems','0412512512','LESSOR',NULL,_binary '',3,'2021-05-11',3),(9,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/e0brqrkgqppjjuxyiy5k',NULL,NULL,NULL,'Ngọc','0512312512','STAFF',NULL,_binary '',NULL,'2021-02-21',NULL),(10,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/wqyzlvyywkmthhctsmkk',NULL,NULL,NULL,'Phung','0531121234','STAFF',NULL,_binary '',NULL,'2023-10-01',NULL),(11,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/m91mgd9tsgrxvl2bftfx',NULL,NULL,NULL,'Bình','0234112412','STAFF',NULL,_binary '',NULL,'2020-06-01',NULL),(12,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/f969fwtrdxvxwytnshhz',NULL,NULL,NULL,'Hạnh','0125123151','STAFF',NULL,_binary '',NULL,'2020-02-26',NULL),(13,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/fnd27aubc3g9jy3t334z',NULL,'tung@gmail.com',NULL,'Tùng','0366423411','LESSOR',NULL,_binary '',4,'2020-03-02',2),(14,NULL,NULL,'sarah@gmail.com',NULL,'Sarah','0374125125','STAFF',NULL,_binary '',NULL,'2023-01-03',NULL),(15,NULL,NULL,'thinh@gmail.com',NULL,'Thịnh','0362312412','STAFF',NULL,_binary '',NULL,'2023-04-06',NULL),(16,NULL,NULL,'soul@gmail.com',NULL,'SouL','0372341224','STAFF',NULL,_binary '',NULL,'2021-02-01',NULL),(17,NULL,NULL,NULL,NULL,'Gia Ky',NULL,'STAFF',NULL,_binary '',NULL,'2020-04-03',NULL),(18,NULL,NULL,NULL,NULL,'Hải',NULL,'STAFF',NULL,_binary '',NULL,'2022-01-20',NULL),(19,NULL,NULL,NULL,NULL,'Trâm',NULL,'STAFF',NULL,_binary '',NULL,'2023-01-21',NULL),(20,NULL,NULL,NULL,NULL,'Vinh',NULL,'STAFF',NULL,_binary '',NULL,'2023-03-20',NULL),(21,NULL,NULL,NULL,NULL,'Thao',NULL,'STAFF',NULL,_binary '',NULL,'2020-02-01',NULL),(22,NULL,NULL,NULL,NULL,'Caitlin',NULL,'STAFF',NULL,_binary '',NULL,'2023-02-11',NULL),(23,NULL,NULL,NULL,NULL,'Hiep',NULL,'STAFF',NULL,_binary '',NULL,'2020-02-20',NULL),(24,NULL,NULL,NULL,NULL,'Hanh',NULL,'STAFF',NULL,_binary '',NULL,'2021-02-01',NULL),(25,NULL,NULL,NULL,NULL,'My Huyen',NULL,'STAFF',NULL,_binary '',NULL,'2020-02-01',NULL),(26,NULL,NULL,NULL,NULL,'Nguyễn',NULL,'STAFF',NULL,_binary '',NULL,'2022-02-01',NULL),(27,NULL,NULL,NULL,NULL,'Cam',NULL,'STAFF',NULL,_binary '',NULL,'2020-02-01',NULL),(28,NULL,NULL,NULL,NULL,'Mai',NULL,'STAFF',NULL,_binary '',NULL,'2022-02-01',NULL),(29,NULL,NULL,NULL,NULL,'Thuy Linh',NULL,'STAFF',NULL,_binary '',NULL,'2020-02-01',NULL),(30,'https://res.cloudinary.com/didieklbo/image/upload/f_auto,q_auto/v1/AvatarUser/wrm8kntd5d5zjg08vvfc',NULL,NULL,NULL,'Janet',NULL,'LESSOR',NULL,_binary '',NULL,'2021-05-01',NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -796,4 +887,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-09-11 15:15:29
+-- Dump completed on 2023-09-14  8:10:50

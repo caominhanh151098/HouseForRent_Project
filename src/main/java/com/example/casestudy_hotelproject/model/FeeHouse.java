@@ -5,18 +5,27 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class GuestDetail {
+public class FeeHouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int numAdults;
-    private int numChildrenAbove2;
-    private int numBabies;
-    private int numPets;
+
+    @ManyToOne
+    @JoinColumn(name = "house_Id")
+    private House house;
+
+    @ManyToOne
+    @JoinColumn(name = "fee_Id")
+    private Fee fee;
+
+    private BigDecimal price;
+    private int other = 1;
 
     @Override
     public String toString() {
