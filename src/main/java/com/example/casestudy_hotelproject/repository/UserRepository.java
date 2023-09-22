@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
-
     @Query(value = "select u from User u " +
             "where lower(u.firstName) like  lower(:search) " +
             "and lower(u.lastName) like lower(:search) " +
@@ -24,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User findUserByHouseId(int houseId);
 
     User findById(int id);
+
+    User findByPhone(String phone);
 }

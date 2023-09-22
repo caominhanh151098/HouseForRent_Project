@@ -5,8 +5,6 @@ import com.example.casestudy_hotelproject.service.review.response.ContentReviewR
 import com.example.casestudy_hotelproject.service.review.response.ShowReviewHostDetailResponse;
 import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.service.user.response.ShowUserDetailResponse;
-import com.example.casestudy_hotelproject.service.user.UserService;
-import com.example.casestudy_hotelproject.service.user.response.UserResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +36,13 @@ public class UserRestController {
         return reviewService.getReviewDetailByOtherHost(id, pageable);
     }
 
+    @PostMapping("/client/add-phone/{id}")
+    public void addPhoneUser(@PathVariable int id, @RequestHeader(name = "Authorization") String token) {
+        userService.addPhoneNumber(id, token);
+    }
+
+    @PostMapping("/client/login")
+    public void loginOrRegister(@RequestHeader(name = "Authorization") String token) {
+        userService.loginOrRegister(token);
+    }
 }
