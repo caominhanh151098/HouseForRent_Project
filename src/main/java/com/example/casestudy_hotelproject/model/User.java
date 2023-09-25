@@ -33,7 +33,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     private boolean status;
-    private LocalDate createDay;
+    private LocalDate createDate = LocalDate.now();
 
     @OneToMany(mappedBy = "user")
     private List<House> hotels;
@@ -66,6 +66,9 @@ public class User {
     @JoinColumn(name = "profile_Id")
     private Profile profile;
 
+    public User(String phone) {
+        this.phone = phone;
+    }
 
     @Override
     public String toString() {

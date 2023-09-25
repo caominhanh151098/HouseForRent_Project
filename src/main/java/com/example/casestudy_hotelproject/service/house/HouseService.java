@@ -3,6 +3,7 @@ package com.example.casestudy_hotelproject.service.house;
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.example.casestudy_hotelproject.repository.*;
+import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.bed.BedRequest;
 import com.example.casestudy_hotelproject.service.bed.BedService;
@@ -23,6 +24,7 @@ import com.example.casestudy_hotelproject.service.image.response.ShowImgListResp
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.RoomService;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowHostInfoResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 
 import lombok.AllArgsConstructor;
@@ -47,7 +49,7 @@ public class HouseService {
     private final ReviewRepository reviewRepository;
     private final ComfortableDetailRepository comfortableDetailRepository;
     private final ImageRepository imageRepository;
-    private  final DescriptionService descriptionService;
+    private final DescriptionService descriptionService;
     private final CategoryHotelService categoryHotelService;
     private final LocationService locationService;
     private final RoomService roomService;
@@ -56,6 +58,8 @@ public class HouseService {
     private final RoomRepository roomRepository;
     private final RuleHouseRepository ruleHouseRepository;
     private final RuleRepository ruleRepository;
+    private final UserRepository userRepository;
+
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAll(pageable);
 
@@ -204,8 +208,35 @@ public class HouseService {
         Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable)
                 .map(e -> {
                     List<Image> images = imageRepository.findAllByHouse_Id(e.getId());
+
+                    List<ShowListHouseForAdminResponse.ShowImgListResponseForAdmin> imgResponse = images.stream()
+                            .map(i -> {
+                                ShowListHouseForAdminResponse.ShowImgListResponseForAdmin img
+                                        = AppUtils.mapper.map(i , ShowListHouseForAdminResponse.ShowImgListResponseForAdmin.class);
+                                try {
+                                    if (roomRepository.findById(i.getRoom().getId()) != null){
+                                        Room room = roomRepository.findById(i.getRoom().getId());
+                                        img.setName(room.getName());
+                                    }
+                                }catch (NullPointerException nullPointerException){
+                                    nullPointerException.getMessage();
+                                }
+
+                                return img;
+                            }).toList();
+
+                    List<ComfortableDetail> comfortableDetails = comfortableDetailRepository.findAllByHouse_Id(e.getId());
+
+                    List<ShowListHouseForAdminResponse.ComfortableResponseForAdmin> comfortableResponseForAdmins = comfortableDetails.stream()
+                            .map(c -> {
+                                ShowListHouseForAdminResponse.ComfortableResponseForAdmin resp
+                                        = AppUtils.mapper.map(c.getComfortable(), ShowListHouseForAdminResponse.ComfortableResponseForAdmin.class);
+                                return resp;
+                            }).toList();
+
                     ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
-                    house.setImages(images.stream().map(i -> AppUtils.mapper.map(i , ShowImgListResponse.class)).toList());
+                    house.setImages(imgResponse);
+                    house.setComfortableList(comfortableResponseForAdmins);
                     return house;
                 });
 
@@ -229,6 +260,7 @@ public class HouseService {
         }
         return safetyListResp;
     }
+
     public void editTitle(int houseID,String title){
        House house= houseRepository.findById(houseID);
         house.setHotelName(title);
@@ -380,6 +412,21 @@ public class HouseService {
            ruleHouse.setStatus(status);
            ruleHouseRepository.save(ruleHouse);
        }
+    }
+
+    public ShowHostInfoResponse getHostInfo(int houseId) {
+        User host = userRepository.findUserByHouseId(houseId);
+        ShowHostInfoResponse hostResp = AppUtils.mapper.map(host, ShowHostInfoResponse.class);
+        hostResp.setNumReview(reviewRepository.countReviewByUser(host.getId()));
+        hostResp.setConfirmIdentity(host.getIdentity() != null ? true : false);
+        hostResp.setCreateDate(String.format("Đã tham gia vào tháng %s năm %s", host.getCreateDate().getMonthValue(), host.getCreateDate().getYear()));
+        return hostResp;
+    }
+
+    public ShowPriceAndFeeByHouseResponse showPriceAndFeeByHouse(int houseId) {
+        House house = houseRepository.findById(houseId);
+        ShowPriceAndFeeByHouseResponse houseResp = AppUtils.mapper.map(house, ShowPriceAndFeeByHouseResponse.class);
+        return houseResp;
     }
 }
 

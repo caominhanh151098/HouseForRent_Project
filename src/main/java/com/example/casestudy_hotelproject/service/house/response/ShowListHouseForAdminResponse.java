@@ -27,7 +27,8 @@ public class ShowListHouseForAdminResponse {
     private ShowDescriptionResponse description;
     private LocationResponseForAdmin location;
     private CategoryResponseForAdmin categoryHotel;
-    private List<ShowImgListResponse> images = new ArrayList<>();
+    private List<ComfortableResponseForAdmin> comfortableList = new ArrayList<>();
+    private List<ShowImgListResponseForAdmin> images = new ArrayList<>();
 
     @Data
     @AllArgsConstructor
@@ -46,5 +47,23 @@ public class ShowListHouseForAdminResponse {
         private String id;
         private String name;
         private String iconUrl;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ShowImgListResponseForAdmin{
+        private String name;
+        private String srcImg;
+        private String description;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ComfortableResponseForAdmin{
+        private String name;
+        private String icon;
+        private String description;
     }
 }

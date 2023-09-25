@@ -1,11 +1,14 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.example.casestudy_hotelproject.model.enums.StatusReservation;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -23,11 +26,19 @@ public class Reservation {
     private User user;
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
-    private LocalDate reservationDate;
+    private LocalDate reservationDate = LocalDate.now();
+    private BigDecimal price;
+    private BigDecimal weekendPrice;
+    private BigDecimal totalPrice;
+    @Enumerated(EnumType.STRING)
+    private StatusReservation status;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "guest_Detail_Id")
     private GuestDetail guestDetail;
+
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    private List<BookingFee> bookingFees;
 
     @OneToOne
     @JoinColumn(name = "payment_Id")

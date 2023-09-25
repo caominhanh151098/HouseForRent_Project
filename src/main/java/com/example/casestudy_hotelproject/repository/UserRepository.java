@@ -10,12 +10,19 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends JpaRepository<User , Integer> {
-
+public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "select u from User u " +
             "where lower(u.firstName) like  lower(:search) " +
             "and lower(u.lastName) like lower(:search) " +
             "and lower(u.email) like lower(:search)")
-    Page<User> findAllWithSearchAndPaging(String search , Pageable pageable);
-User findById(int id);
+    Page<User> findAllWithSearchAndPaging(String search, Pageable pageable);
+
+    @Query(value = "SELECT u from User u " +
+            "JOIN House h ON h.user.id = u.id " +
+            "WHERE h.id = :houseId")
+    User findUserByHouseId(int houseId);
+
+    User findById(int id);
+
+    User findByPhone(String phone);
 }

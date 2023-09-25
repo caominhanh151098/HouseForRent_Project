@@ -2,7 +2,6 @@ package com.example.casestudy_hotelproject.service.user;
 
 import com.example.casestudy_hotelproject.model.House;
 import com.example.casestudy_hotelproject.model.InterestDetail;
-import com.example.casestudy_hotelproject.model.Review;
 import com.example.casestudy_hotelproject.model.User;
 import com.example.casestudy_hotelproject.repository.ReviewRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
@@ -13,11 +12,15 @@ import com.example.casestudy_hotelproject.service.user.response.ShowUserDetailRe
 import com.example.casestudy_hotelproject.service.user.response.UserResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +62,7 @@ public class UserService {
             houseResp.setImage(house.getImages().get(0).getSrcImg());
             houseResp.setCategoryHotel(house.getCategoryHotel().getName());
         }
-        userResp.setNumReview(reviewRepository.getCountReviewByUser(userId));
+        userResp.setNumReview(reviewRepository.countAllReviewByUser(userId));
         userResp.setMiniReview(reviewRepository.getReviewUserByGuest(userId, pageable).getContent()
                 .stream()
                 .map(r -> AppUtils.mapper.map(r, ContentReviewResponse.class))
@@ -73,5 +76,43 @@ public class UserService {
         userResp.setConfirmIdentity(user.getIdentity() != null ? true : false);
         userResp.setConfirmEmail(user.getEmail() != null ? true : false);
         userResp.setConfirmPhone(user.getPhone() != null ? true : false);
+    }
+
+    public void addPhoneNumber(int userId, String token) {
+        String[] chunks = token.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
+        User user = findById(userId);
+        try {
+            JSONObject jsonObject = new JSONObject(payload);
+            if (jsonObject.get("aud").toString().equals("houseforrent-bbf46")) {
+                user.setPhone(jsonObject.get("phone_number").toString());
+            }
+        } catch (JSONException err) {
+//            Log.d("Error", err.toString());
+        }
+        userRepository.save(user);
+    }
+
+    public void loginOrRegister(String token) {
+        String[] chunks = token.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
+        String phone = "";
+        try {
+            JSONObject jsonObject = new JSONObject(payload);
+            phone = jsonObject.get("phone_number").toString();
+        } catch (JSONException err) {
+//            Log.d("Error", err.toString());
+        }
+        User user = userRepository.findByPhone(phone);
+        if (user == null)
+            user = new User(phone);
+
+        userRepository.save(user);
     }
 }
