@@ -26,10 +26,15 @@ public class Room {
     private List<Bed> beds;
 
     @OneToMany(mappedBy = "room")
+    @JsonIgnore
     private List<Image> images;
 
     @Override
     public String toString() {
         return "";
+    }
+
+    public Room(House house) {
+        this.house = house;
     }
 }

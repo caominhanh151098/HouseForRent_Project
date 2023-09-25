@@ -22,6 +22,8 @@ public class HouseRequest {
     private String categoryHotel;
     private String descriptions;
     private String address;
+    private String lat;
+    private String  lon;
     private List<String> imageList;
     private List<String> comfortableDetailList;
 }

@@ -26,7 +26,28 @@ public class RuleHouse {
     private LocalTime endTime;
     @Column(columnDefinition = "LONGTEXT")
     private String other;
-    private boolean status;
+    private boolean status = false;
+
+    public RuleHouse(House house, Rule rule, String other, boolean status) {
+        this.house = house;
+        this.rule = rule;
+        this.other = other;
+        this.status = status;
+    }
+
+    public RuleHouse(House house, Rule rule, boolean status) {
+        this.house = house;
+        this.rule = rule;
+        this.status = status;
+    }
+
+    public RuleHouse(House house, Rule rule, LocalTime startTime, LocalTime endTime, boolean status) {
+        this.house = house;
+        this.rule = rule;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.status = status;
+    }
 
     @Override
     public String toString() {

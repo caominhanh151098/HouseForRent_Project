@@ -1,16 +1,23 @@
 package com.example.casestudy_hotelproject.controller;
 
 import com.example.casestudy_hotelproject.model.House;
+import com.example.casestudy_hotelproject.model.Location;
+import com.example.casestudy_hotelproject.service.bed.BedRequest;
+import com.example.casestudy_hotelproject.service.bed.BedRespone;
+import com.example.casestudy_hotelproject.service.category_hotel.request.TypeRoomAndCategoryRequest;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.house.HouseService;
 import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
+import com.example.casestudy_hotelproject.service.house.request.StringRequest;
 import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
+import com.example.casestudy_hotelproject.service.image.response.ListIDRespone;
+import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
@@ -24,6 +31,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -35,6 +44,7 @@ public class HouseRestController {
     private final ComfortableService comfortableService;
     private final ReviewService reviewService;
     private final RuleService ruleService;
+
 
     @GetMapping
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
@@ -98,5 +108,57 @@ public class HouseRestController {
     @GetMapping("/addComfortable/{houseID}/{comfortableID}")
     public void addComfortable(@PathVariable int houseID,@PathVariable int comfortableID){
         comfortableService.addComfortableDetail(houseID,comfortableID);
+    }
+    @PostMapping ("/edit/title/{houseID}")
+    public void editTitle (@PathVariable int houseID ,@RequestBody StringRequest title){
+        houseService.editTitle(houseID,title.getStringRequest());
+    }
+    @PostMapping ("/edit/description/{houseID}")
+    public void editDescription(@PathVariable int houseID ,@RequestBody StringRequest description){
+        houseService.editDescription(houseID,description.getStringRequest());
+    }
+    @GetMapping ("/edit/quantityOfGuests/{houseID}/{type}")
+    public void editQuantityOfGuests(@PathVariable int houseID ,@PathVariable String  type){
+        houseService.editQuantityOfGuests(houseID,type) ;
+    }
+    @PostMapping("/edit/location/{houseID}")
+    public void editLocation (@PathVariable int houseID, @RequestBody Location location){
+        houseService.editLocation(houseID,location.getAddress(), location.getLatitude(), location.getLongitude());
+
+    }
+    @PostMapping("/edit/typeRoomAndCategory/{houseID}")
+    public void editTypeRoomAndCategory(@RequestBody TypeRoomAndCategoryRequest request,@PathVariable int houseID){
+        houseService.editTypeRoom(houseID,request.getTypeRoom());
+        houseService.editCategory(houseID,Integer.parseInt(request.getCategoryHotel()));
+    }
+    @GetMapping("/edit/quantityRoomBedBath/{houseId}/{room}/{bath}")
+    public void editquantityRoomBedBath(@PathVariable int houseId, @PathVariable int room,@PathVariable int bath){
+        houseService.editquantityOfRooms(houseId,room);
+        houseService.editquantityOfBathrooms(houseId,bath);
+    }
+    @PostMapping("/edit/chooseImage/{roomId}")
+    public void chooseImage(@PathVariable int roomId, @RequestBody ArrayList<Integer> listIDRespone){
+       houseService.chooseImage(roomId,listIDRespone);
+
+    }
+    @PostMapping("/edit/updateBed/{roomID}")
+    public void updateBed (@PathVariable int roomID, @RequestBody ArrayList<BedRequest> bedRequests){
+        houseService.updateBed(roomID,bedRequests   );
+    }
+    @GetMapping("/getImageListUrl/{houseID}")
+    public List<ShowImgListResponse> getImgByHouse_id(@PathVariable int houseID){
+        return houseService.getImgByHouse_id(houseID);
+    }
+    @PostMapping("/edit/image/{houseID}")
+    public void updateImage(@PathVariable int houseID,@RequestBody ArrayList<String> list){
+        houseService.updateImage(houseID,list);
+    }
+    @GetMapping("/setBookNow/{houseID}")
+    public void updateBookNow(@PathVariable int houseID){
+        houseService.editBookNow(houseID);
+    }
+    @GetMapping("/updateRuleBoolen/{houseId}/{ruleId}/{status}")
+    public void updateRuleBoolen (@PathVariable int houseId,@PathVariable int ruleId,@PathVariable boolean status){
+        houseService.updateRuleBoolen(houseId,ruleId,status);
     }
 }

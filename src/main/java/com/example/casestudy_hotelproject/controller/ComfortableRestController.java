@@ -26,4 +26,8 @@ public class ComfortableRestController {
     public List<Comfortable> findAll(){
         return comfortableService.getComfortable();
     }
+    @GetMapping("/getComfortableType")
+    public List<ComfortableType> getComfortableType(){
+        return comfortableService.getComfortableType();
+    }
 }
