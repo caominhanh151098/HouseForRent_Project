@@ -11,20 +11,27 @@ import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.repository.ReservationRepository;
 import com.example.casestudy_hotelproject.repository.SurchargeRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
+import com.example.casestudy_hotelproject.service.guest_detail.response.GuestDetailService;
+import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
+import com.example.casestudy_hotelproject.service.reservation.response.ShowListReservationResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +40,7 @@ public class ReservationService {
     private final UserRepository userRepository;
     private final HouseRepository houseRepository;
     private final SurchargeRepository surchargeRepository;
+    private final GuestDetailService guestDetailService;
 
     public void saveNewReservation(SaveReservationRequest request) {
         Reservation reservation = AppUtils.mapper.map(request, Reservation.class);
@@ -138,7 +146,7 @@ public class ReservationService {
         if (startCal.getTimeInMillis() == endCal.getTimeInMillis())
             return BigDecimal.ZERO;
 
-        BigDecimal exPriceExGuest =  getPriceExGuest(reservation);
+        BigDecimal exPriceExGuest = getPriceExGuest(reservation);
         do {
             startCal.add(Calendar.DAY_OF_MONTH, 1);
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
@@ -157,5 +165,61 @@ public class ReservationService {
             }
         }
         return BigDecimal.ZERO;
+    }
+
+    public List<ShowListReservationResponse> getReservationWillBooked() {
+        List<Reservation> s = reservationRepository.getReservationWillBooked(13);
+        List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
+        return list;
+    }
+    public List<ShowListReservationResponse> getReservationComing(){
+        List<Reservation> s = reservationRepository.getReservationComing(13);
+        List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
+        return list;
+    }
+    public  List<ShowListReservationResponse> getReservationWelcoming(){
+        List<Reservation> s=reservationRepository.getReservationWelComing(13);
+        List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
+        return list;
+    }
+    public List<ShowListReservationResponse> getReservationUpComing(){
+          List<Reservation> s=reservationRepository.getReservationUpComing(13);
+        List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
+        return list;
+    }
+    public List<ShowListReservationResponse> getReservationWaitApproval(){
+        List<Reservation> s=reservationRepository.getReservationWaitApproval(13);
+        List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
+        return list;
+    }
+    public void deleteReservation(int reservationId){
+      Reservation reservation=  reservationRepository.findById(reservationId);
+        reservation.setStatus(StatusReservation.CANCEL);
+        reservationRepository.save(reservation);
+    }
+    public void acceptReservation(int reservationId){
+        Reservation reservation=  reservationRepository.findById(reservationId);
+        reservation.setStatus(StatusReservation.WAIT_FOR_CHECKIN);
+        reservationRepository.save(reservation);
+    }
+    public Page <ShowListReservationResponse> getReservationAllUpcoming(LocalDate startDate, LocalDate endDate, Pageable pageable){
+        Page<Reservation> reservations=reservationRepository.getReservationAllUpcoming(13,startDate,endDate,pageable);
+        Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
+        return list;
+    }
+    public Page <ShowListReservationResponse> getReservationAllFinished(LocalDate startDate,LocalDate endDate, Pageable pageable){
+        Page<Reservation> reservations=reservationRepository.getReservationAllFinished(13,startDate,endDate,pageable);
+        Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
+        return list;
+    }
+    public Page <ShowListReservationResponse> getReservationAllCancel(LocalDate startDate,LocalDate endDate, Pageable pageable){
+        Page<Reservation> reservations=reservationRepository.getReservationAllCancled(13,startDate,endDate,pageable);
+        Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
+        return list;
+    }
+    public Page <ShowListReservationResponse> getReservationAll(LocalDate startDate,LocalDate endDate, Pageable pageable){
+        Page<Reservation> reservations=reservationRepository.getReservationAll(13,startDate,endDate,pageable);
+        Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
+        return list;
     }
 }
