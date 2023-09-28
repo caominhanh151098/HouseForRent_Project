@@ -32,4 +32,9 @@ public class ComfortableRestController {
     public List<ShowListFilterResponse> showListFilter() {
         return comfortableService.getListFilter();
     }
+    
+    @GetMapping("/getComfortableType")
+    public List<ComfortableType> getComfortableType(){
+        return comfortableService.getComfortableType();
+    }
 }

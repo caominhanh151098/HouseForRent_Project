@@ -85,6 +85,9 @@ public class ComfortableService {
     public List<Comfortable> getComfortable(){
         return comfortableRepository.findAll();
     }
+    public List<ComfortableType> getComfortableType(){
+        return comfortableTypeRepository.findAll();
+    }
 
     public List<ShowListFilterResponse> getListFilter() {
         List<Comfortable> comfortableList = comfortableRepository.findAllByTypeFilterNotNull();

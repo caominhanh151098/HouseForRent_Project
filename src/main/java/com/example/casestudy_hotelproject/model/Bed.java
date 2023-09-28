@@ -25,4 +25,10 @@ public class Bed {
     public String toString() {
         return "";
     }
+
+    public Bed(Room room, int quantity, BedType type) {
+        this.room = room;
+        this.quantity = quantity;
+        this.type = type;
+    }
 }
