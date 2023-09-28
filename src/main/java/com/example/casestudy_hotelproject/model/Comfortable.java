@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.example.casestudy_hotelproject.model.enums.TypeFilterComfortable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,9 @@ public class Comfortable {
     private String name;
     private boolean popular;
     private boolean configDefault;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "filter")
+    private TypeFilterComfortable typeFilter;
 
     @ManyToOne
     @JoinColumn(name = "comfortableType_Id")

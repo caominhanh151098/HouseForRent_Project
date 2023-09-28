@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,12 +38,14 @@ public class UserRestController {
     }
 
     @PostMapping("/client/add-phone/{id}")
-    public void addPhoneUser(@PathVariable int id, @RequestHeader(name = "Authorization") String token) {
-        userService.addPhoneNumber(id, token);
+    public ResponseEntity<?> addPhoneUser(@PathVariable int id, @RequestBody String phone) {
+        userService.addPhoneNumber(id, phone);
+        return null;
     }
 
     @PostMapping("/client/login")
-    public void loginOrRegister(@RequestHeader(name = "Authorization") String token) {
-        userService.loginOrRegister(token);
+    public void loginOrRegister(@RequestHeader(name = "Authorization") String authHeader) {
+        String jwt = authHeader.substring(7);
+        userService.loginOrRegister(jwt);
     }
 }

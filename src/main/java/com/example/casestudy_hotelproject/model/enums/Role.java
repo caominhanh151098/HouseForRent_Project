@@ -1,8 +1,8 @@
 package com.example.casestudy_hotelproject.model.enums;
 
 public enum Role {
-    STAFF(1, "Chủ nhà"),
-    LESSOR(2, "Khách"),
+    HOST(1, "Chủ nhà"),
+    GUEST(2, "Khách"),
     ADMIN(3, "Admin");
 
     private int index;

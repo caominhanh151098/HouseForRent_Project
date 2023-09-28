@@ -13,5 +13,4 @@ public interface ComfortableDetailRepository extends JpaRepository<ComfortableDe
     ComfortableDetail findByComfortable_IdAndHouse_Id(int comfortableId, int houseId);
 
     List<ComfortableDetail> findAllByHouse_Id(int house_id);
-
 }

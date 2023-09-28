@@ -22,4 +22,5 @@ public interface ComfortableRepository extends JpaRepository<Comfortable, Intege
     Comfortable findByName(String name);
     Comfortable findById(int id);
 
+    List<Comfortable> findAllByTypeFilterNotNull();
 }

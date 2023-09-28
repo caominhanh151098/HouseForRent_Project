@@ -4,6 +4,7 @@ import com.example.casestudy_hotelproject.model.Comfortable;
 import com.example.casestudy_hotelproject.model.ComfortableType;
 import com.example.casestudy_hotelproject.repository.ComfortableRepository;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
+import com.example.casestudy_hotelproject.service.comfortable.response.ShowListFilterResponse;
 import com.example.casestudy_hotelproject.service.comfortableType.ComfortableTypeService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,5 +26,10 @@ public class ComfortableRestController {
     @GetMapping
     public List<Comfortable> findAll(){
         return comfortableService.getComfortable();
+    }
+
+    @GetMapping("/list-filter")
+    public List<ShowListFilterResponse> showListFilter() {
+        return comfortableService.getListFilter();
     }
 }

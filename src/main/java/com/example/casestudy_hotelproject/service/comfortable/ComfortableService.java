@@ -3,17 +3,21 @@ package com.example.casestudy_hotelproject.service.comfortable;
 import com.example.casestudy_hotelproject.model.Comfortable;
 import com.example.casestudy_hotelproject.model.ComfortableDetail;
 import com.example.casestudy_hotelproject.model.ComfortableType;
+import com.example.casestudy_hotelproject.model.enums.TypeFilterComfortable;
 import com.example.casestudy_hotelproject.repository.ComfortableDetailRepository;
 import com.example.casestudy_hotelproject.repository.ComfortableRepository;
 import com.example.casestudy_hotelproject.repository.ComfortableTypeRepository;
 import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
+import com.example.casestudy_hotelproject.service.comfortable.response.ShowListFilterDetailResponse;
+import com.example.casestudy_hotelproject.service.comfortable.response.ShowListFilterResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,4 +86,18 @@ public class ComfortableService {
         return comfortableRepository.findAll();
     }
 
+    public List<ShowListFilterResponse> getListFilter() {
+        List<Comfortable> comfortableList = comfortableRepository.findAllByTypeFilterNotNull();
+        List<ShowListFilterResponse> filterResponses = new ArrayList<>();
+        Arrays.stream(TypeFilterComfortable.values()).toList().forEach(type -> {
+            List<ShowListFilterDetailResponse> filterDetailLists = new ArrayList<>();
+            comfortableList.forEach(comfortable -> {
+                if (comfortable.getTypeFilter().name() == type.name()) {
+                    filterDetailLists.add(AppUtils.mapper.map(comfortable, ShowListFilterDetailResponse.class));
+                }
+            });
+            filterResponses.add(new ShowListFilterResponse(type.getLangVi(), filterDetailLists));
+        });
+        return filterResponses;
+    }
 }

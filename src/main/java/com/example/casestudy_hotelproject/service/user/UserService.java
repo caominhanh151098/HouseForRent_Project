@@ -78,21 +78,9 @@ public class UserService {
         userResp.setConfirmPhone(user.getPhone() != null ? true : false);
     }
 
-    public void addPhoneNumber(int userId, String token) {
-        String[] chunks = token.split("\\.");
-        Base64.Decoder decoder = Base64.getUrlDecoder();
-
-        String header = new String(decoder.decode(chunks[0]));
-        String payload = new String(decoder.decode(chunks[1]));
+    public void addPhoneNumber(int userId, String phone){
         User user = findById(userId);
-        try {
-            JSONObject jsonObject = new JSONObject(payload);
-            if (jsonObject.get("aud").toString().equals("houseforrent-bbf46")) {
-                user.setPhone(jsonObject.get("phone_number").toString());
-            }
-        } catch (JSONException err) {
-//            Log.d("Error", err.toString());
-        }
+        user.setPhone(phone);
         userRepository.save(user);
     }
 
@@ -109,10 +97,10 @@ public class UserService {
         } catch (JSONException err) {
 //            Log.d("Error", err.toString());
         }
-        User user = userRepository.findByPhone(phone);
+        User user = userRepository.findByPhone(phone).orElseThrow();
         if (user == null)
             user = new User(phone);
 
-        userRepository.save(user);
+//        userRepository.save(user);
     }
 }
