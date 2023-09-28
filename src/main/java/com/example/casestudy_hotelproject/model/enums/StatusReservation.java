@@ -5,4 +5,5 @@ public enum StatusReservation {
     WAIT_FOR_CHECKIN,
     FINISH,
     CANCEL,
+
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class GuestDetail {
+public class  GuestDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -17,6 +17,7 @@ public class GuestDetail {
     private int numChildrenAbove2;
     private int numBabies;
     private int numPets;
+
 
     @Override
     public String toString() {
