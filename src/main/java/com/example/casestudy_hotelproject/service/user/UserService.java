@@ -78,8 +78,8 @@ public class UserService {
         userResp.setConfirmPhone(user.getPhone() != null ? true : false);
     }
 
-    public void addPhoneNumber(int userId, String phone){
-        User user = findById(userId);
+    public void addPhoneNumber(String phone, String jwt){
+        User user = findById(1);
         user.setPhone(phone);
         userRepository.save(user);
     }

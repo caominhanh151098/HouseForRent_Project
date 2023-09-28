@@ -37,9 +37,10 @@ public class UserRestController {
         return reviewService.getReviewDetailByOtherHost(id, pageable);
     }
 
-    @PostMapping("/client/add-phone/{id}")
-    public ResponseEntity<?> addPhoneUser(@PathVariable int id, @RequestBody String phone) {
-        userService.addPhoneNumber(id, phone);
+    @PostMapping("/client/add-phone")
+    public ResponseEntity<?> addPhoneUser(@PathVariable int id, @RequestBody String phone, @RequestHeader(name = "Authorization") String authHeader) {
+        String jwt = authHeader.substring(7);
+        userService.addPhoneNumber(phone, jwt);
         return null;
     }
 
