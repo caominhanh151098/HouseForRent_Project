@@ -5,6 +5,7 @@ import com.example.casestudy_hotelproject.model.Location;
 import com.example.casestudy_hotelproject.service.bed.BedRequest;
 import com.example.casestudy_hotelproject.service.bed.BedRespone;
 import com.example.casestudy_hotelproject.service.category_hotel.request.TypeRoomAndCategoryRequest;
+import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
@@ -24,6 +25,7 @@ import com.example.casestudy_hotelproject.service.review.response.ShowMiniReview
 import com.example.casestudy_hotelproject.service.rule.RuleService;
 import com.example.casestudy_hotelproject.service.rule.response.ShowRuleDetailResponse;
 import com.example.casestudy_hotelproject.service.user.response.ShowHostInfoResponse;
+import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,10 +33,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -45,6 +48,7 @@ public class HouseRestController {
     private final ComfortableService comfortableService;
     private final ReviewService reviewService;
     private final RuleService ruleService;
+    private final HouseRepository houseRepository;
 
 
     @GetMapping
@@ -178,4 +182,20 @@ public class HouseRestController {
     public void updateRuleBoolen (@PathVariable int houseId,@PathVariable int ruleId,@PathVariable boolean status){
         houseService.updateRuleBoolen(houseId,ruleId,status);
     }
+    @GetMapping("/filter")
+    public List<ShowHouseDetailResponse> findHousesByParameters(
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Integer minGuests,
+            @RequestParam(required = false) Integer minRooms,
+            @RequestParam(required = false) Integer minBeds,
+            @RequestParam(required = false) Integer minBathrooms,
+            @RequestParam(required = false) List<Integer> comfortableIds,
+            @RequestParam(required = false) Integer categoryIds
+    ) {
+        List<House> houses = houseRepository.findHousesByComfortableId(
+                minPrice, maxPrice, minGuests, minRooms, minBeds, minBathrooms, comfortableIds, categoryIds);
+        return  houses.stream().map(e -> AppUtils.mapper.map(e, ShowHouseDetailResponse.class)).collect(Collectors.toList());
+    }
+
 }
