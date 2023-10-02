@@ -18,6 +18,7 @@ public class ShowListHouseResponse {
     private ShowLocationListHouseResponse location;
     private String hotelName;
     private int quantityOfBeds;
+    private int quantityOfBathrooms;
     private String price;
     private String review;
     private List<ShowImgListResponse> images = new ArrayList<>();

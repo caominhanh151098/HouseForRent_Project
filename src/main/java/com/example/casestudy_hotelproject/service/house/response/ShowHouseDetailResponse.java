@@ -24,6 +24,7 @@ public class ShowHouseDetailResponse {
     private String requestDetail;
     private String quantityOfRooms;
     private String quantityOfBeds;
+    private String quantityOfBathrooms;
     private ShowDescriptionResponse description;
     private List<ShowMiniListComfortableResponse> miniListComfortable;
     private int numComfortable;
@@ -32,5 +33,6 @@ public class ShowHouseDetailResponse {
     private List<ShowRoomDetailResponse> rooms;
     private List<ShowImgListResponse> images = new ArrayList<>();
     private ShowHostAvatarResponse user;
+    private String price;
 
 }

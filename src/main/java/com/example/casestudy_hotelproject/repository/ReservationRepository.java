@@ -47,24 +47,51 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "inner join house h " +
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
-            "where u.id= :userId and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) > 0  and DATEDIFF( r.check_in_date,:startDate ) > 0  and DATEDIFF( r.check_in_date, :endDate )<0 ",nativeQuery = true)
+            "where u.id= :userId and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) >= 0  and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<0 "
+            ,countQuery = "SELECT count(*) FROM reservation r " +
+            "            inner join house h " +
+            "            on r.house_id= h.id " +
+            "           inner join `user` u on u.id = h.user_id " +
+            "            where u.id= :userId and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) > 0=  and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<0 "
+
+            ,nativeQuery = true)
     Page<Reservation> getReservationAllUpcoming(@Param("userId")int userId, @Param("startDate")LocalDate startDate, @Param("endDate") LocalDate endDate, Pageable pageable);
     @Query(value = "SELECT r.* FROM reservation r " +
             "inner join house h " +
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
-            "where u.id= :userId and r.status ='WAIT_FOR_CHECKIN'   and DATEDIFF( r.check_out_date,:startDate ) > 0  and DATEDIFF( r.check_out_date, :endDate )<0 ",nativeQuery = true)
+            "where u.id= :userId and r.status ='WAIT_FOR_CHECKIN'   and DATEDIFF( r.check_out_date,:startDate ) >= 0  and DATEDIFF( r.check_out_date, :endDate )<=0 "
+            ,countQuery = "SELECT count(*) FROM reservation r " +
+            "            inner join house h " +
+            "            on r.house_id= h.id " +
+            "           inner join `user` u on u.id = h.user_id " +
+            "           where u.id= :userId and r.status ='WAIT_FOR_CHECKIN'   and DATEDIFF( r.check_out_date,:startDate ) >= 0  and DATEDIFF( r.check_out_date, :endDate )<=0  "
+
+            ,nativeQuery = true)
     Page<Reservation> getReservationAllFinished(@Param("userId") int userId, @Param("startDate")LocalDate startDate,@Param("endDate") LocalDate endDate,Pageable pageable);
     @Query(value = "SELECT r.* FROM reservation r " +
             "inner join house h " +
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
-            "where u.id= :userId and r.status ='CANCEL'   and DATEDIFF( r.check_in_date,:startDate ) > 0  and DATEDIFF( r.check_in_date, :endDate )<0 ",nativeQuery = true)
+            "where u.id= :userId and r.status ='CANCEL'   and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0 "
+            ,countQuery = "SELECT count(*) FROM reservation r " +
+            "           inner join house h " +
+            "          on r.house_id= h.id " +
+            "         inner join `user` u on u.id = h.user_id " +
+            "           where u.id= :userId and r.status ='CANCEL'   and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0  "
+
+            ,nativeQuery = true)
     Page<Reservation> getReservationAllCancled(@Param("userId") int userId, @Param("startDate")LocalDate startDate,@Param("endDate") LocalDate endDate,Pageable pageable);
     @Query(value = "SELECT r.* FROM reservation r " +
             "inner join house h " +
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
-            "where u.id= :userId    and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0 ",nativeQuery = true)
+            "where u.id= :userId    and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0 "
+            ,countQuery = "SELECT count(*) FROM reservation r " +
+            "            inner join house h " +
+            "            on r.house_id= h.id " +
+            "            inner join `user` u on u.id = h.user_id " +
+            "            where u.id= :userId    and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0 "
+            ,nativeQuery = true)
     Page<Reservation> getReservationAll(@Param("userId") int userId, @Param("startDate")LocalDate startDate,@Param("endDate") LocalDate endDate,Pageable pageable);
 }
