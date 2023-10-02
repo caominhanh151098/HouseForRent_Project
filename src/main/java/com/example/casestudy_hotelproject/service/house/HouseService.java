@@ -3,6 +3,7 @@ package com.example.casestudy_hotelproject.service.house;
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.example.casestudy_hotelproject.repository.*;
+import com.example.casestudy_hotelproject.service.house.response.*;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.bed.BedRequest;
@@ -14,10 +15,6 @@ import com.example.casestudy_hotelproject.service.comfortable.response.Comfortab
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.description.response.DescriptionService;
 import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
-import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.location.response.LocationService;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
@@ -401,9 +398,7 @@ public class HouseService {
     }
     @Transactional
     public void updateRuleBoolen(int houseID,int ruleId,Boolean status){
-//    ruleHouseRepository.deleteByHouseIdAndRuleId(houseID,ruleId);
-//      RuleHouse ruleHouse=new RuleHouse(houseRepository.findById(houseID),ruleRepository.findById(ruleId),status);
-//      ruleHouseRepository.save(ruleHouse);
+
        RuleHouse ruleHouse= ruleHouseRepository.findByHouseIdAndRuleId(houseID,ruleId);
        if(ruleHouse==null){
            RuleHouse ruleHouse1=new RuleHouse(houseRepository.findById(houseID),ruleRepository.findById(ruleId),status);
@@ -427,6 +422,11 @@ public class HouseService {
         House house = houseRepository.findById(houseId);
         ShowPriceAndFeeByHouseResponse houseResp = AppUtils.mapper.map(house, ShowPriceAndFeeByHouseResponse.class);
         return houseResp;
+    }
+    public List<HouseRevenueResponse> getNameHouseByHostId (int hostId){
+        List<House> houseList=houseRepository.findByUser_Id(hostId);
+        List<HouseRevenueResponse> houseRevenueResponses=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseRevenueResponse.class)).collect(Collectors.toList());
+        return  houseRevenueResponses;
     }
 }
 
