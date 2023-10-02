@@ -23,9 +23,11 @@ public class SecurityConfiguration {
         http
                 .csrf()
                 .disable()
-                .authorizeHttpRequests((authorize)
-                        -> authorize.requestMatchers("/api/auth/**").permitAll().anyRequest().authenticated()
-//                        -> authorize.requestMatchers("/api/**").permitAll().anyRequest().authenticated()
+                .authorizeHttpRequests((authorize) -> authorize
+//                        .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+//                        .requestMatchers("/api/client/**").permitAll()
+                        .requestMatchers("/api/**").permitAll()
+                        .anyRequest().authenticated()
                 ).sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

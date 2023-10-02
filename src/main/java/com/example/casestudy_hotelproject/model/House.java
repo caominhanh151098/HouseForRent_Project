@@ -50,7 +50,6 @@ public class House {
     @JoinColumn(name = "category_Id")
     private CategoryHotel categoryHotel;
     @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
-    @JsonIgnore
     private List<Room> rooms;
 
     @OneToMany(mappedBy = "house")

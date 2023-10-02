@@ -1,5 +1,7 @@
 package com.example.casestudy_hotelproject.config;
 
+import com.example.casestudy_hotelproject.model.User;
+import com.example.casestudy_hotelproject.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,7 +38,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 12))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 3600 * 24))
                 .signWith(getSigninKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

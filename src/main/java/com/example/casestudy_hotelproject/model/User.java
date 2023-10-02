@@ -47,7 +47,7 @@ public class User implements UserDetails {
     private List<EmergencyContact> emergencyContacts;
 
     @OneToMany(mappedBy = "user")
-    private List<Favorite> favorites;
+    private List<FavoritesList> favoritesLists;
 
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;

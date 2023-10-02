@@ -1,10 +1,14 @@
 package com.example.casestudy_hotelproject.controller;
 
+import com.example.casestudy_hotelproject.config.JwtService;
 import com.example.casestudy_hotelproject.model.House;
 import com.example.casestudy_hotelproject.model.Location;
+import com.example.casestudy_hotelproject.model.User;
 import com.example.casestudy_hotelproject.service.bed.BedRequest;
 import com.example.casestudy_hotelproject.service.bed.BedRespone;
 import com.example.casestudy_hotelproject.service.category_hotel.request.TypeRoomAndCategoryRequest;
+import com.example.casestudy_hotelproject.service.favorite.FavoriteService;
+import com.example.casestudy_hotelproject.service.favorite.response.ShowCategoryFavoriteListResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
@@ -30,6 +34,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -45,11 +50,15 @@ public class HouseRestController {
     private final ComfortableService comfortableService;
     private final ReviewService reviewService;
     private final RuleService ruleService;
+    private final FavoriteService favoriteService;
 
-
-    @GetMapping
-    public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
-        return houseService.showDisplayHome(pageable);
+    @GetMapping()
+    public Page<ShowListHouseResponse> showDisplayHome(@RequestHeader(name = "Authorization") String authHeader, Pageable pageable) {
+        String jwt = null;
+        if (authHeader != null) {
+            jwt = authHeader.substring(7);
+        }
+        return houseService.showDisplayHome(jwt, pageable);
     }
 
     @PostMapping
@@ -177,5 +186,23 @@ public class HouseRestController {
     @GetMapping("/updateRuleBoolen/{houseId}/{ruleId}/{status}")
     public void updateRuleBoolen (@PathVariable int houseId,@PathVariable int ruleId,@PathVariable boolean status){
         houseService.updateRuleBoolen(houseId,ruleId,status);
+    }
+
+    @GetMapping("/client/wishlists")
+    public List<ShowCategoryFavoriteListResponse> showCategoryFavoriteList(@RequestHeader(name = "Authorization") String authHeader) {
+        String jwt = authHeader.substring(7);
+        return favoriteService.showCategoryFavoriteList(jwt);
+    }
+
+    @GetMapping("/client/wishlists/{id}")
+    public Page<ShowListHouseResponse> showWishlist(@PathVariable int id, Pageable pageable, @RequestHeader(name = "Authorization") String authHeader) {
+        return favoriteService.showWishlist(id, pageable);
+    }
+
+    @PostMapping("/client/add-wishlist/{idFavoritesList}/{idHouse}")
+    public ResponseEntity<?> addToWishlistByUser(@PathVariable int idHouse, @PathVariable int idFavoritesList ) {
+        String jwt = authHeader.substring(7);
+        favoriteService.addToWishlist(idHouse, idFavoritesList, jwt);
+        return null;
     }
 }

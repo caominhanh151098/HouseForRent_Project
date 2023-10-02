@@ -6,22 +6,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
-public class Favorite {
+public class FavoritesList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "house_Id")
-    private House house;
+    private String name;
+
+    @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
+    private List<Favorite> favoriteList;
 
     @ManyToOne
-    @JoinColumn(name = "list_Id")
-    private FavoritesList list;
+    @JoinColumn(name = "user_Id")
+    private User user;
     @Override
     public String toString() {
         return "";

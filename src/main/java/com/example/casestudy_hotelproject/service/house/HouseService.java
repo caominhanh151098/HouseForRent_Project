@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.service.house;
 
+import com.example.casestudy_hotelproject.config.JwtService;
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.example.casestudy_hotelproject.repository.*;
@@ -24,6 +25,7 @@ import com.example.casestudy_hotelproject.service.image.response.ShowImgListResp
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.RoomService;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
+import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.service.user.response.ShowHostInfoResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 
@@ -59,10 +61,14 @@ public class HouseService {
     private final RuleHouseRepository ruleHouseRepository;
     private final RuleRepository ruleRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
+    public Page<ShowListHouseResponse> showDisplayHome(String jwt, Pageable pageable) {
+        User user = null;
+        if (jwt != null) {
+            user = userService.extractUser(jwt);
+        }
         Page<House> listHouse = houseRepository.findAll(pageable);
-
 
         Page<ShowListHouseResponse> listPageHouse = listHouse.map(e -> AppUtils.mapper.map(e, ShowListHouseResponse.class));
         for (int index = 0; index < listPageHouse.getContent().size(); index++) {
