@@ -10,11 +10,8 @@ import com.example.casestudy_hotelproject.service.category_hotel.request.TypeRoo
 import com.example.casestudy_hotelproject.service.favorite.FavoriteService;
 import com.example.casestudy_hotelproject.service.favorite.response.ShowCategoryFavoriteListResponse;
 import com.example.casestudy_hotelproject.repository.HouseRepository;
-<<<<<<< HEAD
-=======
 import com.example.casestudy_hotelproject.service.fee.FeeService;
 import com.example.casestudy_hotelproject.service.fee.response.SaveFeeCleaningHouseRequest;
->>>>>>> 90d2ecc10ab36bc6d4e17b01cd77be2e76d5b87b
 import com.example.casestudy_hotelproject.service.house.response.*;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
@@ -23,10 +20,6 @@ import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniL
 import com.example.casestudy_hotelproject.service.house.HouseService;
 import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.house.request.StringRequest;
-<<<<<<< HEAD
-import com.example.casestudy_hotelproject.service.image.response.ListIDRespone;
-=======
->>>>>>> 90d2ecc10ab36bc6d4e17b01cd77be2e76d5b87b
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
@@ -245,14 +238,12 @@ public class HouseRestController {
         return houses.stream().map(e -> AppUtils.mapper.map(e, ShowHouseDetailResponse.class)).collect(Collectors.toList());
     }
 
-<<<<<<< HEAD
     @GetMapping("/search/{city}")
     public List<HouseByCityResponse> searchHousesByCity(@PathVariable String city) {
         List<House> houses = houseService.getHousesByCity(city);
         return houses.stream().map(e -> AppUtils.mapper.map(e, HouseByCityResponse.class)).collect(Collectors.toList());
     }
 
-=======
     @PutMapping("/settings/fees/cleaning/{idHouse}")
     public void settingFeeHouse(@PathVariable int idHouse, @RequestBody SaveFeeCleaningHouseRequest request) {
         feeService.settingFeeHouse(idHouse, request);
@@ -266,6 +257,5 @@ public class HouseRestController {
     public Page<ContentReviewResponse> showReviews2(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 12) Pageable pageable) {
         return reviewService.showReviews(id, pageable);
     }
->>>>>>> 90d2ecc10ab36bc6d4e17b01cd77be2e76d5b87b
 }
 

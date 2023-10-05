@@ -58,11 +58,11 @@ public interface HouseRepository extends JpaRepository<House, Integer> {
             @Param("categoryIds") Integer categoryIds
     );
 
-<<<<<<< HEAD
     @Query( value = "select h from House h join Location l on h.location.id = l.id where l.address like :city")
     List<House> findHousesByCity(String city);
-=======
+
     Optional<House> findByIdAndUser_Id(int id, int userId);
+
     @Query(value = "select h from House h left join User u on h.user.id = u.id where (h.status = 'WAITING') and (lower(h.hotelName) like lower(:search) or lower(u.firstName) like lower(:search) or lower(u.lastName) like lower(:search)) ")
     Page<House> findAllHouseForAdminWithStatusWaiting(Pageable pageable,String search);
 
@@ -74,5 +74,4 @@ public interface HouseRepository extends JpaRepository<House, Integer> {
 
     @Query(value = "select h from House h left join User u on h.user.id = u.id where (h.status = 'ACCEPTED') and (lower(h.hotelName) like lower(:search) or lower(u.firstName) like lower(:search) or lower(u.lastName) like lower(:search))")
     Page<House> findAllHouseAdminStatusAccept(Pageable pageable, String search);
->>>>>>> 90d2ecc10ab36bc6d4e17b01cd77be2e76d5b87b
 }

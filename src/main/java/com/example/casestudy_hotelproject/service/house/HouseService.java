@@ -5,12 +5,9 @@ import com.example.casestudy_hotelproject.model.enums.BookingFeeType;
 import com.example.casestudy_hotelproject.model.enums.SurchargeType;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.example.casestudy_hotelproject.repository.*;
-<<<<<<< HEAD
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
-=======
->>>>>>> 90d2ecc10ab36bc6d4e17b01cd77be2e76d5b87b
 import com.example.casestudy_hotelproject.service.bed.BedRequest;
 import com.example.casestudy_hotelproject.service.house.response.*;
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
@@ -488,11 +485,10 @@ public class HouseService {
         return houseResp;
     }
 
-<<<<<<< HEAD
     public List<House> getHousesByCity(String city){
         return houseRepository.findHousesByCity("%"+city+"%");
     }
-=======
+
     public List<HouseRevenueResponse> getNameHouseByHostId () {
         User user = userService.getCurrentUser();
         List<House> houseList = houseRepository.findByUser_Id(user.getId());
@@ -532,7 +528,5 @@ public class HouseService {
                 .map(e -> AppUtils.mapper.map(e, ShowListHouseAcceptAdminResponse.class));
         return responses;
     }
-
->>>>>>> 90d2ecc10ab36bc6d4e17b01cd77be2e76d5b87b
 }
 
