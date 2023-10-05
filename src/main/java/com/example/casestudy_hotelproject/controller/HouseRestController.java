@@ -122,11 +122,6 @@ public class HouseRestController {
         return houseService.showPriceAndFeeByHouse(id);
     }
 
-    @GetMapping("/admin")
-    Page<ShowListHouseForAdminResponse> showAll(Pageable pageable) {
-        return houseService.showListHouseForAdmin(pageable);
-    }
-
     @GetMapping("/deleteComfortable/{houseID}/{comfortableID}")
     public void deleteComfortable(@PathVariable int houseID, @PathVariable int comfortableID) {
         comfortableService.deleteComfortableDetail(houseID, comfortableID);

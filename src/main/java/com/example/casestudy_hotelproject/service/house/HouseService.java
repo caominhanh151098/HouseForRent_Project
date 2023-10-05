@@ -5,12 +5,14 @@ import com.example.casestudy_hotelproject.model.enums.BookingFeeType;
 import com.example.casestudy_hotelproject.model.enums.SurchargeType;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.example.casestudy_hotelproject.repository.*;
+import com.example.casestudy_hotelproject.service.bed.BedRequest;
 import com.example.casestudy_hotelproject.service.house.response.*;
+import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowFeeResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
+import com.example.casestudy_hotelproject.model.enums.StatusHouse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
-import com.example.casestudy_hotelproject.service.bed.BedRequest;
 import com.example.casestudy_hotelproject.service.bed.BedService;
 import com.example.casestudy_hotelproject.service.category_hotel.CategoryHotelService;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
@@ -21,7 +23,6 @@ import com.example.casestudy_hotelproject.service.description.response.Descripti
 import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.location.response.LocationService;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
-import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowMiniReviewResponse;
 import com.example.casestudy_hotelproject.service.room.RoomService;
 import com.example.casestudy_hotelproject.service.room.ShowRoomDetailResponse;
@@ -36,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -212,10 +214,11 @@ public class HouseService {
         return reviewResp;
     }
 
-    public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(Pageable pageable) {
 
+    public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(String search,Pageable pageable){
+        search = "%" + search + "%";
 
-        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable)
+        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable , search)
                 .map(e -> {
                     List<Image> images = imageRepository.findAllByHouse_Id(e.getId());
 
@@ -244,11 +247,14 @@ public class HouseService {
                                 return resp;
                             }).toList();
 
-                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e, ShowListHouseForAdminResponse.class);
+                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
+
                     house.setImages(imgResponse);
                     house.setComfortableList(comfortableResponseForAdmins);
                     return house;
                 });
+
+        Page<ShowListHouseForAdminResponse> a = responses;
 
         return responses;
     }
@@ -306,7 +312,7 @@ public class HouseService {
         House house = houseRepository.findById(houseID);
         house.setTypeRoom(typeRoom);
         houseRepository.save(house);
-        ;
+
     }
 
     public void editquantityOfRooms(int houseID, int quantityOfRooms) {
@@ -471,11 +477,44 @@ public class HouseService {
         return houseResp;
     }
 
-    public List<HouseRevenueResponse> getNameHouseByHostId (){
+    public List<HouseRevenueResponse> getNameHouseByHostId () {
         User user = userService.getCurrentUser();
-        List<House> houseList=houseRepository.findByUser_Id(user.getId());
-        List<HouseRevenueResponse> houseRevenueResponses=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseRevenueResponse.class)).collect(Collectors.toList());
-        return  houseRevenueResponses;
+        List<House> houseList = houseRepository.findByUser_Id(user.getId());
+        List<HouseRevenueResponse> houseRevenueResponses = houseList.stream().map(e -> AppUtils.mapper.map(e, HouseRevenueResponse.class)).collect(Collectors.toList());
+        return houseRevenueResponses;
+    }
+    public List<ShowHouseCreateDateAdminResponse> showHouseCreateDateAdminResponses(int month , int year){
+        List<ShowHouseCreateDateAdminResponse> responses = houseRepository.findAllHouseForAdminWithMonthAndYear(month , year)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowHouseCreateDateAdminResponse.class)).toList();
+
+        return  responses;
+    }
+
+    public List<ShowStatisticalHouseForAdminResponse> showStatisticalHouseForAdminResponses(String date1 , String date2){
+        LocalDate newDate1 = LocalDate.parse(date1);
+        LocalDate newDate2 = LocalDate.parse(date2);
+
+        List<ShowStatisticalHouseForAdminResponse> responses = houseRepository.findAllHouseWithDate(newDate1,newDate2)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowStatisticalHouseForAdminResponse.class)).toList();
+        return  responses;
+    }
+
+    @Transactional
+    public void updateStatusAdmin(String id , String  status , String pdf){
+        int newId = Integer.parseInt(id);
+        House house = houseRepository.findById(newId);
+        house.setStatus(StatusHouse.valueOf(status));
+        house.setConfirmPDF(pdf);
+
+        houseRepository.save(house);
+    }
+
+    public Page<ShowListHouseAcceptAdminResponse> showAllAcceptHouse(Pageable pageable , String search) {
+        search = "%" + search + "%";
+
+        Page<ShowListHouseAcceptAdminResponse> responses = houseRepository.findAllHouseAdminStatusAccept(pageable, search)
+                .map(e -> AppUtils.mapper.map(e, ShowListHouseAcceptAdminResponse.class));
+        return responses;
     }
 
 }

@@ -23,6 +23,7 @@ public class ShowListHouseForAdminResponse {
     private String quantityOfBathrooms;
     private String typeRoom;
     private String status;
+    private String createDate;
     private UserResponse user;
     private ShowDescriptionResponse description;
     private LocationResponseForAdmin location;

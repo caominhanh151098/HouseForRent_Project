@@ -7,8 +7,11 @@ import com.example.casestudy_hotelproject.model.User;
 import com.example.casestudy_hotelproject.repository.ReviewRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
 import com.example.casestudy_hotelproject.service.house.response.ShowInfoHouseOfHostResponse;
+import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.interest.response.ShowInterestUserResponse;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowStatisticalUserForAdminResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowUserCreateDateAdminResponse;
 import com.example.casestudy_hotelproject.service.user.response.ShowUserDetailResponse;
 import com.example.casestudy_hotelproject.service.user.response.UserResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
@@ -19,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,12 +35,12 @@ public class UserService {
     private final JwtService jwtService;
 
     public Page<UserResponse> findAll(String search, Pageable pageable) {
+
         search = "%" + search + "%";
 
 
         Page<UserResponse> responses = userRepository.findAllWithSearchAndPaging(search, pageable)
                 .map(e -> AppUtils.mapper.map(e, UserResponse.class));
-
         return responses;
 
 
@@ -90,5 +94,23 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName();
         return userRepository.findByEmail(userEmail).orElseThrow();
+    }
+
+    public List<ShowUserCreateDateAdminResponse> showUserCreateDateAdminResponses(int day,int year){
+
+        List<ShowUserCreateDateAdminResponse> responses = userRepository.findAllUserCreateDateWithMonthAndYear(day,year)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowUserCreateDateAdminResponse.class)).toList();
+
+        return responses;
+    }
+
+    public List<ShowStatisticalUserForAdminResponse> showStatisticalUserForAdminResponses(String date1 , String date2){
+        LocalDate dateNew1 = LocalDate.parse(date1);
+        LocalDate dateNew2 = LocalDate.parse(date2);
+
+        List<ShowStatisticalUserForAdminResponse> responses = userRepository.findAllUserCreateDate(dateNew1,dateNew2)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowStatisticalUserForAdminResponse.class)).toList();
+
+        return  responses;
     }
 }

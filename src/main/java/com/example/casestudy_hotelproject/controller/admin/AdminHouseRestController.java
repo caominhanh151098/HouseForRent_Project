@@ -1,14 +1,19 @@
 package com.example.casestudy_hotelproject.controller.admin;
 
 import com.example.casestudy_hotelproject.service.house.HouseService;
+import com.example.casestudy_hotelproject.service.house.request.UpdateStatusHouseAdmin;
+import com.example.casestudy_hotelproject.service.house.response.ShowHouseCreateDateAdminResponse;
+import com.example.casestudy_hotelproject.service.house.response.ShowListHouseAcceptAdminResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
+import com.example.casestudy_hotelproject.service.house.response.ShowStatisticalHouseForAdminResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -18,7 +23,32 @@ public class AdminHouseRestController {
 
     private final HouseService houseService;
     @GetMapping
-    Page<ShowListHouseForAdminResponse> showAll(Pageable pageable){
-        return houseService.showListHouseForAdmin(pageable);
+    public Page<ShowListHouseForAdminResponse> showAll(Pageable pageable , @RequestParam(defaultValue = "") String search){
+        return houseService.showListHouseForAdmin(search , pageable );
+    }
+
+    @GetMapping("/createdDate")
+    public List<ShowHouseCreateDateAdminResponse> showAllHouseCreateDate(int month, int year){
+        return houseService.showHouseCreateDateAdminResponses(month , year);
+    }
+
+    @GetMapping("/report")
+    public List<ShowStatisticalHouseForAdminResponse> showStatisticalHouseForAdminResponses(String date1 , String date2){
+        return  houseService.showStatisticalHouseForAdminResponses(date1 , date2);
+    }
+
+    @GetMapping("/accepted")
+    public Page<ShowListHouseAcceptAdminResponse> showListHouseAcceptAdmins(Pageable pageable , @RequestParam(defaultValue = "") String search){
+        return houseService.showAllAcceptHouse(pageable , search);
+    }
+
+    @PatchMapping("/update/{id}")
+    public ResponseEntity<?> updateHouseStatus( @PathVariable String id , @RequestBody UpdateStatusHouseAdmin request){
+        try {
+            houseService.updateStatusAdmin(id, request.getStatus() , request.getConfirmPDF());
+            return ResponseEntity.ok("Success");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed");
+        }
     }
 }

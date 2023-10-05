@@ -36,6 +36,8 @@ public class House {
     @Enumerated(EnumType.STRING)
     private StatusHouse status;
     private LocalDate createDate;
+    @Column(name = "confirm_PDF")
+    private String confirmPDF;
 
     @OneToOne(cascade =CascadeType.ALL)
     @JsonIgnore

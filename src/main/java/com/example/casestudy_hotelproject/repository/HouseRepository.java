@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.lang.annotation.Native;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,4 +59,15 @@ public interface HouseRepository extends JpaRepository<House, Integer> {
     );
 
     Optional<House> findByIdAndUser_Id(int id, int userId);
+    @Query(value = "select h from House h left join User u on h.user.id = u.id where (h.status = 'WAITING') and (lower(h.hotelName) like lower(:search) or lower(u.firstName) like lower(:search) or lower(u.lastName) like lower(:search)) ")
+    Page<House> findAllHouseForAdminWithStatusWaiting(Pageable pageable,String search);
+
+    @Query(nativeQuery = true, value = "select * from house h where (h.status = 'ACCEPTED') and (month(h.create_date) = :month and year(h.create_date) = :year);")
+    List<House> findAllHouseForAdminWithMonthAndYear(@Param("month") int month , @Param("year") int year);
+
+    @Query(nativeQuery = true, value = "select * from house h where (h.status = 'ACCEPTED') and (h.create_date between :date1 and :date2);")
+    List<House> findAllHouseWithDate(@Param("date1") LocalDate date1 , @Param("date2") LocalDate date2);
+
+    @Query(value = "select h from House h left join User u on h.user.id = u.id where (h.status = 'ACCEPTED') and (lower(h.hotelName) like lower(:search) or lower(u.firstName) like lower(:search) or lower(u.lastName) like lower(:search))")
+    Page<House> findAllHouseAdminStatusAccept(Pageable pageable, String search);
 }
