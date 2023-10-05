@@ -6,6 +6,7 @@ import com.example.casestudy_hotelproject.service.bed.BedRequest;
 import com.example.casestudy_hotelproject.service.bed.BedRespone;
 import com.example.casestudy_hotelproject.service.category_hotel.request.TypeRoomAndCategoryRequest;
 import com.example.casestudy_hotelproject.repository.HouseRepository;
+import com.example.casestudy_hotelproject.service.house.response.*;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
@@ -13,10 +14,6 @@ import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniL
 import com.example.casestudy_hotelproject.service.house.HouseService;
 import com.example.casestudy_hotelproject.service.house.request.HouseRequest;
 import com.example.casestudy_hotelproject.service.house.request.StringRequest;
-import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowHouseDetailResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.image.response.ListIDRespone;
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
@@ -196,6 +193,12 @@ public class HouseRestController {
         List<House> houses = houseRepository.findHousesByComfortableId(
                 minPrice, maxPrice, minGuests, minRooms, minBeds, minBathrooms, comfortableIds, categoryIds);
         return  houses.stream().map(e -> AppUtils.mapper.map(e, ShowHouseDetailResponse.class)).collect(Collectors.toList());
+    }
+
+    @GetMapping("/search/{city}")
+    public List<HouseByCityResponse> searchHousesByCity(@PathVariable String city) {
+        List<House> houses = houseService.getHousesByCity(city);
+        return houses.stream().map(e -> AppUtils.mapper.map(e, HouseByCityResponse.class)).collect(Collectors.toList());
     }
 
 }

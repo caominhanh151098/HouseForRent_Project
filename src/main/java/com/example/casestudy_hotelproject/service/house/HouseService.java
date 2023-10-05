@@ -3,6 +3,7 @@ package com.example.casestudy_hotelproject.service.house;
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.example.casestudy_hotelproject.repository.*;
+import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.bed.BedRequest;
@@ -75,6 +76,11 @@ public class HouseService {
             if (numReview > 1)
                 houseResp.setReview(String.format("%s (%s)", house.getAvgReviewPoint(), numReview));
             else houseResp.setReview("Mới");
+            List<ComfortableDetail> comfortableDetails = comfortableDetailRepository.findAllByHouse_Id(house.getId());
+            List<ShowComfortableDetailResponse> showComfortableDetailResponses = comfortableDetails.stream()
+                    .map(comfortableDetail -> AppUtils.mapper.map(comfortableDetail.getComfortable(), ShowComfortableDetailResponse.class))
+                    .collect(Collectors.toList());
+            houseResp.setComfortables(showComfortableDetailResponses);
         }
 
         return listPageHouse;
@@ -427,6 +433,10 @@ public class HouseService {
         House house = houseRepository.findById(houseId);
         ShowPriceAndFeeByHouseResponse houseResp = AppUtils.mapper.map(house, ShowPriceAndFeeByHouseResponse.class);
         return houseResp;
+    }
+
+    public List<House> getHousesByCity(String city){
+        return houseRepository.findHousesByCity("%"+city+"%");
     }
 }
 

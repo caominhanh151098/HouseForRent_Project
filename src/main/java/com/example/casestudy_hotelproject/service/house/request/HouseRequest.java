@@ -24,6 +24,7 @@ public class HouseRequest {
     private String address;
     private String lat;
     private String  lon;
+    private String avgReviewPoint;
     private List<String> imageList;
     private List<String> comfortableDetailList;
 }

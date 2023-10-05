@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ShowComfortableDetailResponse {
+        private int id;
         private String name;
         private String icon;
         private boolean status = true;

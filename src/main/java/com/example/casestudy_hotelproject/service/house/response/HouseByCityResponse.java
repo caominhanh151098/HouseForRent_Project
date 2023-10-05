@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ShowHouseDetailResponse {
+public class HouseByCityResponse {
     private String id;
     private String hotelName;
     private ShowLocationListHouseResponse location;
@@ -36,5 +36,4 @@ public class ShowHouseDetailResponse {
     private List<ShowImgListResponse> images = new ArrayList<>();
     private ShowHostAvatarResponse user;
     private String price;
-
 }

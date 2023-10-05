@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @Data
 public class ShowImgListResponse {
     private String srcImg;
+    private String description;
 }

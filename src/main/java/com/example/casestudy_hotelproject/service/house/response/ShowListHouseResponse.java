@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.service.house.response;
 
+import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.location.response.ShowLocationListHouseResponse;
 import lombok.AllArgsConstructor;
@@ -22,4 +23,5 @@ public class ShowListHouseResponse {
     private String price;
     private String review;
     private List<ShowImgListResponse> images = new ArrayList<>();
+    private List<ShowComfortableDetailResponse> comfortables = new ArrayList<>();
 }

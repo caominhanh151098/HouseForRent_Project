@@ -49,4 +49,7 @@ public interface HouseRepository extends JpaRepository<House, Integer> {
             @Param("comfortableIds") List<Integer> comfortableIds,
             @Param("categoryIds") Integer categoryIds
     );
+
+    @Query( value = "select h from House h join Location l on h.location.id = l.id where l.address like :city")
+    List<House> findHousesByCity(String city);
 }
