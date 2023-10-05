@@ -1,26 +1,29 @@
 package com.example.casestudy_hotelproject.service.user;
 
+import com.example.casestudy_hotelproject.config.JwtService;
 import com.example.casestudy_hotelproject.model.House;
 import com.example.casestudy_hotelproject.model.InterestDetail;
 import com.example.casestudy_hotelproject.model.User;
 import com.example.casestudy_hotelproject.repository.ReviewRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
 import com.example.casestudy_hotelproject.service.house.response.ShowInfoHouseOfHostResponse;
+import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.interest.response.ShowInterestUserResponse;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowStatisticalUserForAdminResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowUserCreateDateAdminResponse;
 import com.example.casestudy_hotelproject.service.user.response.ShowUserDetailResponse;
 import com.example.casestudy_hotelproject.service.user.response.UserResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.spec.SecretKeySpec;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,14 +32,15 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final JwtService jwtService;
 
     public Page<UserResponse> findAll(String search, Pageable pageable) {
+
         search = "%" + search + "%";
 
 
         Page<UserResponse> responses = userRepository.findAllWithSearchAndPaging(search, pageable)
                 .map(e -> AppUtils.mapper.map(e, UserResponse.class));
-
         return responses;
 
 
@@ -73,34 +77,40 @@ public class UserService {
     }
 
     public void checkIdentity(User user, ShowUserDetailResponse userResp) {
-        userResp.setConfirmIdentity(user.getIdentity() != null ? true : false);
-        userResp.setConfirmEmail(user.getEmail() != null ? true : false);
-        userResp.setConfirmPhone(user.getPhone() != null ? true : false);
+        userResp.setConfirmIdentity(user.getIdentity() != null);
+        userResp.setConfirmEmail(user.getEmail() != null);
+        userResp.setConfirmPhone(user.getPhone() != null);
     }
 
-    public void addPhoneNumber(String phone, String jwt){
-        User user = findById(1);
+    public boolean addPhoneNumber(String phone) {
+        User user = getCurrentUser();
         user.setPhone(phone);
         userRepository.save(user);
+        return true;
     }
 
-    public void loginOrRegister(String token) {
-        String[] chunks = token.split("\\.");
-        Base64.Decoder decoder = Base64.getUrlDecoder();
 
-        String header = new String(decoder.decode(chunks[0]));
-        String payload = new String(decoder.decode(chunks[1]));
-        String phone = "";
-        try {
-            JSONObject jsonObject = new JSONObject(payload);
-            phone = jsonObject.get("phone_number").toString();
-        } catch (JSONException err) {
-//            Log.d("Error", err.toString());
-        }
-        User user = userRepository.findByPhone(phone).orElseThrow();
-        if (user == null)
-            user = new User(phone);
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
+        return userRepository.findByEmail(userEmail).orElseThrow();
+    }
 
-//        userRepository.save(user);
+    public List<ShowUserCreateDateAdminResponse> showUserCreateDateAdminResponses(int day,int year){
+
+        List<ShowUserCreateDateAdminResponse> responses = userRepository.findAllUserCreateDateWithMonthAndYear(day,year)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowUserCreateDateAdminResponse.class)).toList();
+
+        return responses;
+    }
+
+    public List<ShowStatisticalUserForAdminResponse> showStatisticalUserForAdminResponses(String date1 , String date2){
+        LocalDate dateNew1 = LocalDate.parse(date1);
+        LocalDate dateNew2 = LocalDate.parse(date2);
+
+        List<ShowStatisticalUserForAdminResponse> responses = userRepository.findAllUserCreateDate(dateNew1,dateNew2)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowStatisticalUserForAdminResponse.class)).toList();
+
+        return  responses;
     }
 }

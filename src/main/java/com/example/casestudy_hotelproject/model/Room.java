@@ -1,6 +1,5 @@
 package com.example.casestudy_hotelproject.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,11 +21,9 @@ public class Room {
     private String name;
 
     @OneToMany(mappedBy = "room")
-    @JsonIgnore
     private List<Bed> beds;
 
     @OneToMany(mappedBy = "room")
-    @JsonIgnore
     private List<Image> images;
 
     @Override

@@ -36,6 +36,8 @@ public class House {
     @Enumerated(EnumType.STRING)
     private StatusHouse status;
     private LocalDate createDate;
+    @Column(name = "confirm_PDF")
+    private String confirmPDF;
 
     @OneToOne(cascade =CascadeType.ALL)
     @JsonIgnore
@@ -50,7 +52,6 @@ public class House {
     @JoinColumn(name = "category_Id")
     private CategoryHotel categoryHotel;
     @OneToMany(mappedBy = "house",cascade =CascadeType.ALL)
-    @JsonIgnore
     private List<Room> rooms;
 
     @OneToMany(mappedBy = "house")
@@ -92,6 +93,9 @@ public class House {
     public House(int id) {
         this.id = id;
     }
+
+    @OneToMany(mappedBy = "house")
+    private List<BlockingDate> blockingDates;
 
     @Override
     public String toString() {

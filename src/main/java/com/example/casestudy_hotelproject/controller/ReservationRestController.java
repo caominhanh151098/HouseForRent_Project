@@ -6,10 +6,12 @@ import com.example.casestudy_hotelproject.service.guest_detail.response.GuestDet
 import com.example.casestudy_hotelproject.service.reservation.ReservationService;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowListReservationResponse;
+import com.example.casestudy_hotelproject.service.reservation.response.ShowRevenue;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -82,5 +84,14 @@ public class ReservationRestController {
     @GetMapping("/all/all/{startDate}/{endDate}")
     public Page<ShowListReservationResponse> getReservationAll(@PathVariable LocalDate startDate, @PathVariable LocalDate endDate, Pageable pageable){
         return reservationService.getReservationAll(startDate,endDate, pageable);
+    }
+    @GetMapping("/getReservationFinish/{houseId}/{startDate}/{endDate}")
+    public Page<ShowRevenue>  getReservationFinish(@PathVariable int houseId,@PathVariable LocalDate startDate, @PathVariable LocalDate endDate,@PageableDefault(size =5 ) Pageable pageable){
+
+        if(houseId==-1){
+            return reservationService.getReservationFinishAll(startDate,endDate, pageable);
+        }else {
+            return  reservationService.getReservationFinishWithHouseID(startDate,endDate, houseId,pageable);
+        }
     }
 }

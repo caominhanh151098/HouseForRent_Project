@@ -30,7 +30,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        if (userRepository.findByEmail(request.getEmail()).isPresent() || userRepository.findByPhone(request.getPhone()).isPresent()) {
+        String phone = "+84" + request.getPhone();
+        if (userRepository.findByEmail(request.getEmail()).isPresent() || userRepository.findByPhone(phone).isPresent()) {
             return null;
         }
         User user = null;
@@ -38,7 +39,7 @@ public class AuthenticationService {
         try {
             user = User.builder()
                     .email(request.getEmail())
-                    .phone("+84" + request.getPhone())
+                    .phone(phone)
                     .firstName(request.firstName)
                     .lastName(request.lastName)
                     .uuid(uuid)

@@ -1,5 +1,8 @@
 package com.example.casestudy_hotelproject.controller;
 
+import com.example.casestudy_hotelproject.service.favorite.FavoriteService;
+import com.example.casestudy_hotelproject.service.favorite.response.ShowCategoryFavoriteListResponse;
+import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowReviewHostDetailResponse;
@@ -11,8 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -27,26 +33,22 @@ public class UserRestController {
         return userService.getUserDetail(id, pageable);
     }
 
-    @GetMapping("/client/detail/review/{id}/1")
-    public Page<ShowReviewHostDetailResponse> getReviewDetailByGuest(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 10) Pageable pageable) {
-        return reviewService.getReviewDetailByGuest(id, pageable);
+    @GetMapping("/client/detail/review/by-guest/{userId}")
+    public Page<ShowReviewHostDetailResponse> getReviewDetailByGuest(@PathVariable int userId, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 10) Pageable pageable) {
+        return reviewService.getReviewDetailByGuest(userId, pageable);
     }
 
-    @GetMapping("/client/detail/review/{id}/2")
-    public Page<ContentReviewResponse> getReviewDetailByOtherHost(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 10) Pageable pageable) {
-        return reviewService.getReviewDetailByOtherHost(id, pageable);
+    @GetMapping("/client/detail/review/by-other-host/{userId}")
+    public Page<ContentReviewResponse> getReviewDetailByOtherHost(@PathVariable int userId, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 10) Pageable pageable) {
+        return reviewService.getReviewDetailByOtherHost(userId, pageable);
     }
 
     @PostMapping("/client/add-phone")
-    public ResponseEntity<?> addPhoneUser(@PathVariable int id, @RequestBody String phone, @RequestHeader(name = "Authorization") String authHeader) {
-        String jwt = authHeader.substring(7);
-        userService.addPhoneNumber(phone, jwt);
-        return null;
+    public ResponseEntity<?> addPhoneUser(@RequestBody String phone) {
+        userService.addPhoneNumber(phone);
+
+        return ResponseEntity.ok(true);
     }
 
-    @PostMapping("/client/login")
-    public void loginOrRegister(@RequestHeader(name = "Authorization") String authHeader) {
-        String jwt = authHeader.substring(7);
-        userService.loginOrRegister(jwt);
-    }
+
 }

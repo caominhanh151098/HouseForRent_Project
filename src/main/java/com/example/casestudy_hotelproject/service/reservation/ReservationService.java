@@ -1,9 +1,6 @@
 package com.example.casestudy_hotelproject.service.reservation;
 
-import com.example.casestudy_hotelproject.model.BookingFee;
-import com.example.casestudy_hotelproject.model.House;
-import com.example.casestudy_hotelproject.model.Reservation;
-import com.example.casestudy_hotelproject.model.Surcharge;
+import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.model.enums.BookingFeeType;
 import com.example.casestudy_hotelproject.model.enums.StatusReservation;
 import com.example.casestudy_hotelproject.model.enums.SurchargeType;
@@ -11,19 +8,18 @@ import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.repository.ReservationRepository;
 import com.example.casestudy_hotelproject.repository.SurchargeRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
-import com.example.casestudy_hotelproject.service.guest_detail.response.GuestDetailService;
-import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
-import com.example.casestudy_hotelproject.service.reservation.response.ShowListReservationResponse;
+import com.example.casestudy_hotelproject.service.reservation.response.*;
+import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -40,7 +36,8 @@ public class ReservationService {
     private final UserRepository userRepository;
     private final HouseRepository houseRepository;
     private final SurchargeRepository surchargeRepository;
-    private final GuestDetailService guestDetailService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final UserService userService;
 
     public void saveNewReservation(SaveReservationRequest request) {
         Reservation reservation = AppUtils.mapper.map(request, Reservation.class);
@@ -51,8 +48,8 @@ public class ReservationService {
         reservation.setWeekendPrice(house.getWeekendPrice());
         reservation.setBookingFees(getCurrentBookingFeesByHouse(reservation, house));
         reservation.setStatus(house.isBookNow() ? StatusReservation.WAIT_FOR_CHECKIN : StatusReservation.AWAITING_APPROVAL);
-        reservation.setTotalPrice(getPrice(reservation).setScale(0, RoundingMode.HALF_UP));
-        reservationRepository.save(reservation);
+        reservation.setTotalPrice(getTotalPrice(reservation));
+//        reservationRepository.save(reservation);
     }
 
     public List<BookingFee> getCurrentBookingFeesByHouse(Reservation reservation, House house) {
@@ -91,47 +88,13 @@ public class ReservationService {
         return bookingFees;
     }
 
-    public BigDecimal getPrice(Reservation reservation) {
+    public BigDecimal getTotalPrice(Reservation reservation) {
+        long daysBetween = reservation.getCheckInDate().until(reservation.getCheckOutDate(), ChronoUnit.DAYS);
         if (reservation.getWeekendPrice() == null) {
             reservation.setWeekendPrice(reservation.getPrice());
         }
-        BigDecimal priceByDate = getPriceByDate(reservation);
-        BigDecimal totalPrice = getTotalPrice(reservation, priceByDate);
-        return totalPrice;
-    }
-
-    public BigDecimal getTotalPrice(Reservation reservation, BigDecimal priceByDate) {
-        long daysBetween = reservation.getCheckInDate().until(reservation.getCheckOutDate(), ChronoUnit.DAYS);
-        BigDecimal cleaningFee = BigDecimal.ZERO;
-        BigDecimal petFee = BigDecimal.ZERO;
-        BigDecimal taxFee = BigDecimal.ZERO;
-        BigDecimal serviceFee = BigDecimal.ZERO;
-        for (int index = 0; index < reservation.getBookingFees().size(); index++) {
-            BookingFee bookingFee = reservation.getBookingFees().get(index);
-            switch (bookingFee.getType()) {
-                case CLEANING -> {
-                    if (daysBetween > 2)
-                        cleaningFee = bookingFee.getValue();
-                }
-                case SHORT_STAY_CLEANING -> {
-                    if (daysBetween <= 2)
-                        cleaningFee = bookingFee.getValue();
-                }
-                case PET -> {
-                    if (reservation.getGuestDetail().getNumPets() > 0)
-                        petFee = bookingFee.getValue();
-                }
-                case TAX -> {
-                    taxFee = bookingFee.getValue();
-                }
-                case SERVICE_FEE -> {
-                    serviceFee = bookingFee.getValue();
-                }
-            }
-        }
-        BigDecimal price = priceByDate.add(cleaningFee.add(petFee));
-        BigDecimal totalPrice = price.add(price.multiply(serviceFee).divide(new BigDecimal(100)));
-        return totalPrice;
+        BigDecimal price = getPriceByDate(reservation);
+        return null;
     }
 
     public BigDecimal getPriceByDate(Reservation reservation) {
@@ -146,7 +109,7 @@ public class ReservationService {
         if (startCal.getTimeInMillis() == endCal.getTimeInMillis())
             return BigDecimal.ZERO;
 
-        BigDecimal exPriceExGuest = getPriceExGuest(reservation);
+        BigDecimal exPriceExGuest =  getPriceExGuest(reservation);
         do {
             startCal.add(Calendar.DAY_OF_MONTH, 1);
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
@@ -167,33 +130,76 @@ public class ReservationService {
         return BigDecimal.ZERO;
     }
 
+    public List<ShowProfitForAdminResponse> showProfit(String date1,String date2){
+
+        LocalDate dateparse1 = LocalDate.parse(date1);
+        LocalDate dateparse2 = LocalDate.parse(date2);
+
+        List<Reservation> a = reservationRepository.showProfitWithStatus(dateparse1,dateparse2);
+
+        List<ShowProfitForAdminResponse> reservations = reservationRepository.showProfitWithStatus(dateparse1,dateparse2)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowProfitForAdminResponse.class)).toList();
+
+        return reservations;
+    }
+
+    public List<ShowReservationDateAdminResponse> showReservationDateAdminResponses (int month , int year) {
+        List<ShowReservationDateAdminResponse> responses = reservationRepository.findAllReservationDateWithMonthAndYear(month,year)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowReservationDateAdminResponse.class)).toList();
+
+        return responses;
+    }
+
+    public List<ShowTableProfitsForAdmin> showListHouseProfitsForAdminResponse (String date1,String date2){
+        LocalDate dateparse1 = LocalDate.parse(date1);
+        LocalDate dateparse2 = LocalDate.parse(date2);
+        List<Reservation> a= reservationRepository.findAllListHouseProfitsForAdmin(dateparse1 , dateparse2);
+        List<ShowTableProfitsForAdmin> responses = reservationRepository.findAllListHouseProfitsForAdmin(dateparse1 , dateparse2)
+                .stream().map(e -> AppUtils.mapper.map(e , ShowTableProfitsForAdmin.class)).toList();
+        return responses;
+    }
+
+    @Transactional
+    public void updateStatus (String id , String status){
+        int newId = Integer.parseInt(id);
+        Reservation reservation = reservationRepository.findById(newId);
+        reservation.setStatus(StatusReservation.valueOf(status));
+
+        reservationRepository.save(reservation);
+    }
+
     public List<ShowListReservationResponse> getReservationWillBooked() {
-        List<Reservation> s = reservationRepository.getReservationWillBooked(13);
+        User user= userService.getCurrentUser();
+        List<Reservation> s = reservationRepository.getReservationWillBooked(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public List<ShowListReservationResponse> getReservationComing(){
-        List<Reservation> s = reservationRepository.getReservationComing(13);
+        User user=userService.getCurrentUser();
+        List<Reservation> s = reservationRepository.getReservationComing(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public  List<ShowListReservationResponse> getReservationWelcoming(){
-        List<Reservation> s=reservationRepository.getReservationWelComing(13);
+        User user=userService.getCurrentUser();
+        List<Reservation> s=reservationRepository.getReservationWelComing(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public List<ShowListReservationResponse> getReservationUpComing(){
-          List<Reservation> s=reservationRepository.getReservationUpComing(13);
+        User user=userService.getCurrentUser();
+        List<Reservation> s=reservationRepository.getReservationUpComing(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public List<ShowListReservationResponse> getReservationWaitApproval(){
-        List<Reservation> s=reservationRepository.getReservationWaitApproval(13);
+        User user=userService.getCurrentUser();
+        List<Reservation> s=reservationRepository.getReservationWaitApproval(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public void deleteReservation(int reservationId){
-      Reservation reservation=  reservationRepository.findById(reservationId);
+        Reservation reservation=  reservationRepository.findById(reservationId);
         reservation.setStatus(StatusReservation.CANCEL);
         reservationRepository.save(reservation);
     }
@@ -202,24 +208,41 @@ public class ReservationService {
         reservation.setStatus(StatusReservation.WAIT_FOR_CHECKIN);
         reservationRepository.save(reservation);
     }
-    public Page <ShowListReservationResponse> getReservationAllUpcoming(LocalDate startDate, LocalDate endDate, Pageable pageable){
-        Page<Reservation> reservations=reservationRepository.getReservationAllUpcoming(13,startDate,endDate,pageable);
+    public Page<ShowListReservationResponse> getReservationAllUpcoming(LocalDate startDate, LocalDate endDate, Pageable pageable){
+        User user=userService.getCurrentUser();
+        Page<Reservation> reservations=reservationRepository.getReservationAllUpcoming(user.getId(),startDate,endDate,pageable);
         Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
         return list;
     }
     public Page <ShowListReservationResponse> getReservationAllFinished(LocalDate startDate,LocalDate endDate, Pageable pageable){
-        Page<Reservation> reservations=reservationRepository.getReservationAllFinished(13,startDate,endDate,pageable);
+        User user=userService.getCurrentUser();
+        Page<Reservation> reservations=reservationRepository.getReservationAllFinished(user.getId(),startDate,endDate,pageable);
         Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
         return list;
     }
     public Page <ShowListReservationResponse> getReservationAllCancel(LocalDate startDate,LocalDate endDate, Pageable pageable){
-        Page<Reservation> reservations=reservationRepository.getReservationAllCancled(13,startDate,endDate,pageable);
+        User user=userService.getCurrentUser();
+        Page<Reservation> reservations=reservationRepository.getReservationAllCancled(user.getId(),startDate,endDate,pageable);
         Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
         return list;
     }
     public Page <ShowListReservationResponse> getReservationAll(LocalDate startDate,LocalDate endDate, Pageable pageable){
-        Page<Reservation> reservations=reservationRepository.getReservationAll(13,startDate,endDate,pageable);
+        User user=userService.getCurrentUser();
+        Page<Reservation> reservations=reservationRepository.getReservationAll(user.getId(),startDate,endDate,pageable);
         Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
         return list;
     }
+    public  Page <ShowRevenue>  getReservationFinishWithHouseID(LocalDate startDate, LocalDate endDate, int houseId, Pageable pageable){
+        User user = userService.getCurrentUser();
+        Page<Reservation> reservationPage= reservationRepository.getReservationFinishWithHouseId(user.getId(),startDate,endDate,houseId,pageable);
+        Page<ShowRevenue> list  =reservationPage.map(e-> AppUtils.mapper.map(e, ShowRevenue.class));
+        return list;
+    }
+    public  Page <ShowRevenue>  getReservationFinishAll(LocalDate startDate, LocalDate endDate, Pageable pageable){
+        User user = userService.getCurrentUser();
+        Page<Reservation> reservationPage= reservationRepository.getReservationFinishAll(user.getId(),startDate,endDate,pageable);
+        Page<ShowRevenue> list  =reservationPage.map(e-> AppUtils.mapper.map(e, ShowRevenue.class));
+        return list;
+    }
+
 }
