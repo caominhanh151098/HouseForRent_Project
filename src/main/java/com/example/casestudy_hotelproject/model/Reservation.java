@@ -27,6 +27,7 @@ public class Reservation {
     private LocalDate checkInDate;
     private LocalDate checkOutDate;
     private LocalDate reservationDate = LocalDate.now();
+    private LocalDate completeDate;
     private BigDecimal price;
     private BigDecimal weekendPrice;
     private BigDecimal totalPrice;

@@ -16,4 +16,5 @@ public class ContentReviewResponse {
     private ShowUserReviewResponse user;
     private String content;
     private LocalDate reviewDate;
+    private ReviewPointResponse reviewPoint;
 }
