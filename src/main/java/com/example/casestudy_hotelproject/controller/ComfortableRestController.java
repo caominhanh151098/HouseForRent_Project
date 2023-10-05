@@ -27,9 +27,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3000")
 public class ComfortableRestController {
     private final ComfortableService comfortableService;
-
     private final ComfortableDetailRepository comfortableDetailRepository;
-
     private final HouseRepository houseRepository;
 
     @GetMapping

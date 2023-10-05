@@ -10,6 +10,8 @@ import com.example.casestudy_hotelproject.service.category_hotel.request.TypeRoo
 import com.example.casestudy_hotelproject.service.favorite.FavoriteService;
 import com.example.casestudy_hotelproject.service.favorite.response.ShowCategoryFavoriteListResponse;
 import com.example.casestudy_hotelproject.repository.HouseRepository;
+import com.example.casestudy_hotelproject.service.fee.FeeService;
+import com.example.casestudy_hotelproject.service.fee.response.SaveFeeCleaningHouseRequest;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowDetailListComfortableResponse;
@@ -36,8 +38,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.math.BigDecimal;
@@ -55,14 +59,11 @@ public class HouseRestController {
     private final RuleService ruleService;
     private final FavoriteService favoriteService;
     private final HouseRepository houseRepository;
+    private final FeeService feeService;
 
     @GetMapping()
-    public Page<ShowListHouseResponse> showDisplayHome(@RequestHeader(name = "Authorization") String authHeader, Pageable pageable) {
-        String jwt = null;
-        if (authHeader != null) {
-            jwt = authHeader.substring(7);
-        }
-        return houseService.showDisplayHome(jwt, pageable);
+    public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
+        return houseService.showDisplayHome(pageable);
     }
 
     @PostMapping
@@ -124,6 +125,7 @@ public class HouseRestController {
     public ShowPriceAndFeeByHouseResponse getPriceAndFee(@PathVariable int id) {
         return houseService.showPriceAndFeeByHouse(id);
     }
+
     @GetMapping("/admin")
     Page<ShowListHouseForAdminResponse> showAll(Pageable pageable) {
         return houseService.showListHouseForAdmin(pageable);
@@ -139,76 +141,95 @@ public class HouseRestController {
         comfortableService.addComfortableDetail(houseID, comfortableID);
     }
 
-    @PostMapping ("/edit/title/{houseID}")
-    public void editTitle (@PathVariable int houseID ,@RequestBody StringRequest title){
-        houseService.editTitle(houseID,title.getStringRequest());
+    @PostMapping("/edit/title/{houseID}")
+    public void editTitle(@PathVariable int houseID, @RequestBody StringRequest title) {
+        houseService.editTitle(houseID, title.getStringRequest());
     }
-    @PostMapping ("/edit/description/{houseID}")
-    public void editDescription(@PathVariable int houseID ,@RequestBody StringRequest description){
-        houseService.editDescription(houseID,description.getStringRequest());
+
+    @PostMapping("/edit/description/{houseID}")
+    public void editDescription(@PathVariable int houseID, @RequestBody StringRequest description) {
+        houseService.editDescription(houseID, description.getStringRequest());
     }
-    @GetMapping ("/edit/quantityOfGuests/{houseID}/{type}")
-    public void editQuantityOfGuests(@PathVariable int houseID ,@PathVariable String  type){
-        houseService.editQuantityOfGuests(houseID,type) ;
+
+    @GetMapping("/edit/quantityOfGuests/{houseID}/{type}")
+    public void editQuantityOfGuests(@PathVariable int houseID, @PathVariable String type) {
+        houseService.editQuantityOfGuests(houseID, type);
     }
+
     @PostMapping("/edit/location/{houseID}")
-    public void editLocation (@PathVariable int houseID, @RequestBody Location location){
-        houseService.editLocation(houseID,location.getAddress(), location.getLatitude(), location.getLongitude());
+    public void editLocation(@PathVariable int houseID, @RequestBody Location location) {
+        houseService.editLocation(houseID, location.getAddress(), location.getLatitude(), location.getLongitude());
 
     }
+
     @PostMapping("/edit/typeRoomAndCategory/{houseID}")
-    public void editTypeRoomAndCategory(@RequestBody TypeRoomAndCategoryRequest request,@PathVariable int houseID){
-        houseService.editTypeRoom(houseID,request.getTypeRoom());
-        houseService.editCategory(houseID,Integer.parseInt(request.getCategoryHotel()));
+    public void editTypeRoomAndCategory(@RequestBody TypeRoomAndCategoryRequest request, @PathVariable int houseID) {
+        houseService.editTypeRoom(houseID, request.getTypeRoom());
+        houseService.editCategory(houseID, Integer.parseInt(request.getCategoryHotel()));
     }
+
     @GetMapping("/edit/quantityRoomBedBath/{houseId}/{room}/{bath}")
-    public void editquantityRoomBedBath(@PathVariable int houseId, @PathVariable int room,@PathVariable int bath){
-        houseService.editquantityOfRooms(houseId,room);
-        houseService.editquantityOfBathrooms(houseId,bath);
+    public void editquantityRoomBedBath(@PathVariable int houseId, @PathVariable int room, @PathVariable int bath) {
+        houseService.editquantityOfRooms(houseId, room);
+        houseService.editquantityOfBathrooms(houseId, bath);
     }
+
     @PostMapping("/edit/chooseImage/{roomId}")
-    public void chooseImage(@PathVariable int roomId, @RequestBody ArrayList<Integer> listIDRespone){
-       houseService.chooseImage(roomId,listIDRespone);
+    public void chooseImage(@PathVariable int roomId, @RequestBody ArrayList<Integer> listIDRespone) {
+        houseService.chooseImage(roomId, listIDRespone);
 
     }
+
     @PostMapping("/edit/updateBed/{roomID}")
-    public void updateBed (@PathVariable int roomID, @RequestBody ArrayList<BedRequest> bedRequests){
-        houseService.updateBed(roomID,bedRequests   );
+    public void updateBed(@PathVariable int roomID, @RequestBody ArrayList<BedRequest> bedRequests) {
+        houseService.updateBed(roomID, bedRequests);
     }
+
     @GetMapping("/getImageListUrl/{houseID}")
-    public List<ShowImgListResponse> getImgByHouse_id(@PathVariable int houseID){
+    public List<ShowImgListResponse> getImgByHouse_id(@PathVariable int houseID) {
         return houseService.getImgByHouse_id(houseID);
     }
+
     @PostMapping("/edit/image/{houseID}")
-    public void updateImage(@PathVariable int houseID,@RequestBody ArrayList<String> list){
-        houseService.updateImage(houseID,list);
+    public void updateImage(@PathVariable int houseID, @RequestBody ArrayList<String> list) {
+        houseService.updateImage(houseID, list);
     }
+
     @GetMapping("/setBookNow/{houseID}")
-    public void updateBookNow(@PathVariable int houseID){
+    public void updateBookNow(@PathVariable int houseID) {
         houseService.editBookNow(houseID);
     }
+
     @GetMapping("/updateRuleBoolen/{houseId}/{ruleId}/{status}")
-    public void updateRuleBoolen (@PathVariable int houseId,@PathVariable int ruleId,@PathVariable boolean status){
-        houseService.updateRuleBoolen(houseId,ruleId,status);
+    public void updateRuleBoolen(@PathVariable int houseId, @PathVariable int ruleId, @PathVariable boolean status) {
+        houseService.updateRuleBoolen(houseId, ruleId, status);
     }
 
     @GetMapping("/client/wishlists")
-    public List<ShowCategoryFavoriteListResponse> showCategoryFavoriteList(@RequestHeader(name = "Authorization") String authHeader) {
-        String jwt = authHeader.substring(7);
-        return favoriteService.showCategoryFavoriteList(jwt);
+    public List<ShowCategoryFavoriteListResponse> showCategoryFavoriteList() {
+        return favoriteService.showCategoryFavoriteList();
     }
 
     @GetMapping("/client/wishlists/{id}")
-    public Page<ShowListHouseResponse> showWishlist(@PathVariable int id, Pageable pageable, @RequestHeader(name = "Authorization") String authHeader) {
+    public Page<ShowListHouseResponse> showWishlist(@PathVariable int id, Pageable pageable) {
         return favoriteService.showWishlist(id, pageable);
     }
 
-    @PostMapping("/client/add-wishlist/{idFavoritesList}/{idHouse}")
-    public ResponseEntity<?> addToWishlistByUser(@PathVariable int idHouse, @PathVariable int idFavoritesList, @RequestHeader(name = "Authorization") String authHeader) {
-        String jwt = authHeader.substring(7);
-        favoriteService.addToWishlist(idHouse, idFavoritesList, jwt);
-        return null;
+    @PostMapping("/client/add-house-to-wishlist/{idFavoritesList}/{idHouse}")
+    public void addToWishlistByUser(@PathVariable int idHouse, @PathVariable int idFavoritesList) {
+        favoriteService.addToWishlist(idHouse, idFavoritesList);
     }
+
+    @DeleteMapping("/client/remove-house-favorite/{idHouse}")
+    public void removeHouseFavorite(@PathVariable int idHouse) {
+        favoriteService.removeHouseFavorite(idHouse);
+    }
+
+    @PostMapping("/client/create-wishlist")
+    public void createNewWishlist(@RequestBody String nameWishlist) {
+        favoriteService.createNewWishlist(nameWishlist);
+    }
+
     @GetMapping("/filter")
     public List<ShowHouseDetailResponse> findHousesByParameters(
             @RequestParam(required = false) BigDecimal minPrice,
@@ -222,6 +243,12 @@ public class HouseRestController {
     ) {
         List<House> houses = houseRepository.findHousesByComfortableId(
                 minPrice, maxPrice, minGuests, minRooms, minBeds, minBathrooms, comfortableIds, categoryIds);
-        return  houses.stream().map(e -> AppUtils.mapper.map(e, ShowHouseDetailResponse.class)).collect(Collectors.toList());
+        return houses.stream().map(e -> AppUtils.mapper.map(e, ShowHouseDetailResponse.class)).collect(Collectors.toList());
     }
+
+    @PutMapping("/settings/fees/cleaning/{idHouse}")
+    public void settingFeeHouse(@PathVariable int idHouse, @RequestBody SaveFeeCleaningHouseRequest request) {
+        feeService.settingFeeHouse(idHouse, request);
+    }
+
 }

@@ -4,6 +4,7 @@ import com.example.casestudy_hotelproject.model.Favorite;
 import com.example.casestudy_hotelproject.model.FavoritesList;
 import com.example.casestudy_hotelproject.model.House;
 import com.example.casestudy_hotelproject.model.User;
+import com.example.casestudy_hotelproject.repository.FavoriteRepository;
 import com.example.casestudy_hotelproject.repository.FavoritesListRepository;
 import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.service.favorite.response.ShowCategoryFavoriteListResponse;
@@ -13,8 +14,8 @@ import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,10 @@ public class FavoriteService {
     private final HouseRepository houseRepository;
     private final UserService userService;
     private final FavoritesListRepository favoritesListRepository;
+    private final FavoriteRepository favoriteRepository;
 
-    public List<ShowCategoryFavoriteListResponse> showCategoryFavoriteList(String jwt) {
-        User user = userService.extractUser(jwt);
+    public List<ShowCategoryFavoriteListResponse> showCategoryFavoriteList() {
+        User user = userService.getCurrentUser();
         List<ShowCategoryFavoriteListResponse> respList = new ArrayList<>();
         user.getFavoritesLists().forEach(fl -> {
 
@@ -44,6 +46,7 @@ public class FavoriteService {
     }
 
     public Page<ShowListHouseResponse> showWishlist(int wishListId, Pageable pageable) {
+
         Page<House> houseList = houseRepository.findAllByFavorites(wishListId, pageable);
 
         Page<ShowListHouseResponse> respList = houseList.map(h -> AppUtils.mapper.map(h, ShowListHouseResponse.class));
@@ -77,12 +80,12 @@ public class FavoriteService {
         return srcImages;
     }
 
-    public void addToWishlist(int idHouse, int idFavoritesList, String jwt) {
-        User user = userService.extractUser(jwt);
+    public void addToWishlist(int idHouse, int idFavoritesList) {
+        User user = userService.getCurrentUser();
 
         user.getFavoritesLists().forEach(fl -> {
             House house = houseRepository.findById(idHouse);
-            if (fl.getId() == idFavoritesList && !fl.getFavoriteList().contains(house)) {
+            if (fl.getId() == idFavoritesList && favoriteRepository.findByHouseAndList(house, fl) == null) {
                 fl.getFavoriteList().add(new Favorite().builder()
                         .house(house)
                         .list(fl)
@@ -91,6 +94,18 @@ public class FavoriteService {
             favoritesListRepository.save(fl);
             return;
         });
+    }
 
+    @Transactional
+    public void removeHouseFavorite(int idHouse) {
+        User user = userService.getCurrentUser();
+
+        favoriteRepository.removeByHouse_IdAndList_User(idHouse, user);
+    }
+
+    public void createNewWishlist(String nameWishlist) {
+        User user = userService.getCurrentUser();
+
+        favoritesListRepository.save(new FavoritesList().builder().name(nameWishlist).user(user).build());
     }
 }

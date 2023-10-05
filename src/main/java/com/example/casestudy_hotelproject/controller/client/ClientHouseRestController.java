@@ -32,12 +32,8 @@ public class ClientHouseRestController {
     private final RuleService ruleService;
 
     @GetMapping
-    public Page<ShowListHouseResponse> showDisplayHome(@RequestHeader(name = "Authorization") String authHeader, Pageable pageable) {
-        String jwt = null;
-        if (authHeader != null) {
-            jwt = authHeader.substring(7);
-        }
-        return houseService.showDisplayHome(jwt, pageable);
+    public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
+        return houseService.showDisplayHome(pageable);
     }
     @GetMapping("/detail/{id}")
     public ShowHouseDetailResponse showDetail(@PathVariable int id) {

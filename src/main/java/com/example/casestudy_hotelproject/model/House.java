@@ -92,6 +92,9 @@ public class House {
         this.id = id;
     }
 
+    @OneToMany(mappedBy = "house")
+    private List<BlockingDate> blockingDates;
+
     @Override
     public String toString() {
         return "";

@@ -2,9 +2,13 @@ package com.example.casestudy_hotelproject.service.house;
 
 import com.example.casestudy_hotelproject.config.JwtService;
 import com.example.casestudy_hotelproject.model.*;
+import com.example.casestudy_hotelproject.model.enums.BookingFeeType;
+import com.example.casestudy_hotelproject.model.enums.SurchargeType;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.example.casestudy_hotelproject.repository.*;
 import com.example.casestudy_hotelproject.service.house.response.*;
+import com.example.casestudy_hotelproject.service.reservation.response.ShowFeeByHouseResponse;
+import com.example.casestudy_hotelproject.service.reservation.response.ShowFeeResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.bed.BedRequest;
@@ -32,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,8 +44,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-    @Service
-    @AllArgsConstructor
+@Service
+@AllArgsConstructor
 public class HouseService {
     private final HouseRepository houseRepository;
     private final ComfortableRepository comfortableRepository;
@@ -59,12 +64,10 @@ public class HouseService {
     private final RuleRepository ruleRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final SurchargeRepository surchargeRepository;
 
-    public Page<ShowListHouseResponse> showDisplayHome(String jwt, Pageable pageable) {
-        User user = null;
-        if (jwt != null) {
-            user = userService.extractUser(jwt);
-        }
+    public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
+//        User user = userService.extractUser();
         Page<House> listHouse = houseRepository.findAll(pageable);
 
         Page<ShowListHouseResponse> listPageHouse = listHouse.map(e -> AppUtils.mapper.map(e, ShowListHouseResponse.class));
@@ -82,41 +85,44 @@ public class HouseService {
 
         return listPageHouse;
     }
-    public List<HouseOfHostReponse> showHouseOfHost(int id){
-        List<House> houseList =houseRepository.findByUser_Id(id);
-        List<HouseOfHostReponse> reponseList=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseOfHostReponse.class)).collect(Collectors.toList());
+
+    public List<HouseOfHostReponse> showHouseOfHost(int id) {
+        List<House> houseList = houseRepository.findByUser_Id(id);
+        List<HouseOfHostReponse> reponseList = houseList.stream().map(e -> AppUtils.mapper.map(e, HouseOfHostReponse.class)).collect(Collectors.toList());
         return reponseList;
     }
-    public void createHouse(HouseRequest houseRequest){
-        House house= AppUtils.mapper.map(houseRequest,House.class);
+
+    public void createHouse(HouseRequest houseRequest) {
+        House house = AppUtils.mapper.map(houseRequest, House.class);
         house.setDescription(new Description(houseRequest.getDescriptions()));
-        house.setCategoryHotel(new CategoryHotel(Integer.parseInt(houseRequest.getCategoryHotel()) ));
-        house.setLocation(new Location(houseRequest.getAddress(),Double.parseDouble(houseRequest.getLon()),Double.parseDouble(houseRequest.getLat()) ));
-        List<Image> images=new ArrayList<>();
-        for (var item:houseRequest.getImageList()
-             ) {
+        house.setCategoryHotel(new CategoryHotel(Integer.parseInt(houseRequest.getCategoryHotel())));
+        house.setLocation(new Location(houseRequest.getAddress(), Double.parseDouble(houseRequest.getLon()), Double.parseDouble(houseRequest.getLat())));
+        List<Image> images = new ArrayList<>();
+        for (var item : houseRequest.getImageList()
+        ) {
             images.add(new Image(house, item));
         }
         house.setImages(images);
 
         houseRepository.save(house);
-        for (var item:houseRequest.getComfortableDetailList()
+        for (var item : houseRequest.getComfortableDetailList()
         ) {
-            comfortableService.createComfortableDetail(new ComfortableDetail(house,new Comfortable(Integer.parseInt(item)),true));
+            comfortableService.createComfortableDetail(new ComfortableDetail(house, new Comfortable(Integer.parseInt(item)), true));
         }
     }
 
-    public HouseOfHostReponse  getHouseOfHostDetail(int id){
-        House house =houseRepository.findById(id);
-        HouseOfHostReponse houseRespone = AppUtils.mapper.map(house,HouseOfHostReponse.class);
-        List<ComfortableDetailRespone> list=new ArrayList<>();
-        for (var item:house.getComfortableDetails()
-             ) {
-            list.add(new ComfortableDetailRespone(new ComfortableRespone(item.getComfortable().getId()) ,item.isStatus()) );
+    public HouseOfHostReponse getHouseOfHostDetail(int id) {
+        House house = houseRepository.findById(id);
+        HouseOfHostReponse houseRespone = AppUtils.mapper.map(house, HouseOfHostReponse.class);
+        List<ComfortableDetailRespone> list = new ArrayList<>();
+        for (var item : house.getComfortableDetails()
+        ) {
+            list.add(new ComfortableDetailRespone(new ComfortableRespone(item.getComfortable().getId()), item.isStatus()));
         }
         houseRespone.setComfortableDetails(list);
         return houseRespone;
     }
+
     public ShowHouseDetailResponse showDetail(int houseId) {
         House house = houseRepository.findById(houseId);
 
@@ -144,7 +150,7 @@ public class HouseService {
                 house.getQuantityOfBeds(),
                 house.getQuantityOfBathrooms());
         List<Comfortable> listComfortable = new ArrayList<>();
-        for (ComfortableDetail comfortableDetail : house.getComfortableDetails()){
+        for (ComfortableDetail comfortableDetail : house.getComfortableDetails()) {
             listComfortable.add(comfortableDetail.getComfortable());
         }
         List<ShowMiniListComfortableResponse> miniListComfortable = new ArrayList<>();
@@ -154,7 +160,7 @@ public class HouseService {
         }
         List<ShowMiniListComfortableResponse> safeList = showSafetyAndAccommodation(houseId);
         for (int index = 0; index < safeList.size(); index++) {
-            if (safeList.get(index).isStatic_comfortable() == false){
+            if (safeList.get(index).isStatic_comfortable() == false) {
                 miniListComfortable.add(safeList.get(index));
             } else {
                 if (miniListComfortable.size() < listComfortable.size()) {
@@ -189,10 +195,11 @@ public class HouseService {
             return new ShowRoomDetailResponse(room.getName(), srcImg, beds, bedDetail);
         }).collect(Collectors.toList());
     }
-   public List<House> getHouseOfHost(int id){
-            List<House> list=houseRepository.findByUser_Id(id);
+
+    public List<House> getHouseOfHost(int id) {
+        List<House> list = houseRepository.findByUser_Id(id);
         return list;
-   }
+    }
 
     public ShowMiniReviewResponse showMiniReview(int idHouse) {
         House house = houseRepository.findById(idHouse);
@@ -205,7 +212,7 @@ public class HouseService {
         return reviewResp;
     }
 
-    public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(Pageable pageable){
+    public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(Pageable pageable) {
 
 
         Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable)
@@ -215,13 +222,13 @@ public class HouseService {
                     List<ShowListHouseForAdminResponse.ShowImgListResponseForAdmin> imgResponse = images.stream()
                             .map(i -> {
                                 ShowListHouseForAdminResponse.ShowImgListResponseForAdmin img
-                                        = AppUtils.mapper.map(i , ShowListHouseForAdminResponse.ShowImgListResponseForAdmin.class);
+                                        = AppUtils.mapper.map(i, ShowListHouseForAdminResponse.ShowImgListResponseForAdmin.class);
                                 try {
-                                    if (roomRepository.findById(i.getRoom().getId()) != null){
+                                    if (roomRepository.findById(i.getRoom().getId()) != null) {
                                         Room room = roomRepository.findById(i.getRoom().getId());
                                         img.setName(room.getName());
                                     }
-                                }catch (NullPointerException nullPointerException){
+                                } catch (NullPointerException nullPointerException) {
                                     nullPointerException.getMessage();
                                 }
 
@@ -237,7 +244,7 @@ public class HouseService {
                                 return resp;
                             }).toList();
 
-                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
+                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e, ShowListHouseForAdminResponse.class);
                     house.setImages(imgResponse);
                     house.setComfortableList(comfortableResponseForAdmins);
                     return house;
@@ -264,155 +271,172 @@ public class HouseService {
         return safetyListResp;
     }
 
-    public void editTitle(int houseID,String title){
-       House house= houseRepository.findById(houseID);
+    public void editTitle(int houseID, String title) {
+        House house = houseRepository.findById(houseID);
         house.setHotelName(title);
         houseRepository.save(house);
     }
-    public void editDescription(int houseID,String description){
-        House house= houseRepository.findById(houseID);
-        Description description1= descriptionService.findById( house.getDescription().getId());
+
+    public void editDescription(int houseID, String description) {
+        House house = houseRepository.findById(houseID);
+        Description description1 = descriptionService.findById(house.getDescription().getId());
         description1.setListingDescription(description);
         descriptionService.saveDescription(description1);
     }
-    public void editQuantityOfGuests (int houseID ,String type){
-        House house= houseRepository.findById(houseID);
-        if(Objects.equals(type, "c")){
-            house.setQuantityOfGuests(house.getQuantityOfGuests()+1);
-        }if(Objects.equals(type, "t")){
-            house.setQuantityOfGuests(house.getQuantityOfGuests()-1);
+
+    public void editQuantityOfGuests(int houseID, String type) {
+        House house = houseRepository.findById(houseID);
+        if (Objects.equals(type, "c")) {
+            house.setQuantityOfGuests(house.getQuantityOfGuests() + 1);
+        }
+        if (Objects.equals(type, "t")) {
+            house.setQuantityOfGuests(house.getQuantityOfGuests() - 1);
         }
         houseRepository.save(house);
     }
-    public void editCategory (int houseID, int categoryID){
-        House house= houseRepository.findById(houseID);
-        CategoryHotel categoryHotel=categoryHotelService.findById(categoryID);
+
+    public void editCategory(int houseID, int categoryID) {
+        House house = houseRepository.findById(houseID);
+        CategoryHotel categoryHotel = categoryHotelService.findById(categoryID);
         house.setCategoryHotel(categoryHotel);
         houseRepository.save(house);
     }
-    public void editTypeRoom (int houseID , TypeRoom typeRoom){
-        House house= houseRepository.findById(houseID);
+
+    public void editTypeRoom(int houseID, TypeRoom typeRoom) {
+        House house = houseRepository.findById(houseID);
         house.setTypeRoom(typeRoom);
-        houseRepository.save(house);;
+        houseRepository.save(house);
+        ;
     }
-    public void editquantityOfRooms(int houseID,int quantityOfRooms){
-        House house= houseRepository.findById(houseID);
+
+    public void editquantityOfRooms(int houseID, int quantityOfRooms) {
+        House house = houseRepository.findById(houseID);
         house.setQuantityOfRooms(quantityOfRooms);
         houseRepository.save(house);
-        editRoom(houseID,quantityOfRooms);
+        editRoom(houseID, quantityOfRooms);
     }
-    public void editquantityOfBathrooms(int houseID,int quantityOfBathrooms){
-        House house= houseRepository.findById(houseID);
+
+    public void editquantityOfBathrooms(int houseID, int quantityOfBathrooms) {
+        House house = houseRepository.findById(houseID);
         house.setQuantityOfBathrooms(quantityOfBathrooms);
         houseRepository.save(house);
     }
-    public void editquantityOfBeds(int houseID,int quantityOfBeds){
-        House house= houseRepository.findById(houseID);
+
+    public void editquantityOfBeds(int houseID, int quantityOfBeds) {
+        House house = houseRepository.findById(houseID);
         house.setQuantityOfBeds(quantityOfBeds);
         houseRepository.save(house);
 
     }
-    public void editLocation (int houseID,String address,Double lat ,Double lon){
-        House house= houseRepository.findById(houseID);
-        Location location =house.getLocation();
+
+    public void editLocation(int houseID, String address, Double lat, Double lon) {
+        House house = houseRepository.findById(houseID);
+        Location location = house.getLocation();
         location.setAddress(address);
         location.setLatitude(lat);
         location.setLongitude(lon);
         locationService.saveLocation(location);
     }
-    @Transactional
-    public void editRoom(int houseID ,int quantityRoom){
-            List<Room> rooms=roomService.findRoomByHouseID(houseID);
-            List<Room> newList = new ArrayList<>();
-            if(quantityRoom>rooms.size()){
-                for (int i = 0; i < quantityRoom-rooms.size(); i++) {
-                    roomService.createRoom(houseID);
-                }
-            }else if(quantityRoom<rooms.size()){
-                for (int i = 0; i < quantityRoom; i++) {
-                    newList.add(rooms.get(i));
-                }
-                for (int i = 0; i < rooms.size(); i++) {
-                   List<Image> a= rooms.get(i).getImages();
-                    for (var item:a
-                         ) {
-                        item.setRoom(null);
-                        imageRepository.save(item);
-                    }
-                    if(rooms.get(i).getBeds().size()>0){
-                        bedRepository.deleteAll(rooms.get(i).getBeds());
-                        rooms.get(i).setBeds(new ArrayList<>());
-                    }
 
-                }
-                for (int i = 0; i < rooms.size(); i++) {
-                    roomService.deleteRoom(rooms.get(i));
-                }
-                for (var item:newList
-                     ) {
-                    roomService.save(item);
-                }
+    @Transactional
+    public void editRoom(int houseID, int quantityRoom) {
+        List<Room> rooms = roomService.findRoomByHouseID(houseID);
+        List<Room> newList = new ArrayList<>();
+        if (quantityRoom > rooms.size()) {
+            for (int i = 0; i < quantityRoom - rooms.size(); i++) {
+                roomService.createRoom(houseID);
             }
+        } else if (quantityRoom < rooms.size()) {
+            for (int i = 0; i < quantityRoom; i++) {
+                newList.add(rooms.get(i));
+            }
+            for (int i = 0; i < rooms.size(); i++) {
+                List<Image> a = rooms.get(i).getImages();
+                for (var item : a
+                ) {
+                    item.setRoom(null);
+                    imageRepository.save(item);
+                }
+                if (rooms.get(i).getBeds().size() > 0) {
+                    bedRepository.deleteAll(rooms.get(i).getBeds());
+                    rooms.get(i).setBeds(new ArrayList<>());
+                }
+
+            }
+            for (int i = 0; i < rooms.size(); i++) {
+                roomService.deleteRoom(rooms.get(i));
+            }
+            for (var item : newList
+            ) {
+                roomService.save(item);
+            }
+        }
     }
-    public void chooseImage (int roomID,ArrayList<Integer> list){
-        Room room= roomService.findById(roomID);
-        List<Image> a= room .getImages();
-        for (var item:a
+
+    public void chooseImage(int roomID, ArrayList<Integer> list) {
+        Room room = roomService.findById(roomID);
+        List<Image> a = room.getImages();
+        for (var item : a
         ) {
             item.setRoom(null);
             imageRepository.save(item);
         }
-        for (int item :list
-             ) {
-            Image image=  imageRepository.findById(item);
+        for (int item : list
+        ) {
+            Image image = imageRepository.findById(item);
             image.setRoom(room);
             imageRepository.save(image);
         }
     }
+
     @Transactional
-    public void updateBed(int roomID ,ArrayList<BedRequest> list){
-        Room room= roomService.findById(roomID);
+    public void updateBed(int roomID, ArrayList<BedRequest> list) {
+        Room room = roomService.findById(roomID);
         bedRepository.deleteByRoomId(roomID);
-        for (var item: list
-             ) {
-            if(item.getQuantity()>0){
-                Bed bed=new Bed(room, item.getQuantity(), item.getType());
+        for (var item : list
+        ) {
+            if (item.getQuantity() > 0) {
+                Bed bed = new Bed(room, item.getQuantity(), item.getType());
                 bedRepository.save(bed);
             }
         }
     }
-    public List<ShowImgListResponse> getImgByHouse_id(int houseID){
-        List<Image> list= imageRepository.findAllByHouse_Id(houseID);
-        List<ShowImgListResponse> listResponses=list.stream().map(e-> AppUtils.mapper.map(e,ShowImgListResponse.class)).collect(Collectors.toList());
-        return  listResponses;
+
+    public List<ShowImgListResponse> getImgByHouse_id(int houseID) {
+        List<Image> list = imageRepository.findAllByHouse_Id(houseID);
+        List<ShowImgListResponse> listResponses = list.stream().map(e -> AppUtils.mapper.map(e, ShowImgListResponse.class)).collect(Collectors.toList());
+        return listResponses;
     }
+
     @Transactional
-    public void updateImage(int houseID ,ArrayList<String> listImage){
-        House house =houseRepository.findById(houseID);
+    public void updateImage(int houseID, ArrayList<String> listImage) {
+        House house = houseRepository.findById(houseID);
         imageRepository.deleteByHouseId(houseID);
-        for (var item:listImage
-             ) {
-            Image newImage =new Image(house,item);
+        for (var item : listImage
+        ) {
+            Image newImage = new Image(house, item);
             imageRepository.save(newImage);
         }
     }
-    public void editBookNow(int houseID){
-        House house =houseRepository.findById(houseID);
-        Boolean bookNow=house.isBookNow();
+
+    public void editBookNow(int houseID) {
+        House house = houseRepository.findById(houseID);
+        Boolean bookNow = house.isBookNow();
         house.setBookNow(!bookNow);
         houseRepository.save(house);
     }
-    @Transactional
-    public void updateRuleBoolen(int houseID,int ruleId,Boolean status){
 
-       RuleHouse ruleHouse= ruleHouseRepository.findByHouseIdAndRuleId(houseID,ruleId);
-       if(ruleHouse==null){
-           RuleHouse ruleHouse1=new RuleHouse(houseRepository.findById(houseID),ruleRepository.findById(ruleId),status);
-      ruleHouseRepository.save(ruleHouse1);
-       }else if(ruleHouse.isStatus()!=status){
-           ruleHouse.setStatus(status);
-           ruleHouseRepository.save(ruleHouse);
-       }
+    @Transactional
+    public void updateRuleBoolen(int houseID, int ruleId, Boolean status) {
+
+        RuleHouse ruleHouse = ruleHouseRepository.findByHouseIdAndRuleId(houseID, ruleId);
+        if (ruleHouse == null) {
+            RuleHouse ruleHouse1 = new RuleHouse(houseRepository.findById(houseID), ruleRepository.findById(ruleId), status);
+            ruleHouseRepository.save(ruleHouse1);
+        } else if (ruleHouse.isStatus() != status) {
+            ruleHouse.setStatus(status);
+            ruleHouseRepository.save(ruleHouse);
+        }
     }
 
     public ShowHostInfoResponse getHostInfo(int houseId) {
@@ -427,12 +451,30 @@ public class HouseService {
     public ShowPriceAndFeeByHouseResponse showPriceAndFeeByHouse(int houseId) {
         House house = houseRepository.findById(houseId);
         ShowPriceAndFeeByHouseResponse houseResp = AppUtils.mapper.map(house, ShowPriceAndFeeByHouseResponse.class);
+        List<Surcharge> surchargeList = surchargeRepository.findAll();
+        ShowFeeByHouseResponse feeResp = null;
+
+        for (int i = 0; i < surchargeList.size(); i++) {
+            Surcharge surcharge = surchargeList.get(i);
+            BookingFeeType bookingFeeType
+                    = surcharge.getType() ==
+                    SurchargeType.SERVICE_FEE ? BookingFeeType.SERVICE_FEE : BookingFeeType.TAX;
+
+            feeResp = ShowFeeByHouseResponse.builder()
+                    .fee(new ShowFeeResponse(surcharge.getName(), bookingFeeType))
+                    .price(BigDecimal.valueOf(surcharge.getPercent()))
+                    .other(1)
+                    .build();
+            houseResp.getFeeHouses().add(feeResp);
+        }
+
         return houseResp;
     }
-    public List<HouseRevenueResponse> getNameHouseByHostId (int hostId){
-        List<House> houseList=houseRepository.findByUser_Id(hostId);
-        List<HouseRevenueResponse> houseRevenueResponses=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseRevenueResponse.class)).collect(Collectors.toList());
-        return  houseRevenueResponses;
+
+    public List<HouseRevenueResponse> getNameHouseByHostId(int hostId) {
+        List<House> houseList = houseRepository.findByUser_Id(hostId);
+        List<HouseRevenueResponse> houseRevenueResponses = houseList.stream().map(e -> AppUtils.mapper.map(e, HouseRevenueResponse.class)).collect(Collectors.toList());
+        return houseRevenueResponses;
     }
 }
 

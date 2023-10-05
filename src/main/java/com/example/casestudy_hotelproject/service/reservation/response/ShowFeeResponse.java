@@ -6,14 +6,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
-public class ShowFeeByHouseResponse {
-    private ShowFeeResponse fee;
-    private BigDecimal price;
-    private int other = 1;
+public class ShowFeeResponse {
+    private String name;
+    private BookingFeeType feeType;
 }

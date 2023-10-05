@@ -97,7 +97,7 @@ public class ReservationService {
         }
         BigDecimal priceByDate = getPriceByDate(reservation);
         BigDecimal totalPrice = getTotalPrice(reservation, priceByDate);
-        return totalPrice;
+         return totalPrice;
     }
 
     public BigDecimal getTotalPrice(Reservation reservation, BigDecimal priceByDate) {

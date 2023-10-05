@@ -6,28 +6,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Data
-public class FeeHouse {
+public class BlockingDate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private LocalDate blockingDate;
+
     @ManyToOne
     @JoinColumn(name = "house_Id")
     private House house;
-
-    @ManyToOne
-    @JoinColumn(name = "fee_Id")
-    private Fee fee;
-
-    private BigDecimal price;
-    private int other = 1;
 
     @Override
     public String toString() {

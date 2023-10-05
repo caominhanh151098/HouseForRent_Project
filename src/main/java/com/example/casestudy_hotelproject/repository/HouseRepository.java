@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.lang.annotation.Native;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HouseRepository extends JpaRepository<House, Integer> {
@@ -55,4 +56,6 @@ public interface HouseRepository extends JpaRepository<House, Integer> {
             @Param("comfortableIds") List<Integer> comfortableIds,
             @Param("categoryIds") Integer categoryIds
     );
+
+    Optional<House> findByIdAndUser_Id(int id, int userId);
 }
