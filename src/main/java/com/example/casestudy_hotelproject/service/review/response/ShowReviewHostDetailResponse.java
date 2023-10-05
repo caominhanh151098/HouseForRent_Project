@@ -11,4 +11,5 @@ import lombok.NoArgsConstructor;
 public class ShowReviewHostDetailResponse {
     private ShowHouseInfoInReviewResponse house;
     private ContentReviewResponse review;
+
 }

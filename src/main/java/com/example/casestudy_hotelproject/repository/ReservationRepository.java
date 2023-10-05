@@ -94,4 +94,28 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "            where u.id= :userId    and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0 "
             ,nativeQuery = true)
     Page<Reservation> getReservationAll(@Param("userId") int userId, @Param("startDate")LocalDate startDate,@Param("endDate") LocalDate endDate,Pageable pageable);
+    @Query(value = "SELECT r.* FROM reservation r " +
+            "inner join house h " +
+            "on r.house_id= h.id " +
+            "inner join `user` u on u.id = h.user_id " +
+            "where  u.id= :userId and house_id= :houseId  and r.status ='FINISH'  and complete_date >= :startDate  and complete_date<= :endDate "
+            ,countQuery = "SELECT count(*) FROM reservation r " +
+            "            inner join house h " +
+            "            on r.house_id= h.id " +
+            "            inner join `user` u on u.id = h.user_id " +
+            "            where u.id= :userId and house_id= :houseId  and r.status ='FINISH'  and complete_date >= :startDate  and complete_date<= :endDate "
+            ,nativeQuery = true)
+    Page<Reservation> getReservationFinishWithHouseId(@Param("userId") int userId,@Param("startDate")LocalDate startDate,@Param("endDate") LocalDate endDate,@Param("houseId") int houseId,Pageable pageable);
+    @Query(value = "SELECT r.* FROM reservation r " +
+            "inner join house h " +
+            "on r.house_id= h.id " +
+            "inner join `user` u on u.id = h.user_id " +
+            "where  u.id= :userId   and r.status ='FINISH'  and complete_date >= :startDate  and complete_date<= :endDate "
+            ,countQuery = "SELECT count(*) FROM reservation r " +
+            "            inner join house h " +
+            "            on r.house_id= h.id " +
+            "            inner join `user` u on u.id = h.user_id " +
+            "            where u.id= :userId   and r.status ='FINISH'  and complete_date >= :startDate  and complete_date<= :endDate "
+            ,nativeQuery = true)
+    Page<Reservation> getReservationFinishAll(@Param("userId") int userId,@Param("startDate")LocalDate startDate,@Param("endDate") LocalDate endDate,Pageable pageable);
 }

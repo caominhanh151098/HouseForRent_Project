@@ -1,6 +1,5 @@
 package com.example.casestudy_hotelproject.service.house;
 
-import com.example.casestudy_hotelproject.config.JwtService;
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.example.casestudy_hotelproject.repository.*;
@@ -35,7 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -60,11 +58,8 @@ public class HouseService {
     private final UserRepository userRepository;
     private final UserService userService;
 
-    public Page<ShowListHouseResponse> showDisplayHome(String jwt, Pageable pageable) {
-        User user = null;
-        if (jwt != null) {
-            user = userService.extractUser(jwt);
-        }
+    public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
+//        User user = userService.getCurrentUser();
         Page<House> listHouse = houseRepository.findAll(pageable);
 
         Page<ShowListHouseResponse> listPageHouse = listHouse.map(e -> AppUtils.mapper.map(e, ShowListHouseResponse.class));
@@ -82,12 +77,15 @@ public class HouseService {
 
         return listPageHouse;
     }
-    public List<HouseOfHostReponse> showHouseOfHost(int id){
-        List<House> houseList =houseRepository.findByUser_Id(id);
+    public List<HouseOfHostReponse> showHouseOfHost(){
+        User user=userService.getCurrentUser();
+
+        List<House> houseList =houseRepository.findByUser_Id(user.getId());
         List<HouseOfHostReponse> reponseList=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseOfHostReponse.class)).collect(Collectors.toList());
         return reponseList;
     }
     public void createHouse(HouseRequest houseRequest){
+        User user=userService.getCurrentUser();
         House house= AppUtils.mapper.map(houseRequest,House.class);
         house.setDescription(new Description(houseRequest.getDescriptions()));
         house.setCategoryHotel(new CategoryHotel(Integer.parseInt(houseRequest.getCategoryHotel()) ));
@@ -99,6 +97,7 @@ public class HouseService {
         }
         house.setImages(images);
 
+        house.setUser(user);
         houseRepository.save(house);
         for (var item:houseRequest.getComfortableDetailList()
         ) {
@@ -429,10 +428,12 @@ public class HouseService {
         ShowPriceAndFeeByHouseResponse houseResp = AppUtils.mapper.map(house, ShowPriceAndFeeByHouseResponse.class);
         return houseResp;
     }
-    public List<HouseRevenueResponse> getNameHouseByHostId (int hostId){
-        List<House> houseList=houseRepository.findByUser_Id(hostId);
+    public List<HouseRevenueResponse> getNameHouseByHostId (){
+        User user = userService.getCurrentUser();
+        List<House> houseList=houseRepository.findByUser_Id(user.getId());
         List<HouseRevenueResponse> houseRevenueResponses=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseRevenueResponse.class)).collect(Collectors.toList());
         return  houseRevenueResponses;
     }
+
 }
 

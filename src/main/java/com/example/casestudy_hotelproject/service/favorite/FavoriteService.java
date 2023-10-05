@@ -13,7 +13,6 @@ import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,8 +25,8 @@ public class FavoriteService {
     private final UserService userService;
     private final FavoritesListRepository favoritesListRepository;
 
-    public List<ShowCategoryFavoriteListResponse> showCategoryFavoriteList(String jwt) {
-        User user = userService.extractUser(jwt);
+    public List<ShowCategoryFavoriteListResponse> showCategoryFavoriteList() {
+        User user = userService.getCurrentUser();
         List<ShowCategoryFavoriteListResponse> respList = new ArrayList<>();
         user.getFavoritesLists().forEach(fl -> {
 
@@ -77,8 +76,8 @@ public class FavoriteService {
         return srcImages;
     }
 
-    public void addToWishlist(int idHouse, int idFavoritesList, String jwt) {
-        User user = userService.extractUser(jwt);
+    public void addToWishlist(int idHouse, int idFavoritesList) {
+        User user = userService.getCurrentUser();
 
         user.getFavoritesLists().forEach(fl -> {
             House house = houseRepository.findById(idHouse);

@@ -1,9 +1,6 @@
 package com.example.casestudy_hotelproject.service.reservation;
 
-import com.example.casestudy_hotelproject.model.BookingFee;
-import com.example.casestudy_hotelproject.model.House;
-import com.example.casestudy_hotelproject.model.Reservation;
-import com.example.casestudy_hotelproject.model.Surcharge;
+import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.model.enums.BookingFeeType;
 import com.example.casestudy_hotelproject.model.enums.StatusReservation;
 import com.example.casestudy_hotelproject.model.enums.SurchargeType;
@@ -12,9 +9,10 @@ import com.example.casestudy_hotelproject.repository.ReservationRepository;
 import com.example.casestudy_hotelproject.repository.SurchargeRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
 import com.example.casestudy_hotelproject.service.guest_detail.response.GuestDetailService;
-import com.example.casestudy_hotelproject.service.house.response.HouseOfHostReponse;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowListReservationResponse;
+import com.example.casestudy_hotelproject.service.reservation.response.ShowRevenue;
+import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -41,6 +38,7 @@ public class ReservationService {
     private final HouseRepository houseRepository;
     private final SurchargeRepository surchargeRepository;
     private final GuestDetailService guestDetailService;
+    private final UserService userService;
 
     public void saveNewReservation(SaveReservationRequest request) {
         Reservation reservation = AppUtils.mapper.map(request, Reservation.class);
@@ -168,27 +166,32 @@ public class ReservationService {
     }
 
     public List<ShowListReservationResponse> getReservationWillBooked() {
-        List<Reservation> s = reservationRepository.getReservationWillBooked(13);
+        User user=userService.getCurrentUser();
+        List<Reservation> s = reservationRepository.getReservationWillBooked(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public List<ShowListReservationResponse> getReservationComing(){
-        List<Reservation> s = reservationRepository.getReservationComing(13);
+        User user=userService.getCurrentUser();
+        List<Reservation> s = reservationRepository.getReservationComing(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public  List<ShowListReservationResponse> getReservationWelcoming(){
-        List<Reservation> s=reservationRepository.getReservationWelComing(13);
+        User user=userService.getCurrentUser();
+        List<Reservation> s=reservationRepository.getReservationWelComing(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public List<ShowListReservationResponse> getReservationUpComing(){
-          List<Reservation> s=reservationRepository.getReservationUpComing(13);
+        User user=userService.getCurrentUser();
+          List<Reservation> s=reservationRepository.getReservationUpComing(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
     public List<ShowListReservationResponse> getReservationWaitApproval(){
-        List<Reservation> s=reservationRepository.getReservationWaitApproval(13);
+        User user=userService.getCurrentUser();
+        List<Reservation> s=reservationRepository.getReservationWaitApproval(user.getId());
         List<ShowListReservationResponse>list=s.stream().map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
@@ -203,23 +206,44 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
     public Page <ShowListReservationResponse> getReservationAllUpcoming(LocalDate startDate, LocalDate endDate, Pageable pageable){
-        Page<Reservation> reservations=reservationRepository.getReservationAllUpcoming(13,startDate,endDate,pageable);
+        User user=userService.getCurrentUser();
+        Page<Reservation> reservations=reservationRepository.getReservationAllUpcoming(user.getId(),startDate,endDate,pageable);
         Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
         return list;
     }
     public Page <ShowListReservationResponse> getReservationAllFinished(LocalDate startDate,LocalDate endDate, Pageable pageable){
-        Page<Reservation> reservations=reservationRepository.getReservationAllFinished(13,startDate,endDate,pageable);
+        User user=userService.getCurrentUser();
+        Page<Reservation> reservations=reservationRepository.getReservationAllFinished(user.getId(),startDate,endDate,pageable);
         Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
         return list;
     }
     public Page <ShowListReservationResponse> getReservationAllCancel(LocalDate startDate,LocalDate endDate, Pageable pageable){
-        Page<Reservation> reservations=reservationRepository.getReservationAllCancled(13,startDate,endDate,pageable);
+        User user=userService.getCurrentUser();
+        Page<Reservation> reservations=reservationRepository.getReservationAllCancled(user.getId(),startDate,endDate,pageable);
         Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
         return list;
     }
     public Page <ShowListReservationResponse> getReservationAll(LocalDate startDate,LocalDate endDate, Pageable pageable){
-        Page<Reservation> reservations=reservationRepository.getReservationAll(13,startDate,endDate,pageable);
+        User user=userService.getCurrentUser();
+        Page<Reservation> reservations=reservationRepository.getReservationAll(user.getId(),startDate,endDate,pageable);
         Page<ShowListReservationResponse>list=reservations.map(e-> AppUtils.mapper.map(e, ShowListReservationResponse.class));
         return list;
     }
+    public  Page <ShowRevenue>  getReservationFinishWithHouseID(LocalDate startDate, LocalDate endDate, int houseId, Pageable pageable){
+        User user = userService.getCurrentUser();
+
+
+        Page<Reservation> reservationPage= reservationRepository.getReservationFinishWithHouseId(user.getId(),startDate,endDate,houseId,pageable);
+       Page<ShowRevenue> list  =reservationPage.map(e-> AppUtils.mapper.map(e, ShowRevenue.class));
+        return list;
+    }
+    public  Page <ShowRevenue>  getReservationFinishAll(LocalDate startDate, LocalDate endDate, Pageable pageable){
+        User user = userService.getCurrentUser();
+
+
+        Page<Reservation> reservationPage= reservationRepository.getReservationFinishAll(user.getId(),startDate,endDate,pageable);
+        Page<ShowRevenue> list  =reservationPage.map(e-> AppUtils.mapper.map(e, ShowRevenue.class));
+        return list;
+    }
+
 }

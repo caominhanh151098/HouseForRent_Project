@@ -15,6 +15,8 @@ import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -76,16 +78,17 @@ public class UserService {
         userResp.setConfirmPhone(user.getPhone() != null);
     }
 
-    public boolean addPhoneNumber(String phone, String jwt) {
-        User user = extractUser(jwt);
+    public boolean addPhoneNumber(String phone) {
+        User user = getCurrentUser();
         user.setPhone(phone);
         userRepository.save(user);
         return true;
     }
 
 
-    public User extractUser(String jwt) {
-        String userEmail = jwtService.extractUsername(jwt);
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userEmail = authentication.getName();
         return userRepository.findByEmail(userEmail).orElseThrow();
     }
 }

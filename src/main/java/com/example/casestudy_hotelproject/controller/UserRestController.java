@@ -44,9 +44,8 @@ public class UserRestController {
     }
 
     @PostMapping("/client/add-phone")
-    public ResponseEntity<?> addPhoneUser(@RequestBody String phone, @RequestHeader(name = "Authorization") String authHeader) {
-        String jwt = authHeader.substring(7);
-        userService.addPhoneNumber(phone, jwt);
+    public ResponseEntity<?> addPhoneUser(@RequestBody String phone) {
+        userService.addPhoneNumber(phone);
 
         return ResponseEntity.ok(true);
     }
