@@ -528,5 +528,20 @@ public class HouseService {
                 .map(e -> AppUtils.mapper.map(e, ShowListHouseAcceptAdminResponse.class));
         return responses;
     }
+    public PriceResponse  getPrice(int houseId){
+       House house= houseRepository.findById(houseId);
+       PriceResponse priceResponse= AppUtils.mapper.map(house, PriceResponse.class);
+       return priceResponse;
+    }
+    public void editPrice (int houseId,BigDecimal price){
+        House house=houseRepository.findById(houseId);
+        house.setPrice(price);
+        houseRepository.save(house);
+    }
+    public void editWeekendPrice(int houseId,BigDecimal price){
+        House house=houseRepository.findById(houseId);
+        house.setWeekendPrice(price);
+        houseRepository.save(house);
+    }
 }
 

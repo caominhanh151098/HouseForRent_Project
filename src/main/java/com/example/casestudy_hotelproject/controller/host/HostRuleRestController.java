@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.controller.host;
 
+import com.example.casestudy_hotelproject.service.house.request.StringRequest;
 import com.example.casestudy_hotelproject.service.rule.RuleService;
 import com.example.casestudy_hotelproject.service.rule.response.RuleBoolenRespone;
 import com.example.casestudy_hotelproject.service.rule.response.RuleHouseRespone;
@@ -27,7 +28,7 @@ public class HostRuleRestController {
         ruleService.updateQuietTime(houseId,startTime,endTime,ruleId);
     }
     @PostMapping("/updateOther/{houseId}")
-    public void updateOther(@PathVariable int houseId , @RequestBody String other){
-        ruleService.updateOther(houseId,other);
+    public void updateOther(@PathVariable int houseId , @RequestBody StringRequest other){
+        ruleService.updateOther(houseId,other.getStringRequest()    );
     }
 }

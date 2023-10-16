@@ -178,21 +178,6 @@ public class HostHouseRestController {
         houseService.updateRuleBoolen(houseId,ruleId,status);
     }
 
-    @GetMapping("/client/wishlists")
-    public List<ShowCategoryFavoriteListResponse> showCategoryFavoriteList() {
-        return favoriteService.showCategoryFavoriteList();
-    }
-
-    @GetMapping("/client/wishlists/{id}")
-    public Page<ShowListHouseResponse> showWishlist(@PathVariable int id, Pageable pageable, @RequestHeader(name = "Authorization") String authHeader) {
-        return favoriteService.showWishlist(id, pageable);
-    }
-
-    @PostMapping("/client/add-wishlist/{idFavoritesList}/{idHouse}")
-    public ResponseEntity<?> addToWishlistByUser(@PathVariable int idHouse, @PathVariable int idFavoritesList) {
-        favoriteService.addToWishlist(idHouse, idFavoritesList);
-        return null;
-    }
     @GetMapping("/filter")
     public List<ShowHouseDetailResponse> findHousesByParameters(
             @RequestParam(required = false) BigDecimal minPrice,
@@ -212,8 +197,25 @@ public class HostHouseRestController {
     public List<HouseRevenueResponse> getHouseRevenueHost(){
         return houseService.getNameHouseByHostId();
     }
+
     @GetMapping("/detail/reviews2/{houseId}")
     public Page<ContentReviewResponse> showReviews2(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 12) Pageable pageable) {
         return reviewService.showReviews(id, pageable);
     }
+    @GetMapping("/getPrice/{houseId}")
+    public PriceResponse getPrice(@PathVariable int houseId){
+        if(houseId==0){
+            return null;
+        }
+        return houseService.getPrice(houseId);
+    }
+    @GetMapping("/editPrice/{houseId}/{price}")
+    public void editPrice(@PathVariable int houseId,@PathVariable BigDecimal price){
+        houseService.editPrice(houseId,price);
+    }
+    @GetMapping("editWeekendPrice/{houseId}/{weekendPrice}")
+    public void editWeekendPrice(@PathVariable int houseId,@PathVariable  BigDecimal weekendPrice){
+        houseService.editWeekendPrice(houseId,weekendPrice);
+    }
+
 }

@@ -2,10 +2,7 @@ package com.example.casestudy_hotelproject.controller.admin;
 
 import com.example.casestudy_hotelproject.service.house.HouseService;
 import com.example.casestudy_hotelproject.service.house.request.UpdateStatusHouseAdmin;
-import com.example.casestudy_hotelproject.service.house.response.ShowHouseCreateDateAdminResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowListHouseAcceptAdminResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowStatisticalHouseForAdminResponse;
+import com.example.casestudy_hotelproject.service.house.response.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,4 +48,5 @@ public class AdminHouseRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed");
         }
     }
+
 }

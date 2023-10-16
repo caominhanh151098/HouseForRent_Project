@@ -40,16 +40,17 @@ public class ReservationService {
     private final UserService userService;
 
     public void saveNewReservation(SaveReservationRequest request) {
+        User user = userService.getCurrentUser();
         Reservation reservation = AppUtils.mapper.map(request, Reservation.class);
         House house = houseRepository.findById(Integer.parseInt(request.getHouseId()));
-        reservation.setUser(userRepository.findById(Integer.parseInt(request.getUserId())));
+        reservation.setUser(userRepository.findById(user.getId()));
         reservation.setHouse(house);
         reservation.setPrice(house.getPrice());
         reservation.setWeekendPrice(house.getWeekendPrice());
         reservation.setBookingFees(getCurrentBookingFeesByHouse(reservation, house));
         reservation.setStatus(house.isBookNow() ? StatusReservation.WAIT_FOR_CHECKIN : StatusReservation.AWAITING_APPROVAL);
         reservation.setTotalPrice(getTotalPrice(reservation));
-//        reservationRepository.save(reservation);
+       reservationRepository.save(reservation);
     }
 
     public List<BookingFee> getCurrentBookingFeesByHouse(Reservation reservation, House house) {
@@ -94,7 +95,7 @@ public class ReservationService {
             reservation.setWeekendPrice(reservation.getPrice());
         }
         BigDecimal price = getPriceByDate(reservation);
-        return null;
+        return price;
     }
 
     public BigDecimal getPriceByDate(Reservation reservation) {

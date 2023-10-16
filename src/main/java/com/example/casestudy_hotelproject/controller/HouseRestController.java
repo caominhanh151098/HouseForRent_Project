@@ -150,7 +150,6 @@ public class HouseRestController {
     @PostMapping("/edit/location/{houseID}")
     public void editLocation(@PathVariable int houseID, @RequestBody Location location) {
         houseService.editLocation(houseID, location.getAddress(), location.getLatitude(), location.getLongitude());
-
     }
 
     @PostMapping("/edit/typeRoomAndCategory/{houseID}")

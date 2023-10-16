@@ -1,9 +1,6 @@
-package com.example.casestudy_hotelproject.controller;
+package com.example.casestudy_hotelproject.controller.host;
 
 import com.example.casestudy_hotelproject.model.User;
-import com.example.casestudy_hotelproject.service.favorite.FavoriteService;
-import com.example.casestudy_hotelproject.service.favorite.response.ShowCategoryFavoriteListResponse;
-import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.review.response.ShowReviewHostDetailResponse;
@@ -15,17 +12,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/host/user")
 @CrossOrigin(origins = "http://localhost:3000")
-public class UserRestController {
+public class HostUserRestController {
     private final UserService userService;
     private final ReviewService reviewService;
 
@@ -51,6 +45,4 @@ public class UserRestController {
 
         return ResponseEntity.ok(true);
     }
-
-
 }
