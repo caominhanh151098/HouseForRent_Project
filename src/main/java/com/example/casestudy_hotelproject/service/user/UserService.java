@@ -2,18 +2,18 @@ package com.example.casestudy_hotelproject.service.user;
 
 import com.example.casestudy_hotelproject.config.JwtService;
 import com.example.casestudy_hotelproject.model.House;
+import com.example.casestudy_hotelproject.model.IdentityPaper;
 import com.example.casestudy_hotelproject.model.InterestDetail;
 import com.example.casestudy_hotelproject.model.User;
+import com.example.casestudy_hotelproject.model.enums.IdentityType;
+import com.example.casestudy_hotelproject.repository.IdentityPaperRepository;
 import com.example.casestudy_hotelproject.repository.ReviewRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
 import com.example.casestudy_hotelproject.service.house.response.ShowInfoHouseOfHostResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseForAdminResponse;
 import com.example.casestudy_hotelproject.service.interest.response.ShowInterestUserResponse;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
-import com.example.casestudy_hotelproject.service.user.response.ShowStatisticalUserForAdminResponse;
-import com.example.casestudy_hotelproject.service.user.response.ShowUserCreateDateAdminResponse;
-import com.example.casestudy_hotelproject.service.user.response.ShowUserDetailResponse;
-import com.example.casestudy_hotelproject.service.user.response.UserResponse;
+import com.example.casestudy_hotelproject.service.user.response.*;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final JwtService jwtService;
+    private final IdentityPaperRepository identityPaperRepository;
 
     public Page<UserResponse> findAll(String search, Pageable pageable) {
 
@@ -112,5 +114,53 @@ public class UserService {
                 .stream().map(e -> AppUtils.mapper.map(e , ShowStatisticalUserForAdminResponse.class)).toList();
 
         return  responses;
+    }
+
+    public UserInfoResponse getInfoUser() {
+        User user = getCurrentUser();
+        return AppUtils.mapper.map(user, UserInfoResponse.class);
+    }
+
+    public UserInfoResponse updateUserInfo(Map<String, Object> updates) {
+        User user = getCurrentUser();
+        if (updates.containsKey("firstName")){
+            user.setFirstName((String) updates.get("firstName"));
+        }
+        if (updates.containsKey("lastName")){
+            user.setLastName((String) updates.get("lastName"));
+        }
+        if (updates.containsKey("email")){
+            user.setEmail((String) updates.get("email"));
+        }
+        if (updates.containsKey("phone")){
+            user.setPhone((String) updates.get("phone"));
+        }
+        if (updates.containsKey("identity")){
+            Object identityObj  = updates.get("identity");
+            IdentityPaper identity;
+            if (identityObj instanceof Integer){
+                int identityId = (Integer) identityObj;
+                identity = identityPaperRepository.findById(identityId).orElse(null);
+            } else if (identityObj instanceof Map){
+                Map<String, Object> identityData = (Map<String, Object>) identityObj;
+
+                if(user.getIdentity() != null){
+                    identity = user.getIdentity();
+                    identity.setSrcImgFrontSide((String) identityData.get("srcImgFrontSide"));
+                    identity.setSrcImgBackSide((String) identityData.get("srcImgBackSide"));
+                } else {
+                    identity = new IdentityPaper();
+                    identity.setType(IdentityType.ID_CARD);
+                    identity.setSrcImgFrontSide((String) identityData.get("srcImgFrontSide"));
+                    identity.setSrcImgBackSide((String) identityData.get("srcImgBackSide"));
+                    identity = identityPaperRepository.save(identity);
+                }
+            } else {
+                throw new IllegalArgumentException("Invalid identity format");
+            }
+            user.setIdentity(identity);
+        }
+        userRepository.save(user);
+        return AppUtils.mapper.map(user, UserInfoResponse.class);
     }
 }

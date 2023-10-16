@@ -5,6 +5,7 @@ import com.example.casestudy_hotelproject.service.review.response.ContentReviewR
 import com.example.casestudy_hotelproject.service.review.response.ShowReviewHostDetailResponse;
 import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.service.user.response.ShowUserDetailResponse;
+import com.example.casestudy_hotelproject.service.user.response.UserInfoResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -41,5 +44,16 @@ public class GuestUserRestController {
         userService.addPhoneNumber(phone);
 
         return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/get-info")
+    public UserInfoResponse getInfoUser(){
+        return userService.getInfoUser();
+    }
+
+    @PatchMapping("/update-info")
+    public ResponseEntity<UserInfoResponse> updateUserInfo(@RequestBody Map<String, Object> updates){
+        UserInfoResponse userInfoResponse = userService.updateUserInfo(updates);
+        return ResponseEntity.ok(userInfoResponse);
     }
 }
