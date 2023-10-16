@@ -35,11 +35,6 @@ public class HostReservationResController {
     private final ReservationService reservationService;
     private final GuestDetailService guestDetailService;
 
-    @PostMapping("/create")
-    public void saveReservation(@RequestBody SaveReservationRequest request) {
-        reservationService.saveNewReservation(request);
-    }
-
     @GetMapping("/willCheckOut")
     public List<ShowListReservationResponse> getReservationWillCheckOut() {
         return reservationService.getReservationWillBooked();

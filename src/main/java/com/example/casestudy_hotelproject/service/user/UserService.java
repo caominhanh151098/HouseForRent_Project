@@ -143,28 +143,28 @@ public class UserService {
 
     public UserInfoResponse updateUserInfo(Map<String, Object> updates) {
         User user = getCurrentUser();
-        if (updates.containsKey("firstName")){
+        if (updates.containsKey("firstName")) {
             user.setFirstName((String) updates.get("firstName"));
         }
-        if (updates.containsKey("lastName")){
+        if (updates.containsKey("lastName")) {
             user.setLastName((String) updates.get("lastName"));
         }
-        if (updates.containsKey("email")){
+        if (updates.containsKey("email")) {
             user.setEmail((String) updates.get("email"));
         }
-        if (updates.containsKey("phone")){
+        if (updates.containsKey("phone")) {
             user.setPhone((String) updates.get("phone"));
         }
-        if (updates.containsKey("identity")){
-            Object identityObj  = updates.get("identity");
+        if (updates.containsKey("identity")) {
+            Object identityObj = updates.get("identity");
             IdentityPaper identity;
-            if (identityObj instanceof Integer){
+            if (identityObj instanceof Integer) {
                 int identityId = (Integer) identityObj;
                 identity = identityPaperRepository.findById(identityId).orElse(null);
-            } else if (identityObj instanceof Map){
+            } else if (identityObj instanceof Map) {
                 Map<String, Object> identityData = (Map<String, Object>) identityObj;
 
-                if(user.getIdentity() != null){
+                if (user.getIdentity() != null) {
                     identity = user.getIdentity();
                     identity.setSrcImgFrontSide((String) identityData.get("srcImgFrontSide"));
                     identity.setSrcImgBackSide((String) identityData.get("srcImgBackSide"));
@@ -182,5 +182,11 @@ public class UserService {
         }
         userRepository.save(user);
         return AppUtils.mapper.map(user, UserInfoResponse.class);
+    }
+
+    public void verifyEmail() {
+        User user = getCurrentUser();
+        user.setVerifyEmail(true);
+        userRepository.save(user);
     }
 }

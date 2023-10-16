@@ -28,7 +28,7 @@ public class ReservationRestController {
 
     @PostMapping("/create")
     public void saveReservation(@RequestBody SaveReservationRequest request) {
-        reservationService.saveNewReservation(request);
+//        reservationService.saveNewReservation(request);
     }
 
     @GetMapping("/willCheckOut")
