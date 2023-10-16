@@ -26,7 +26,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/multi-calendars/**").hasAuthority("GUEST")
 //                        .requestMatchers("/api/client/**").permitAll()
-                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/**","/ws/**").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

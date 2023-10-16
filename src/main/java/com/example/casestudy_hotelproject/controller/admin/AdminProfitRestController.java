@@ -1,6 +1,7 @@
 package com.example.casestudy_hotelproject.controller.admin;
 
 
+import com.example.casestudy_hotelproject.service.dataSocket.response.DataSocketResponse;
 import com.example.casestudy_hotelproject.service.reservation.ReservationService;
 import com.example.casestudy_hotelproject.service.reservation.request.ReservationTestRequest;
 import com.example.casestudy_hotelproject.service.reservation.response.ReservationTest;
@@ -41,5 +42,15 @@ public class AdminProfitRestController {
     public ResponseEntity<?> updateData (@PathVariable String id , @RequestBody ReservationTestRequest request){
         reservationService.updateStatus(id , request.getStatus());
         return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping("/show_all")
+    public List<DataSocketResponse> showAllInday(){
+        return reservationService.findAllInday();
+    }
+
+    @GetMapping("/findAll")
+    public List<ReservationTest> showAll(){
+        return reservationService.showAll();
     }
 }

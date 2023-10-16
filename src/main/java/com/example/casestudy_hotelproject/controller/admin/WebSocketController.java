@@ -4,6 +4,7 @@ import com.example.casestudy_hotelproject.service.reservation.request.Reservatio
 import com.example.casestudy_hotelproject.service.dataSocket.DataSocketService;
 import com.example.casestudy_hotelproject.service.dataSocket.response.DataSocketResponse;
 import lombok.AllArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -17,10 +18,9 @@ public class WebSocketController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @MessageMapping("/sendData")
-    @SendTo("/topic/dataUpdates")
+    @SendTo("/topic/dataNew")
     public DataSocketResponse sendData(ReservationTestRequest request){
         DataSocketResponse response = dataSocketService.processData(request.getId());
-
         return response;
     }
 

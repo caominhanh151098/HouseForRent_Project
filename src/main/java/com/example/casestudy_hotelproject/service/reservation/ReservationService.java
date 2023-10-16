@@ -8,11 +8,13 @@ import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.repository.ReservationRepository;
 import com.example.casestudy_hotelproject.repository.SurchargeRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
+import com.example.casestudy_hotelproject.service.dataSocket.response.DataSocketResponse;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import com.example.casestudy_hotelproject.service.reservation.response.*;
 import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
+import org.hibernate.loader.NonUniqueDiscoveredSqlAliasException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -246,4 +248,17 @@ public class ReservationService {
         return list;
     }
 
+    public List<ReservationTest> showAll(){
+        return reservationRepository.showAllStatus().stream().map(e -> AppUtils.mapper.map(e , ReservationTest.class)).toList();
+    }
+
+    public List<DataSocketResponse> findAllInday(){
+        try {
+            return  reservationRepository.findAllListHouseProfitsInDay(LocalDate.now()).stream().map(e -> AppUtils.mapper.map(e , DataSocketResponse.class)).toList();
+
+        }catch (NonUniqueDiscoveredSqlAliasException exception){
+            exception.getCause();
+        }
+        return null;
+    }
 }

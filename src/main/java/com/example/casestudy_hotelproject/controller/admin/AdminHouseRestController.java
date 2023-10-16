@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.controller.admin;
 
+import com.example.casestudy_hotelproject.service.dataSocket.response.DataSocketResponse;
 import com.example.casestudy_hotelproject.service.house.HouseService;
 import com.example.casestudy_hotelproject.service.house.request.UpdateStatusHouseAdmin;
 import com.example.casestudy_hotelproject.service.house.response.*;
@@ -40,8 +41,9 @@ public class AdminHouseRestController {
     }
 
     @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateHouseStatus( @PathVariable String id , @RequestBody UpdateStatusHouseAdmin request){
+    public ResponseEntity<?> updateStatusAdmin( @PathVariable String id , @RequestBody UpdateStatusHouseAdmin request){
         try {
+
             houseService.updateStatusAdmin(id, request.getStatus() , request.getConfirmPDF());
             return ResponseEntity.ok("Success");
         } catch (Exception e) {
@@ -49,4 +51,19 @@ public class AdminHouseRestController {
         }
     }
 
+
+    @PatchMapping("/set-status/{id}")
+    public ResponseEntity<?> updateHouseStatus(@PathVariable String id , @RequestBody UpdateStatusHouseAdmin request){
+        try {
+            houseService.updateStatusAdmin(id , request.getStatus());
+            return ResponseEntity.ok("Success");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed");
+        }
+    }
+
+    @GetMapping("/cancel")
+    public Page<ShowListHouseAcceptAdminResponse> showAllCancelHouse(Pageable pageable , @RequestParam(defaultValue = "") String search){
+        return houseService.showAllCancelHouse(pageable , search);
+    }
 }

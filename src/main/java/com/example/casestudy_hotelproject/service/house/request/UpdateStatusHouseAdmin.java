@@ -13,6 +13,9 @@ public class UpdateStatusHouseAdmin {
     private String confirmPDF;
     private UserAcceptResponse user;
 
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class UserAcceptResponse {
         private String id;
 

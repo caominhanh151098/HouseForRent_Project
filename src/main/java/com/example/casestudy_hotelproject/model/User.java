@@ -39,6 +39,7 @@ public class User implements UserDetails {
     private boolean status;
     private LocalDate createDate = LocalDate.now();
     private String password;
+    private String reasonPDF;
 
     @OneToMany(mappedBy = "user")
     private List<House> hotels;

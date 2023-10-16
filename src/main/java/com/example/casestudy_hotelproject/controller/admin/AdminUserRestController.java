@@ -1,6 +1,7 @@
 package com.example.casestudy_hotelproject.controller.admin;
 
 import com.example.casestudy_hotelproject.service.user.UserService;
+import com.example.casestudy_hotelproject.service.user.request.UserRequest;
 import com.example.casestudy_hotelproject.service.user.response.ShowStatisticalUserForAdminResponse;
 import com.example.casestudy_hotelproject.service.user.response.ShowUserCreateDateAdminResponse;
 import com.example.casestudy_hotelproject.service.user.response.UserResponse;
@@ -21,6 +22,16 @@ public class AdminUserRestController {
     @GetMapping
     public Page<UserResponse> findAll(@RequestParam(defaultValue = "") String search, Pageable pageable) {
         return userService.findAll(search, pageable);
+    }
+
+    @GetMapping("/user_ban")
+    public Page<UserResponse> findAllUserBan(@RequestParam(defaultValue = "") String search , Pageable pageable){
+        return  userService.findAllUserBan(search , pageable);
+    }
+
+    @PatchMapping("/update/{id}")
+    public void changStatusUser(@PathVariable String id ,@RequestBody  UserRequest userRequest){
+        userService.changeStatusUser(id , userRequest.getStatus());
     }
 
     @GetMapping("/createdDate")

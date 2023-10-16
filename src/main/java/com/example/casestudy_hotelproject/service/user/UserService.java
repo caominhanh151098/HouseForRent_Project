@@ -14,6 +14,11 @@ import com.example.casestudy_hotelproject.service.house.response.ShowListHouseFo
 import com.example.casestudy_hotelproject.service.interest.response.ShowInterestUserResponse;
 import com.example.casestudy_hotelproject.service.review.response.ContentReviewResponse;
 import com.example.casestudy_hotelproject.service.user.response.*;
+import com.example.casestudy_hotelproject.service.user.request.UserRequest;
+import com.example.casestudy_hotelproject.service.user.response.ShowStatisticalUserForAdminResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowUserCreateDateAdminResponse;
+import com.example.casestudy_hotelproject.service.user.response.ShowUserDetailResponse;
+import com.example.casestudy_hotelproject.service.user.response.UserResponse;
 import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,6 +51,21 @@ public class UserService {
         return responses;
 
 
+    }
+
+    public Page<UserResponse> findAllUserBan(String search , Pageable pageable){
+        search = "%" + search + "%";
+
+        Page<UserResponse> responses = userRepository.findAllUserBan(search , pageable)
+                .map(e -> AppUtils.mapper.map(e , UserResponse.class));
+        return  responses;
+    }
+
+    public void changeStatusUser(String id ,String status){
+        User user = userRepository.findById(Integer.parseInt(id));
+        user.setStatus(Boolean.parseBoolean(status));
+
+        userRepository.save(user);
     }
 
     public User findById(int id) {

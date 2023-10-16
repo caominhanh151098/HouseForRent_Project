@@ -15,11 +15,16 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "select u from User u " +
-            "where lower(u.firstName) like  lower(:search) " +
+            "where (u.status = true) and (u.role = 'HOST' or u.role = 'GUEST') and (lower(u.firstName) like  lower(:search) " +
             "or lower(u.lastName) like lower(:search) " +
-            "or lower(u.email) like lower(:search)")
+            "or lower(u.email) like lower(:search))")
     Page<User> findAllWithSearchAndPaging(String search, Pageable pageable);
 
+    @Query(value = "select u from User u " +
+            "where (u.status = false) and (u.role = 'HOST' or u.role = 'GUEST') and (lower(u.firstName) like  lower(:search) " +
+            "or lower(u.lastName) like lower(:search) " +
+            "or lower(u.email) like lower(:search))")
+    Page<User> findAllUserBan(String search , Pageable pageable);
     @Query(value = "SELECT u from User u " +
             "JOIN House h ON h.user.id = u.id " +
             "WHERE h.id = :houseId")

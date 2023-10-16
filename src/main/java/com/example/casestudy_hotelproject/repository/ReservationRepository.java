@@ -145,30 +145,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "and (r.reservationDate between :date1 and  :date2)")
     List<Reservation> findAllListHouseProfitsForAdmin(LocalDate date1,LocalDate date2);
 
-//    @Query(value = "select r,h,u,b from Reservation r " +
-//            "left join House h on r.house.id = h.id " +
-//            "left join User u on r.user.id = u.id " +
-//            "left join BookingFee b on r.id = b.reservation.id " +
-//
-//            "where (r.status = 'FINISH') " +
-//            "and (b.type = 'SERVICE_FEE') " +
-//            " and (h.status = 'ACCEPTED')" +
-//            "and (r.reservationDate = :dateNow)")
-//    List<Reservation> findAllListHouseProfitsInDay(LocalDate dateNow);
-
-    @Query(nativeQuery = true, value = "select r.* , h.* , u.* , b.* from reservation r " +
-            "left join house h on r.house_id = h.id  " +
-            "    left join user u on r.user_id = u.id " +
-            "    left join booking_fee b on r.id = b.reservation_id " +
-            "      join (" +
-            "  select r.id from reservation r where (r.reservation_date = :dateNow) group by r.id order by r.id DESC limit 1 " +
-            "      ) t1 " +
-            "    where (r.status = 'FINISH') " +
-            "    and (b.type = 'SERVICE_FEE') " +
-            "    and (h.status = 'ACCEPTED') " +
-            "    and (r.reservation_date = :dateNow) " +
-            "and (r.id = t1.id);")
-    Reservation findAllListHouseProfitsInDay(@Param("dateNow") LocalDate dateNow);
+    @Query(value = "select r , h , u , b from Reservation r " +
+            "left join House h on r.house.id = h.id " +
+            "left join User u on r.user.id = u.id " +
+            "left join BookingFee b on r.id = b.reservation.id " +
+            "where (r.status = 'FINISH') " +
+            "and (b.type = 'SERVICE_FEE') " +
+            "and (h.status = 'ACCEPTED') " +
+            "and (r.reservationDate = :dateNow) order by r.id DESC")
+    List<Reservation> findAllListHouseProfitsInDay(LocalDate dateNow);
 
     @Query(value = "select r,h,u,b from Reservation r " +
             "left join House h on r.house.id = h.id " +

@@ -74,4 +74,7 @@ public interface HouseRepository extends JpaRepository<House, Integer> {
 
     @Query(value = "select h from House h left join User u on h.user.id = u.id where (h.status = 'ACCEPTED') and (lower(h.hotelName) like lower(:search) or lower(u.firstName) like lower(:search) or lower(u.lastName) like lower(:search))")
     Page<House> findAllHouseAdminStatusAccept(Pageable pageable, String search);
+
+    @Query(value = "select h from House  h left join User u on h.user.id = u.id where (h.status = 'CANCEL') and (lower(h.hotelName) like lower(:search) or lower(u.firstName) like lower(:search) or lower(u.lastName) like lower(:search))")
+    Page<House> findAllHouseAdminStatusCancel(Pageable pageable , String search);
 }

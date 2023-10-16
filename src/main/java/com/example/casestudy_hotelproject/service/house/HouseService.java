@@ -538,10 +538,24 @@ public class HouseService {
         house.setPrice(price);
         houseRepository.save(house);
     }
-    public void editWeekendPrice(int houseId,BigDecimal price){
-        House house=houseRepository.findById(houseId);
+    public void editWeekendPrice(int houseId,BigDecimal price) {
+        House house = houseRepository.findById(houseId);
         house.setWeekendPrice(price);
         houseRepository.save(house);
+    }
+    @Transactional
+    public void updateStatusAdmin(String id , String status){
+        House house = houseRepository.findById(Integer.parseInt(id));
+        house.setStatus(StatusHouse.valueOf(status));
+
+        houseRepository.save(house);
+    }
+
+    public Page<ShowListHouseAcceptAdminResponse> showAllCancelHouse(Pageable pageable , String search){
+        Page<ShowListHouseAcceptAdminResponse> responses = houseRepository.findAllHouseAdminStatusCancel(pageable , "%" + search + "%")
+                .map(e -> AppUtils.mapper.map(e , ShowListHouseAcceptAdminResponse.class));
+
+        return responses;
     }
 }
 
