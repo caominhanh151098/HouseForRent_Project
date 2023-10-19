@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.repository;
 
+import com.example.casestudy_hotelproject.model.Payment;
 import com.example.casestudy_hotelproject.model.Reservation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -164,4 +165,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     Reservation findReservationWithStatusFinish(int id);
 
     Reservation findById(int id);
+
+    Reservation findByPaymentId(int paymentId);
+
+    Reservation findByPayment(Payment payment);
 }

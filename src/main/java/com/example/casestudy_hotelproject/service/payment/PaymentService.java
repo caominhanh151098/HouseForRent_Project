@@ -1,26 +1,38 @@
 package com.example.casestudy_hotelproject.service.payment;
 
 import com.example.casestudy_hotelproject.config.TransactionConfig;
+import com.example.casestudy_hotelproject.model.Payment;
 import com.example.casestudy_hotelproject.model.Reservation;
+import com.example.casestudy_hotelproject.model.enums.StatusReservation;
+import com.example.casestudy_hotelproject.repository.PaymentRepository;
+import com.example.casestudy_hotelproject.repository.ReservationRepository;
+import com.example.casestudy_hotelproject.service.payment.request.GetRefundRequest;
+import com.example.casestudy_hotelproject.service.payment.request.GetTransactionRefundRequest;
 import com.example.casestudy_hotelproject.service.payment.response.GetTransactionResponse;
+import com.example.casestudy_hotelproject.service.payment.response.InfoPaymentRefundResponse;
 import com.example.casestudy_hotelproject.service.reservation.ReservationService;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
+import com.google.gson.Gson;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class PaymentService {
-    private final ReservationService reservationService;
+    private final PaymentRepository paymentRepository;
+    private final ReservationRepository reservationRepository;
 
     public GetTransactionResponse createPayment(HttpServletRequest httpServletRequest, SaveReservationRequest request, Reservation reservation) throws UnsupportedEncodingException {
         String orderType = "other";
@@ -38,20 +50,21 @@ public class PaymentService {
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", vnp_BankCode);
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+        vnp_Params.put("vnp_OrderInfo", "Thanh toan hoa don:" + vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", orderType);
         vnp_Params.put("vnp_Locale", "vn");
 
         vnp_Params.put("vnp_ReturnUrl", TransactionConfig.vnp_ReturnUrl(request, reservation));
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        String vnp_CreateDate = formatter.format(cld.getTime());
+//        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        LocalDateTime paymentTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String vnp_CreateDate = paymentTime.format(formatter);
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
-        cld.add(Calendar.MINUTE, 15);
-        String vnp_ExpireDate = formatter.format(cld.getTime());
+        LocalDateTime expireTime = paymentTime.plusMinutes(15);
+        String vnp_ExpireDate = expireTime.format(formatter);
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
         List fieldNames = new ArrayList(vnp_Params.keySet());
@@ -89,5 +102,71 @@ public class PaymentService {
         return getTransactionResponse;
     }
 
+    public InfoPaymentRefundResponse refundTransaction(HttpServletRequest httpServletRequest, GetRefundRequest request) throws NoSuchAlgorithmException {
+        Reservation reservation = reservationRepository.findById(Integer.parseInt(request.getReservationId()));
+        if (request.getCreateBy().equals("User")) {
+            if (reservation.getStatus() != StatusReservation.WAIT_FOR_CHECKIN &&
+                    reservation.getStatus() != StatusReservation.AWAITING_APPROVAL)
+                return null;
+        } else if (request.getCreateBy().equals("Host")) {
+            if (reservation.getStatus() == StatusReservation.FINISH ||
+                    reservation.getStatus() == StatusReservation.CANCEL ||
+                    reservation.getStatus() == StatusReservation.REFUND ||
+                    reservation.getStatus() == StatusReservation.REFUNDED)
+                return null;
+        }
+        Payment payment = reservation.getPayment();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        String vnp_RequestId = TransactionConfig.getRandomNumber(8);
+        String vnp_Version = TransactionConfig.vnp_Version;
+        String vnp_Command = TransactionConfig.vnp_refund;
+        String vnp_TmnCode = TransactionConfig.vnp_TmnCode;
+        String vnp_TransactionType = request.getTransactionType();
+        String vnp_TxnRef = payment.getTxnRef();
+        String vnp_Amount = String.valueOf((payment.getAmount().multiply(BigDecimal.valueOf(100000)).intValue()));
+        String vnp_OrderInfo = "Hoan tien don hang: " + vnp_TxnRef;
+        String vnp_TransactionNo = payment.getTransactionNo();
+        String vnp_TransactionDate = payment.getCreateDate().format(formatter);
+        String vnp_CreateBy = request.getCreateBy();
+        String vnp_IpAddr = TransactionConfig.getIpAddress(httpServletRequest);
+
+        String vnp_CreateDate = LocalDateTime.now().format(formatter);
+
+        String vnp_SecureHash = TransactionConfig.generateVnpSecureHash(TransactionConfig.secretKey, vnp_RequestId, vnp_Version, vnp_Command, vnp_TmnCode, vnp_TransactionType, vnp_TxnRef, vnp_Amount, vnp_TransactionNo, vnp_TransactionDate, vnp_CreateBy, vnp_CreateDate, vnp_IpAddr, vnp_OrderInfo);
+
+        GetTransactionRefundRequest refundResponse = GetTransactionRefundRequest
+                .builder()
+                .vnp_RequestId(vnp_RequestId)
+                .vnp_Version(vnp_Version)
+                .vnp_Command(vnp_Command)
+                .vnp_TmnCode(vnp_TmnCode)
+                .vnp_TransactionType(vnp_TransactionType)
+                .vnp_TxnRef(vnp_TxnRef)
+                .vnp_Amount(vnp_Amount)
+                .vnp_OrderInfo(vnp_OrderInfo)
+                .vnp_TransactionNo(vnp_TransactionNo)
+                .vnp_TransactionDate(vnp_TransactionDate)
+                .vnp_CreateBy(vnp_CreateBy)
+                .vnp_CreateDate(vnp_CreateDate)
+                .vnp_IpAddr(vnp_IpAddr)
+                .vnp_SecureHash(vnp_SecureHash)
+                .build();
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<GetTransactionRefundRequest> requestEntity = new HttpEntity<>(refundResponse, headers);
+        String apiUrl = TransactionConfig.vnp_QueryPaymentUrl;
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
+        String data = responseEntity.getBody().toString();
+
+        Gson gson = new Gson();
+        InfoPaymentRefundResponse response = gson.fromJson(data, InfoPaymentRefundResponse.class);
+        if (response != null && response.getVnp_ResponseCode().equals("00"))
+            return response;
+        return null;
+    }
 }

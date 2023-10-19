@@ -4,7 +4,9 @@ import com.example.casestudy_hotelproject.config.TransactionConfig;
 import com.example.casestudy_hotelproject.model.Reservation;
 import com.example.casestudy_hotelproject.service.guest_detail.response.GuestDetailService;
 import com.example.casestudy_hotelproject.service.payment.PaymentService;
+import com.example.casestudy_hotelproject.service.payment.request.GetRefundRequest;
 import com.example.casestudy_hotelproject.service.payment.response.GetTransactionResponse;
+import com.example.casestudy_hotelproject.service.payment.response.InfoPaymentRefundResponse;
 import com.example.casestudy_hotelproject.service.reservation.ReservationService;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 
 @RestController
 @AllArgsConstructor
@@ -37,10 +40,24 @@ public class GuestReservationRestController {
     }
 
     @GetMapping("/check-transaction/{paymentId}/{tnxRef}")
-    public ResponseEntity<?> checkTransaction(@PathVariable int paymentId, @PathVariable int tnxRef, @RequestParam(value = "vnp_TransactionNo") long vnp_TransactionNo) {
-        if (reservationService.checkTransaction(paymentId, tnxRef, vnp_TransactionNo))
+    public ResponseEntity<?> checkTransaction(@PathVariable int paymentId, @PathVariable String tnxRef, @RequestParam(value = "vnp_TransactionNo") String vnp_TransactionNo, @RequestParam(value = "vnp_PayDate") String vnp_PayDate) {
+        if (reservationService.checkTransaction(paymentId, tnxRef, vnp_TransactionNo, vnp_PayDate)) {
+            reservationService.changeStatus(paymentId);
             return ResponseEntity.status(HttpStatus.OK).body(true);
-        else
+        } else
             return ResponseEntity.status(HttpStatus.OK).body(false);
+    }
+
+    @PostMapping("/delete-reservation/{paymentId}/{tnxRef}")
+    public void deleteTransaction(@PathVariable int paymentId, @PathVariable String tnxRef) {
+        reservationService.deleteTransaction(paymentId, tnxRef);
+    }
+
+    @PostMapping("/refund")
+    public ResponseEntity<?> refundTransaction(HttpServletRequest httpServletRequest, @RequestBody GetRefundRequest refundRequest) throws NoSuchAlgorithmException {
+        InfoPaymentRefundResponse refundResponse = paymentService.refundTransaction(httpServletRequest, refundRequest);
+        if (refundResponse != null);
+            reservationService.refundTransaction(Integer.parseInt(refundRequest.getReservationId()), refundResponse);
+        return ResponseEntity.ok(true);
     }
 }

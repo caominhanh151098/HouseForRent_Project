@@ -136,8 +136,13 @@ public class TransactionConfig {
         return sb.toString();
     }
 
-    public static String generateVnpSecureHash(String secretKey, String vnp_RequestId, String vnp_Version, String vnp_Command, String vnp_TmnCode, String vnp_TxnRef, String vnp_TransactionDate, String vnp_CreateDate, String vnp_IpAddr, String vnp_OrderInfo) throws NoSuchAlgorithmException {
-        String data = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + vnp_TmnCode + "|" + vnp_TxnRef + "|" + vnp_TransactionDate + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
+    public static String generateVnpSecureHash(String secretKey, String vnp_RequestId, String vnp_Version, String vnp_Command,
+                                               String vnp_TmnCode, String vnp_TransactionType, String vnp_TxnRef,
+                                               String vnp_Amount, String vnp_TransactionNo, String vnp_TransactionDate,
+                                               String vnp_CreateBy, String vnp_CreateDate, String vnp_IpAddr, String vnp_OrderInfo) throws NoSuchAlgorithmException {
+        String data = vnp_RequestId + "|" + vnp_Version + "|" + vnp_Command + "|" + vnp_TmnCode + "|" +
+                vnp_TransactionType + "|" + vnp_TxnRef + "|" + vnp_Amount + "|" + vnp_TransactionNo + "|" +
+                vnp_TransactionDate + "|" + vnp_CreateBy + "|" + vnp_CreateDate + "|" + vnp_IpAddr + "|" + vnp_OrderInfo;
         return hmacSHA512(secretKey, data);
     }
 }

@@ -11,6 +11,7 @@ import com.example.casestudy_hotelproject.repository.SurchargeRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
 import com.example.casestudy_hotelproject.service.dataSocket.response.DataSocketResponse;
 import com.example.casestudy_hotelproject.repository.*;
+import com.example.casestudy_hotelproject.service.payment.response.InfoPaymentRefundResponse;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import com.example.casestudy_hotelproject.service.reservation.response.*;
 import com.example.casestudy_hotelproject.service.user.UserService;
@@ -25,7 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,16 +58,15 @@ public class ReservationService {
         reservation.setPrice(house.getPrice());
         reservation.setWeekendPrice(house.getWeekendPrice());
         reservation.setBookingFees(getCurrentBookingFeesByHouse(reservation, house));
-        reservation.setStatus(house.isBookNow() ? StatusReservation.WAIT_FOR_CHECKIN : StatusReservation.AWAITING_APPROVAL);
+        reservation.setStatus(StatusReservation.WAITING_FOR_TRANSACTION);
 
         BigDecimal totalPrice = getTotalPrice(reservation);
         reservation.setTotalPrice(totalPrice);
 
         Payment payment = Payment.builder()
                 .amount(totalPrice)
-                .txnRef(Integer.parseInt(txnRef))
+                .txnRef(txnRef)
                 .bankCode(bankCode)
-                .paymentDate(LocalDate.now())
                 .status(StatusPayment.FAIL)
                 .build();
 
@@ -290,7 +293,7 @@ public class ReservationService {
         return list;
     }
 
-    public void updatePayment(int reservationId, long transactionNo) {
+    public void updatePayment(int reservationId, String transactionNo) {
         Reservation reservation = reservationRepository.findById(reservationId);
         reservation.getPayment().setTransactionNo(transactionNo);
         reservation.getPayment().setStatus(StatusPayment.SUCCESS);
@@ -298,14 +301,42 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    public boolean checkTransaction(int paymentId, int tnxRef,long vnp_TransactionNo) {
+    public boolean checkTransaction(int paymentId, String tnxRef,String vnp_TransactionNo, String vnp_PayDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         Payment payment = paymentRepository.findByIdAndTxnRef(paymentId, tnxRef).orElse(null);
+
         if (payment != null) {
             payment.setTransactionNo(vnp_TransactionNo);
             payment.setStatus(StatusPayment.SUCCESS);
+            payment.setCreateDate(LocalDateTime.parse(vnp_PayDate, formatter));
+            payment.setUpdateDate(LocalDateTime.parse(vnp_PayDate, formatter));
             paymentRepository.save(payment);
             return true;
         }
         else return false;
+    }
+
+    public void changeStatus(int paymentId) {
+        Reservation reservation = reservationRepository.findByPaymentId(paymentId);
+        House house = houseRepository.findById(reservation.getHouse().getId());
+        reservation.setStatus(house.isBookNow() ? StatusReservation.WAIT_FOR_CHECKIN : StatusReservation.AWAITING_APPROVAL);
+        reservationRepository.save(reservation);
+    }
+
+    public void deleteTransaction(int paymentId, String tnxRef) {
+        Payment payment = paymentRepository.findByIdAndTxnRef(paymentId, tnxRef).orElse(null);
+        reservationRepository.delete(reservationRepository.findByPayment(payment));
+    }
+
+    public void refundTransaction(int reservationId, InfoPaymentRefundResponse refundResponse) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+        Reservation reservation = reservationRepository.findById(reservationId);
+
+        reservation.setStatus(StatusReservation.REFUND);
+        reservation.getPayment().setStatus(StatusPayment.REFUND);
+        reservation.getPayment().setUpdateDate(LocalDateTime.parse(refundResponse.getVnp_PayDate(), formatter));
+
+        reservationRepository.save(reservation);
     }
 }
