@@ -29,8 +29,11 @@ public class CancellationPolicyList {
     private TypeRefundCancel typeRefundCancel;
 
     @ManyToOne
-    @JoinColumn(name = "cancellation_Policy_Id")
+    @JoinColumn(name = "cancellation_policy_id")
     private CancellationPolicy cancellationPolicy;
+
+    @OneToMany(mappedBy = "cancellationPolicyList")
+    private List<CancellationPolicyDetail> cancellationPolicyDetailList;
 
     @Override
     public String toString() {
