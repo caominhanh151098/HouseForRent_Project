@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -60,7 +61,7 @@ public class ReservationService {
         reservation.setBookingFees(getCurrentBookingFeesByHouse(reservation, house));
         reservation.setStatus(StatusReservation.WAITING_FOR_TRANSACTION);
 
-        BigDecimal totalPrice = getTotalPrice(reservation);
+        BigDecimal totalPrice = getPrice(reservation).setScale(0, RoundingMode.HALF_UP);
         reservation.setTotalPrice(totalPrice);
 
         Payment payment = Payment.builder()
@@ -111,12 +112,47 @@ public class ReservationService {
         return bookingFees;
     }
 
-    public BigDecimal getTotalPrice(Reservation reservation) {
+    public BigDecimal getPrice(Reservation reservation) {
         if (reservation.getWeekendPrice() == null) {
             reservation.setWeekendPrice(reservation.getPrice());
         }
-        BigDecimal price = getPriceByDate(reservation);
-        return price;
+        BigDecimal priceByDate = getPriceByDate(reservation);
+        BigDecimal totalPrice = getTotalPrice(reservation, priceByDate);
+        return totalPrice;
+    }
+
+    public BigDecimal getTotalPrice(Reservation reservation, BigDecimal priceByDate) {
+        long daysBetween = reservation.getCheckInDate().until(reservation.getCheckOutDate(), ChronoUnit.DAYS);
+        BigDecimal cleaningFee = BigDecimal.ZERO;
+        BigDecimal petFee = BigDecimal.ZERO;
+        BigDecimal taxFee = BigDecimal.ZERO;
+        BigDecimal serviceFee = BigDecimal.ZERO;
+        for (int index = 0; index < reservation.getBookingFees().size(); index++) {
+            BookingFee bookingFee = reservation.getBookingFees().get(index);
+            switch (bookingFee.getType()) {
+                case CLEANING -> {
+                    if (daysBetween > 2)
+                        cleaningFee = bookingFee.getValue();
+                }
+                case SHORT_STAY_CLEANING -> {
+                    if (daysBetween <= 2)
+                        cleaningFee = bookingFee.getValue();
+                }
+                case PET -> {
+                    if (reservation.getGuestDetail().getNumPets() > 0)
+                        petFee = bookingFee.getValue();
+                }
+                case TAX -> {
+                    taxFee = bookingFee.getValue();
+                }
+                case SERVICE_FEE -> {
+                    serviceFee = bookingFee.getValue();
+                }
+            }
+        }
+        BigDecimal price = priceByDate.add(cleaningFee.add(petFee));
+        BigDecimal totalPrice = price.add(price.multiply(serviceFee).divide(new BigDecimal(100)));
+        return totalPrice;
     }
 
     public BigDecimal getPriceByDate(Reservation reservation) {
