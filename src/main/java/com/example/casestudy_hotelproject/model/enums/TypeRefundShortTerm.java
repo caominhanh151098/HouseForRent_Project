@@ -1,6 +1,6 @@
 package com.example.casestudy_hotelproject.model.enums;
 
-public enum TypeRefundCancel {
+public enum TypeRefundShortTerm {
     FLEXIBLE,
     MODERATE,
     FIRM,

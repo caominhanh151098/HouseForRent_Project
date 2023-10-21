@@ -1,5 +1,6 @@
 package com.example.casestudy_hotelproject.service.house.response;
 
+import com.example.casestudy_hotelproject.service.cancellation_policy.response.ShowCancellationPolicyListResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowMiniListComfortableResponse;
 import com.example.casestudy_hotelproject.service.description.response.ShowDescriptionResponse;
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
@@ -36,5 +37,5 @@ public class ShowHouseDetailResponse {
     private List<ShowImgListResponse> images = new ArrayList<>();
     private ShowHostAvatarResponse user;
     private String price;
-
+    private List<ShowCancellationPolicyListResponse> cancellationPolicyDetailList;
 }

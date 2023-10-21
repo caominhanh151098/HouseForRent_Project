@@ -1,7 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
 import com.example.casestudy_hotelproject.model.enums.StatusHouse;
-import com.example.casestudy_hotelproject.model.enums.TypeRefundCancel;
 import com.example.casestudy_hotelproject.model.enums.TypeRoom;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

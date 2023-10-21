@@ -63,6 +63,8 @@ public class ReservationService {
         reservation.setBookingFees(getCurrentBookingFeesByHouse(reservation, house));
         reservation.setStatus(StatusReservation.WAITING_FOR_TRANSACTION);
 
+
+
         BigDecimal totalPrice = getPrice(reservation).setScale(0, RoundingMode.HALF_UP);
         reservation.setTotalPrice(totalPrice);
 

@@ -1,6 +1,6 @@
 package com.example.casestudy_hotelproject.model;
 
-import com.example.casestudy_hotelproject.model.enums.TypeRefundCancel;
+import com.example.casestudy_hotelproject.model.enums.TypeRefundShortTerm;
 import com.example.casestudy_hotelproject.model.enums.TypeCancellationPolicy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,7 +26,7 @@ public class CancellationPolicyList {
     private TypeCancellationPolicy type;
     private boolean noRefunds;
     @Enumerated(EnumType.STRING)
-    private TypeRefundCancel typeRefundCancel;
+    private TypeRefundShortTerm typeRefundShortTerm;
 
     @ManyToOne
     @JoinColumn(name = "cancellation_policy_id")

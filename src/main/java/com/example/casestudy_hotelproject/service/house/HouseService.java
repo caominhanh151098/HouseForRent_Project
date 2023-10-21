@@ -3,6 +3,8 @@ package com.example.casestudy_hotelproject.service.house;
 import com.example.casestudy_hotelproject.model.*;
 import com.example.casestudy_hotelproject.model.enums.*;
 import com.example.casestudy_hotelproject.repository.*;
+import com.example.casestudy_hotelproject.service.cancellation_policy.response.ShowCancellationPolicyListResponse;
+import com.example.casestudy_hotelproject.service.cancellation_policy.response.ShowCancellationPolicyResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
@@ -90,11 +92,11 @@ public class HouseService {
         return listPageHouse;
     }
 
-    public List<HouseOfHostReponse> showHouseOfHost(){
-        User user=userService.getCurrentUser();
+    public List<HouseOfHostReponse> showHouseOfHost() {
+        User user = userService.getCurrentUser();
 
-        List<House> houseList =houseRepository.findByUser_Id(user.getId());
-        List<HouseOfHostReponse> reponseList=houseList.stream().map(e-> AppUtils.mapper.map(e,HouseOfHostReponse.class)).collect(Collectors.toList());
+        List<House> houseList = houseRepository.findByUser_Id(user.getId());
+        List<HouseOfHostReponse> reponseList = houseList.stream().map(e -> AppUtils.mapper.map(e, HouseOfHostReponse.class)).collect(Collectors.toList());
         return reponseList;
     }
     public void createHouse(HouseRequest houseRequest){
@@ -184,6 +186,20 @@ public class HouseService {
         houseResp.setTitle(String.format("%s. Chủ nhà %s", houseResp.getTitle(), house.getUser().getLastName()));
         houseResp.setRequestDetail(requestDetail);
         houseResp.setNumComfortable(listComfortable.size());
+        List<ShowCancellationPolicyListResponse> cancellationPolicyListResponseList = new ArrayList<>();
+        house.getCancellationPolicyDetailList().forEach(cp -> {
+            ShowCancellationPolicyListResponse cancelListResponse = ShowCancellationPolicyListResponse
+                    .builder()
+                    .noRefunds(cp.getCancellationPolicyList().isNoRefunds())
+                    .type(String.valueOf(cp.getCancellationPolicyList().getType()))
+                    .typeRefundShortTerm(String.valueOf(cp.getCancellationPolicyList().getTypeRefundShortTerm()))
+                    .cancellationPolicy(AppUtils.mapper.map(cp.getCancellationPolicyList().getCancellationPolicy(), ShowCancellationPolicyResponse.class))
+                    .build();
+
+            cancellationPolicyListResponseList.add(cancelListResponse);
+        });
+        houseResp.setCancellationPolicyDetailList(cancellationPolicyListResponseList);
+
         return houseResp;
     }
 
@@ -224,10 +240,10 @@ public class HouseService {
     }
 
 
-    public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(String search,Pageable pageable){
+    public Page<ShowListHouseForAdminResponse> showListHouseForAdmin(String search, Pageable pageable) {
         search = "%" + search + "%";
 
-        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable , search)
+        Page<ShowListHouseForAdminResponse> responses = houseRepository.findAllHouseForAdminWithStatusWaiting(pageable, search)
                 .map(e -> {
                     List<Image> images = imageRepository.findAllByHouse_Id(e.getId());
 
@@ -256,7 +272,7 @@ public class HouseService {
                                 return resp;
                             }).toList();
 
-                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e , ShowListHouseForAdminResponse.class);
+                    ShowListHouseForAdminResponse house = AppUtils.mapper.map(e, ShowListHouseForAdminResponse.class);
 
                     house.setImages(imgResponse);
                     house.setComfortableList(comfortableResponseForAdmins);
@@ -486,34 +502,35 @@ public class HouseService {
         return houseResp;
     }
 
-    public List<House> getHousesByCity(String city){
-        return houseRepository.findHousesByCity("%"+city+"%");
+    public List<House> getHousesByCity(String city) {
+        return houseRepository.findHousesByCity("%" + city + "%");
     }
 
-    public List<HouseRevenueResponse> getNameHouseByHostId () {
+    public List<HouseRevenueResponse> getNameHouseByHostId() {
         User user = userService.getCurrentUser();
         List<House> houseList = houseRepository.findByUser_Id(user.getId());
         List<HouseRevenueResponse> houseRevenueResponses = houseList.stream().map(e -> AppUtils.mapper.map(e, HouseRevenueResponse.class)).collect(Collectors.toList());
         return houseRevenueResponses;
     }
-    public List<ShowHouseCreateDateAdminResponse> showHouseCreateDateAdminResponses(int month , int year){
-        List<ShowHouseCreateDateAdminResponse> responses = houseRepository.findAllHouseForAdminWithMonthAndYear(month , year)
-                .stream().map(e -> AppUtils.mapper.map(e , ShowHouseCreateDateAdminResponse.class)).toList();
 
-        return  responses;
+    public List<ShowHouseCreateDateAdminResponse> showHouseCreateDateAdminResponses(int month, int year) {
+        List<ShowHouseCreateDateAdminResponse> responses = houseRepository.findAllHouseForAdminWithMonthAndYear(month, year)
+                .stream().map(e -> AppUtils.mapper.map(e, ShowHouseCreateDateAdminResponse.class)).toList();
+
+        return responses;
     }
 
-    public List<ShowStatisticalHouseForAdminResponse> showStatisticalHouseForAdminResponses(String date1 , String date2){
+    public List<ShowStatisticalHouseForAdminResponse> showStatisticalHouseForAdminResponses(String date1, String date2) {
         LocalDate newDate1 = LocalDate.parse(date1);
         LocalDate newDate2 = LocalDate.parse(date2);
 
-        List<ShowStatisticalHouseForAdminResponse> responses = houseRepository.findAllHouseWithDate(newDate1,newDate2)
-                .stream().map(e -> AppUtils.mapper.map(e , ShowStatisticalHouseForAdminResponse.class)).toList();
-        return  responses;
+        List<ShowStatisticalHouseForAdminResponse> responses = houseRepository.findAllHouseWithDate(newDate1, newDate2)
+                .stream().map(e -> AppUtils.mapper.map(e, ShowStatisticalHouseForAdminResponse.class)).toList();
+        return responses;
     }
 
     @Transactional
-    public void updateStatusAdmin(String id , String  status , String pdf){
+    public void updateStatusAdmin(String id, String status, String pdf) {
         int newId = Integer.parseInt(id);
         House house = houseRepository.findById(newId);
         house.setStatus(StatusHouse.valueOf(status));
@@ -522,39 +539,43 @@ public class HouseService {
         houseRepository.save(house);
     }
 
-    public Page<ShowListHouseAcceptAdminResponse> showAllAcceptHouse(Pageable pageable , String search) {
+    public Page<ShowListHouseAcceptAdminResponse> showAllAcceptHouse(Pageable pageable, String search) {
         search = "%" + search + "%";
 
         Page<ShowListHouseAcceptAdminResponse> responses = houseRepository.findAllHouseAdminStatusAccept(pageable, search)
                 .map(e -> AppUtils.mapper.map(e, ShowListHouseAcceptAdminResponse.class));
         return responses;
     }
-    public PriceResponse  getPrice(int houseId){
-       House house= houseRepository.findById(houseId);
-       PriceResponse priceResponse= AppUtils.mapper.map(house, PriceResponse.class);
-       return priceResponse;
+
+    public PriceResponse getPrice(int houseId) {
+        House house = houseRepository.findById(houseId);
+        PriceResponse priceResponse = AppUtils.mapper.map(house, PriceResponse.class);
+        return priceResponse;
     }
-    public void editPrice (int houseId,BigDecimal price){
-        House house=houseRepository.findById(houseId);
+
+    public void editPrice(int houseId, BigDecimal price) {
+        House house = houseRepository.findById(houseId);
         house.setPrice(price);
         houseRepository.save(house);
     }
-    public void editWeekendPrice(int houseId,BigDecimal price) {
+
+    public void editWeekendPrice(int houseId, BigDecimal price) {
         House house = houseRepository.findById(houseId);
         house.setWeekendPrice(price);
         houseRepository.save(house);
     }
+
     @Transactional
-    public void updateStatusAdmin(String id , String status){
+    public void updateStatusAdmin(String id, String status) {
         House house = houseRepository.findById(Integer.parseInt(id));
         house.setStatus(StatusHouse.valueOf(status));
 
         houseRepository.save(house);
     }
 
-    public Page<ShowListHouseAcceptAdminResponse> showAllCancelHouse(Pageable pageable , String search){
-        Page<ShowListHouseAcceptAdminResponse> responses = houseRepository.findAllHouseAdminStatusCancel(pageable , "%" + search + "%")
-                .map(e -> AppUtils.mapper.map(e , ShowListHouseAcceptAdminResponse.class));
+    public Page<ShowListHouseAcceptAdminResponse> showAllCancelHouse(Pageable pageable, String search) {
+        Page<ShowListHouseAcceptAdminResponse> responses = houseRepository.findAllHouseAdminStatusCancel(pageable, "%" + search + "%")
+                .map(e -> AppUtils.mapper.map(e, ShowListHouseAcceptAdminResponse.class));
 
         return responses;
     }

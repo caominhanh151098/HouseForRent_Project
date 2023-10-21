@@ -45,6 +45,10 @@ public class Reservation {
     @JoinColumn(name = "payment_Id")
     private Payment payment;
 
+    @OneToOne
+    @JoinColumn(name = "reservation_id")
+    private CancellationPolicyAtBooking cancellationPolicyAtBooking;
+
     @Override
     public String toString() {
         return "";

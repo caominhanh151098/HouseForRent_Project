@@ -1,5 +1,7 @@
 package com.example.casestudy_hotelproject.model;
 
+import com.example.casestudy_hotelproject.model.enums.TypeRefundLongTerm;
+import com.example.casestudy_hotelproject.model.enums.TypeRefundShortTerm;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,16 +13,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Builder
-public class CancellationPolicyDetail {
+@Table(name = "cancellation_policy_booking")
+public class CancellationPolicyAtBooking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne
-    @JoinColumn(name = "house_Id")
-    private House house;
-    @ManyToOne
-    @JoinColumn(name = "cancellation_Policy_List_Id")
-    private CancellationPolicyList cancellationPolicyList;
+
+    private TypeRefundShortTerm shortTerm;
+    private TypeRefundLongTerm longTerm;
 
     @Override
     public String toString() {
