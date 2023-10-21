@@ -375,4 +375,9 @@ public class ReservationService {
 
         reservationRepository.save(reservation);
     }
+
+    public List<ReversationBlockResponse> getReversationByHouseId(int id){
+        List <Reservation> reservations = reservationRepository.findByHouseId((id));
+        return reservations.stream().map(e -> AppUtils.mapper.map(e, ReversationBlockResponse.class)).collect(Collectors.toList());
+    }
 }

@@ -10,6 +10,8 @@ import com.example.casestudy_hotelproject.service.category_hotel.request.TypeRoo
 import com.example.casestudy_hotelproject.service.favorite.FavoriteService;
 import com.example.casestudy_hotelproject.service.favorite.response.ShowCategoryFavoriteListResponse;
 import com.example.casestudy_hotelproject.repository.HouseRepository;
+import com.example.casestudy_hotelproject.service.favoritesList.FavoritesListService;
+import com.example.casestudy_hotelproject.service.favoritesList.response.FavoriteHouseResponse;
 import com.example.casestudy_hotelproject.service.fee.FeeService;
 import com.example.casestudy_hotelproject.service.fee.response.SaveFeeCleaningHouseRequest;
 import com.example.casestudy_hotelproject.service.house.response.*;
@@ -56,6 +58,7 @@ public class HouseRestController {
     private final FavoriteService favoriteService;
     private final HouseRepository houseRepository;
     private final FeeService feeService;
+    private final FavoritesListService favoritesListService;
 
     @GetMapping()
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
@@ -217,8 +220,18 @@ public class HouseRestController {
     }
 
     @PostMapping("/client/create-wishlist")
-    public void createNewWishlist(@RequestBody String nameWishlist) {
-        favoriteService.createNewWishlist(nameWishlist);
+    public int createNewWishlist(@RequestBody String nameWishlist) {
+        return favoriteService.createNewWishlist(nameWishlist);
+    }
+    
+    @DeleteMapping("/client/delete-wishlist/{wishListId}")
+    public void deleteWishList(@PathVariable int wishListId){
+        favoritesListService.deleteWishList(wishListId);
+    }
+
+    @GetMapping("/client/favorite-houses")
+    public List<Integer> getFavoriteHousesByUser() {
+        return favoriteService.findFavoriteHousesWithLocationByUserId();
     }
 
     @GetMapping("/filter")

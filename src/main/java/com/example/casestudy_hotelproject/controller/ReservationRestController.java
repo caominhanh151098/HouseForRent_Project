@@ -8,6 +8,7 @@ import com.example.casestudy_hotelproject.service.payment.request.GetRefundReque
 import com.example.casestudy_hotelproject.service.payment.response.InfoPaymentRefundResponse;
 import com.example.casestudy_hotelproject.service.reservation.ReservationService;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
+import com.example.casestudy_hotelproject.service.reservation.response.ReversationBlockResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowListReservationResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowRevenue;
 import jakarta.servlet.http.HttpServletRequest;
@@ -129,5 +130,10 @@ public class ReservationRestController {
         if (refundResponse != null) ;
         reservationService.refundTransaction(Integer.parseInt(refundRequest.getReservationId()), refundResponse);
         return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/block/{houseId}")
+    public List<ReversationBlockResponse> getReversationByHouseId(@PathVariable int houseId){
+        return reservationService.getReversationByHouseId((houseId));
     }
 }

@@ -8,6 +8,7 @@ import com.example.casestudy_hotelproject.repository.FavoriteRepository;
 import com.example.casestudy_hotelproject.repository.FavoritesListRepository;
 import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.service.favorite.response.ShowCategoryFavoriteListResponse;
+import com.example.casestudy_hotelproject.service.favoritesList.response.FavoriteHouseResponse;
 import com.example.casestudy_hotelproject.service.house.response.ShowListHouseResponse;
 import com.example.casestudy_hotelproject.service.user.UserService;
 import com.example.casestudy_hotelproject.util.AppUtils;
@@ -103,9 +104,15 @@ public class FavoriteService {
         favoriteRepository.removeByHouse_IdAndList_User(idHouse, user);
     }
 
-    public void createNewWishlist(String nameWishlist) {
+    public int createNewWishlist(String nameWishlist) {
         User user = userService.getCurrentUser();
 
-        favoritesListRepository.save(new FavoritesList().builder().name(nameWishlist).user(user).build());
+        String cleanedName = nameWishlist.replaceAll("\"", "");
+       return favoritesListRepository.save(new FavoritesList().builder().name(cleanedName).user(user).build()).getId();
+    }
+
+    public List<Integer> findFavoriteHousesWithLocationByUserId() {
+        User user = userService.getCurrentUser();
+        return favoriteRepository.findFavoriteHousesWithLocationByUserId(user.getId());
     }
 }

@@ -169,4 +169,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     Reservation findByPaymentId(int paymentId);
 
     Reservation findByPayment(Payment payment);
+
+    List<Reservation> findByHouseId(int house_id);
 }
