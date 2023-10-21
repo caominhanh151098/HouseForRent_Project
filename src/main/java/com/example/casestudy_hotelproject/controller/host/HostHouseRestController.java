@@ -217,5 +217,13 @@ public class HostHouseRestController {
     public void editWeekendPrice(@PathVariable int houseId,@PathVariable  BigDecimal weekendPrice){
         houseService.editWeekendPrice(houseId,weekendPrice);
     }
-
+    @GetMapping("/checkQuantityHouse")
+    public boolean checkQuantityHouse(){
+       List<HouseOfHostReponse> house= houseService.showHouseOfHost();
+        if (house.size()==0){
+            return false;
+        }else {
+            return true;
+        }
+    }
 }

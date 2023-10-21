@@ -2,6 +2,7 @@ package com.example.casestudy_hotelproject.service.user.response;
 
 import com.example.casestudy_hotelproject.model.AddressUser;
 import com.example.casestudy_hotelproject.model.IdentityPaper;
+import com.example.casestudy_hotelproject.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,4 +22,5 @@ public class UserInfoResponse {
     public String address;
     public String avatar;
     public IdentityPaper identity;
+    public Role role;
 }

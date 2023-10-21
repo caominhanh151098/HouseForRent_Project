@@ -29,6 +29,12 @@ public class FeeHouse {
     private BigDecimal price;
     private int other = 1;
 
+    public FeeHouse(House house, Fee fee, BigDecimal price) {
+        this.house = house;
+        this.fee = fee;
+        this.price = price;
+    }
+
     @Override
     public String toString() {
         return "";

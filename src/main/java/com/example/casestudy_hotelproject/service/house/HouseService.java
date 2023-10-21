@@ -1,9 +1,7 @@
 package com.example.casestudy_hotelproject.service.house;
 
 import com.example.casestudy_hotelproject.model.*;
-import com.example.casestudy_hotelproject.model.enums.BookingFeeType;
-import com.example.casestudy_hotelproject.model.enums.SurchargeType;
-import com.example.casestudy_hotelproject.model.enums.TypeRoom;
+import com.example.casestudy_hotelproject.model.enums.*;
 import com.example.casestudy_hotelproject.repository.*;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
@@ -14,7 +12,6 @@ import com.example.casestudy_hotelproject.service.image.response.ShowImgListResp
 import com.example.casestudy_hotelproject.service.reservation.response.ShowFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowFeeResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
-import com.example.casestudy_hotelproject.model.enums.StatusHouse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.bed.BedService;
 import com.example.casestudy_hotelproject.service.category_hotel.CategoryHotelService;
@@ -102,6 +99,10 @@ public class HouseService {
     }
     public void createHouse(HouseRequest houseRequest){
         User user=userService.getCurrentUser();
+        if(user.getRole()== Role.GUEST){
+            user.setRole(Role.HOST);
+            userRepository.save(user);
+        }
         House house= AppUtils.mapper.map(houseRequest,House.class);
         house.setDescription(new Description(houseRequest.getDescriptions()));
         house.setCategoryHotel(new CategoryHotel(Integer.parseInt(houseRequest.getCategoryHotel())));

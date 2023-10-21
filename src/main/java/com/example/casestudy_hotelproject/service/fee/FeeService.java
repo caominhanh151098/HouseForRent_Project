@@ -53,8 +53,13 @@ public class FeeService {
     }
     public void editSurcharge(int house,BigDecimal price,BookingFeeType type){
        FeeHouse feeHouse=feeHouseRepository.findByHouseIdAndFee(house,feeRepository.findByFeeType(type));
-        feeHouse.setPrice(price);
-        feeHouseRepository.save(feeHouse);
+        if(feeHouse!=null){
+            feeHouse.setPrice(price);
+            feeHouseRepository.save(feeHouse);
+        }else {
+            feeHouseRepository.save(new FeeHouse(houseRepository.findById(house),feeRepository.findByFeeType(type),price));
+        }
+
     }
     public void editOther(int house,BigDecimal price,int  other){
         FeeHouse feeHouse=feeHouseRepository.findByHouseIdAndFee(house,feeRepository.findByFeeType(BookingFeeType.EXTRA_GUESS));

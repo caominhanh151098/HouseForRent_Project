@@ -66,10 +66,10 @@ public class ReservationRestController {
         return reservationService.getReservationWaitApproval();
     }
 
-    @GetMapping("/delete/{reservationID}")
-    public void deleteReservation(@PathVariable int reservationID) {
-        reservationService.deleteReservation(reservationID);
-    }
+//    @GetMapping("/delete/{reservationID}")
+//    public void deleteReservation(@PathVariable int reservationID) {
+////        reservationService.deleteReservation(reservationID);
+//    }
 
     @GetMapping("/accept/{reservationID}")
     public void acceptReservation(@PathVariable int reservationID) {

@@ -6,18 +6,24 @@ import com.example.casestudy_hotelproject.service.comfortable.ComfortableService
 import com.example.casestudy_hotelproject.service.favorite.FavoriteService;
 import com.example.casestudy_hotelproject.service.guest_detail.response.GuestDetailService;
 import com.example.casestudy_hotelproject.service.house.HouseService;
+import com.example.casestudy_hotelproject.service.payment.PaymentService;
+import com.example.casestudy_hotelproject.service.payment.request.GetRefundRequest;
+import com.example.casestudy_hotelproject.service.payment.response.InfoPaymentRefundResponse;
 import com.example.casestudy_hotelproject.service.reservation.ReservationService;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowListReservationResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowRevenue;
 import com.example.casestudy_hotelproject.service.review.ReviewService;
 import com.example.casestudy_hotelproject.service.rule.RuleService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,7 +40,7 @@ public class HostReservationResController {
     private final HouseRepository houseRepository;
     private final ReservationService reservationService;
     private final GuestDetailService guestDetailService;
-
+    private final PaymentService paymentService;
     @GetMapping("/willCheckOut")
     public List<ShowListReservationResponse> getReservationWillCheckOut() {
         return reservationService.getReservationWillBooked();
@@ -61,8 +67,10 @@ public class HostReservationResController {
     }
 
     @GetMapping("/delete/{reservationID}")
-    public void deleteReservation(@PathVariable int reservationID) {
-        reservationService.deleteReservation(reservationID);
+    public void deleteReservation(HttpServletRequest httpServletRequest,@PathVariable int reservationID) throws NoSuchAlgorithmException {
+        InfoPaymentRefundResponse refundResponse = paymentService.refundTransaction(httpServletRequest, new GetRefundRequest(reservationID+"","Host","02") );
+        if (refundResponse != null) ;
+        reservationService.deleteReservation(reservationID, refundResponse);
     }
 
     @GetMapping("/accept/{reservationID}")
@@ -97,5 +105,9 @@ public class HostReservationResController {
         }else {
             return  reservationService.getReservationFinishWithHouseID(startDate,endDate, houseId,pageable);
         }
+    }
+    @GetMapping("/finishReservation/{reservationId}")
+    public void finishReservation(@PathVariable int reservationId){
+        reservationService.finishReservation(reservationId);
     }
 }

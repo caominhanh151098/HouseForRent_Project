@@ -9,9 +9,11 @@ import com.example.casestudy_hotelproject.repository.HouseRepository;
 import com.example.casestudy_hotelproject.repository.ReservationRepository;
 import com.example.casestudy_hotelproject.repository.SurchargeRepository;
 import com.example.casestudy_hotelproject.repository.UserRepository;
+import com.example.casestudy_hotelproject.service.blockingDate.BlockingDateRangeResponse;
 import com.example.casestudy_hotelproject.service.dataSocket.response.DataSocketResponse;
 import com.example.casestudy_hotelproject.repository.*;
 import com.example.casestudy_hotelproject.service.payment.response.InfoPaymentRefundResponse;
+import com.example.casestudy_hotelproject.service.house.response.HouseRevenueResponse;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
 import com.example.casestudy_hotelproject.service.reservation.response.*;
 import com.example.casestudy_hotelproject.service.user.UserService;
@@ -232,7 +234,7 @@ public class ReservationService {
         List<ShowListReservationResponse> list = s.stream().map(e -> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
-
+    
     public List<ReservationTest> showAll(){
         return reservationRepository.showAllStatus().stream().map(e -> AppUtils.mapper.map(e , ReservationTest.class)).toList();
     }
@@ -275,9 +277,13 @@ public class ReservationService {
         return list;
     }
 
-    public void deleteReservation(int reservationId) {
+    public void deleteReservation(int reservationId, InfoPaymentRefundResponse refundResponse ) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
         Reservation reservation = reservationRepository.findById(reservationId);
         reservation.setStatus(StatusReservation.CANCEL);
+        reservation.getPayment().setStatus(StatusPayment.REFUND);
+        reservation.getPayment().setUpdateDate(LocalDateTime.parse(refundResponse.getVnp_PayDate(), formatter));
         reservationRepository.save(reservation);
     }
 
@@ -376,8 +382,21 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    public List<ReversationBlockResponse> getReversationByHouseId(int id){
-        List <Reservation> reservations = reservationRepository.findByHouseId((id));
+    public List<ReversationBlockResponse> getReversationByHouseId(int id) {
+        List<Reservation> reservations = reservationRepository.findByHouseId((id));
         return reservations.stream().map(e -> AppUtils.mapper.map(e, ReversationBlockResponse.class)).collect(Collectors.toList());
+    }
+
+    public List<BlockingDateRangeResponse> getBlockingDateWithReservation(int houseID){
+       List<Reservation>reservations= reservationRepository.findByHouseIdAndStatus(houseID,StatusReservation.WAIT_FOR_CHECKIN);
+        List<BlockingDateRangeResponse> blockingDateRangeResponses= reservations.stream().map(e -> AppUtils.mapper.map(e, BlockingDateRangeResponse.class)).collect(Collectors.toList());
+        return blockingDateRangeResponses;
+    }
+
+    public void finishReservation(int reservationId){
+        Reservation reservation =reservationRepository.findById(reservationId);
+        reservation.setCompleteDate(LocalDate.now());
+        reservation.setStatus(StatusReservation.FINISH);
+        reservationRepository.save(reservation);
     }
 }
