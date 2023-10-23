@@ -13,8 +13,6 @@ import com.example.casestudy_hotelproject.service.house.response.*;
 import com.example.casestudy_hotelproject.service.image.response.ShowImgListResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowFeeResponse;
-import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
-import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.bed.BedService;
 import com.example.casestudy_hotelproject.service.category_hotel.CategoryHotelService;
 import com.example.casestudy_hotelproject.service.comfortable.ComfortableService;
@@ -67,9 +65,10 @@ public class HouseService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final SurchargeRepository surchargeRepository;
+    private final CancellationPolicyListRepository cancellationPolicyListRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
-        Page<House> listHouse = houseRepository.findAll(pageable);
+        Page<House> listHouse = houseRepository.findAllInHomePage(pageable);
 
         Page<ShowListHouseResponse> listPageHouse = listHouse.map(e -> AppUtils.mapper.map(e, ShowListHouseResponse.class));
         for (int index = 0; index < listPageHouse.getContent().size(); index++) {
@@ -99,13 +98,14 @@ public class HouseService {
         List<HouseOfHostReponse> reponseList = houseList.stream().map(e -> AppUtils.mapper.map(e, HouseOfHostReponse.class)).collect(Collectors.toList());
         return reponseList;
     }
-    public void createHouse(HouseRequest houseRequest){
-        User user=userService.getCurrentUser();
-        if(user.getRole()== Role.GUEST){
+
+    public void createHouse(HouseRequest houseRequest) {
+        User user = userService.getCurrentUser();
+        if (user.getRole() == Role.GUEST) {
             user.setRole(Role.HOST);
             userRepository.save(user);
         }
-        House house= AppUtils.mapper.map(houseRequest,House.class);
+        House house = AppUtils.mapper.map(houseRequest, House.class);
         house.setDescription(new Description(houseRequest.getDescriptions()));
         house.setCategoryHotel(new CategoryHotel(Integer.parseInt(houseRequest.getCategoryHotel())));
         house.setLocation(new Location(houseRequest.getAddress(), Double.parseDouble(houseRequest.getLon()), Double.parseDouble(houseRequest.getLat())));
@@ -115,13 +115,31 @@ public class HouseService {
             images.add(new Image(house, item));
         }
         house.setImages(images);
+        house.setStatus(StatusHouse.WAITING);
+        List<CancellationPolicyDetail> cancellationPolicyDetailList = getDefaultCancellationPolicyForHouse(house);
 
+        house.setCancellationPolicyDetailList(cancellationPolicyDetailList);
         house.setUser(user);
         houseRepository.save(house);
         for (var item : houseRequest.getComfortableDetailList()
         ) {
             comfortableService.createComfortableDetail(new ComfortableDetail(house, new Comfortable(Integer.parseInt(item)), true));
         }
+    }
+
+    public List<CancellationPolicyDetail> getDefaultCancellationPolicyForHouse(House house) {
+        List<CancellationPolicyDetail> cancellationPolicyDetailList = new ArrayList<>();
+        cancellationPolicyDetailList.add(CancellationPolicyDetail
+                .builder()
+                .house(house)
+                .cancellationPolicyList(cancellationPolicyListRepository.findById(1).orElse(null))
+                .build());
+        cancellationPolicyDetailList.add(CancellationPolicyDetail
+                .builder()
+                .house(house)
+                .cancellationPolicyList(cancellationPolicyListRepository.findById(9).orElse(null))
+                .build());
+        return cancellationPolicyDetailList;
     }
 
     public HouseOfHostReponse getHouseOfHostDetail(int id) {

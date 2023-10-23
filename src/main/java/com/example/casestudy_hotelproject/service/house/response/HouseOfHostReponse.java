@@ -33,7 +33,7 @@ public class HouseOfHostReponse {
     private String typeRoom;
     private CategoryHotelRespone categoryHotel;
     private String bookNow;
-    private boolean status;
+    private String status;
     private List<ImageRespone> images = new ArrayList<>();
     private List<ComfortableDetailRespone> comfortableDetails;
     private List<RoomRespone> rooms;
