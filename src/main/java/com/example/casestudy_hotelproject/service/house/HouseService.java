@@ -119,20 +119,18 @@ public class HouseService {
         }
         house.setImages(images);
         house.setStatus(StatusHouse.WAITING);
-        List<CancellationPolicyDetail> cancellationPolicyDetailList = getDefaultCancellationPolicyForHouse(house);
 
-        house.setCancellationPolicyDetailList(cancellationPolicyDetailList);
         house.setUser(user);
         house.setCreateDate(LocalDate.now());
         houseRepository.save(house);
+        saveDefaultCancellationPolicyForHouse(house);
         for (var item : houseRequest.getComfortableDetailList()
         ) {
             comfortableService.createComfortableDetail(new ComfortableDetail(house, new Comfortable(Integer.parseInt(item)), true));
         }
     }
 
-    public List<CancellationPolicyDetail> getDefaultCancellationPolicyForHouse(House house) {
-        List<CancellationPolicyDetail> cancellationPolicyDetailList = new ArrayList<>();
+    public void saveDefaultCancellationPolicyForHouse(House house) {
         CancellationPolicyDetail cancellationPolicyDetail = null;
         cancellationPolicyDetail = CancellationPolicyDetail
                 .builder()
@@ -140,16 +138,12 @@ public class HouseService {
                 .cancellationPolicyList(cancellationPolicyListRepository.findById(1).orElse(null))
                 .build();
         cancellationPolicyDetailRepository.save(cancellationPolicyDetail);
-        cancellationPolicyDetailList.add(cancellationPolicyDetail);
         cancellationPolicyDetail = CancellationPolicyDetail
                 .builder()
                 .house(house)
                 .cancellationPolicyList(cancellationPolicyListRepository.findById(9).orElse(null))
                 .build();
         cancellationPolicyDetailRepository.save(cancellationPolicyDetail);
-        cancellationPolicyDetailList.add(cancellationPolicyDetail);
-
-        return cancellationPolicyDetailList;
     }
 
     public HouseOfHostReponse getHouseOfHostDetail(int id) {

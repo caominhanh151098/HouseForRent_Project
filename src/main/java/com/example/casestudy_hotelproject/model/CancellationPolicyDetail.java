@@ -18,7 +18,7 @@ public class CancellationPolicyDetail {
     @ManyToOne
     @JoinColumn(name = "house_Id")
     private House house;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cancellation_Policy_List_Id")
     private CancellationPolicyList cancellationPolicyList;
 
