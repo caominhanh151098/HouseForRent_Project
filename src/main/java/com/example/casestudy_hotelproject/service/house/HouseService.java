@@ -66,6 +66,7 @@ public class HouseService {
     private final UserService userService;
     private final SurchargeRepository surchargeRepository;
     private final CancellationPolicyListRepository cancellationPolicyListRepository;
+    private final CancellationPolicyDetailRepository cancellationPolicyDetailRepository;
 
     public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
         Page<House> listHouse = houseRepository.findAllInHomePage(pageable);
@@ -122,6 +123,7 @@ public class HouseService {
 
         house.setCancellationPolicyDetailList(cancellationPolicyDetailList);
         house.setUser(user);
+        house.setCreateDate(LocalDate.now());
         houseRepository.save(house);
         for (var item : houseRequest.getComfortableDetailList()
         ) {
@@ -131,16 +133,22 @@ public class HouseService {
 
     public List<CancellationPolicyDetail> getDefaultCancellationPolicyForHouse(House house) {
         List<CancellationPolicyDetail> cancellationPolicyDetailList = new ArrayList<>();
-        cancellationPolicyDetailList.add(CancellationPolicyDetail
+        CancellationPolicyDetail cancellationPolicyDetail = null;
+        cancellationPolicyDetail = CancellationPolicyDetail
                 .builder()
                 .house(house)
                 .cancellationPolicyList(cancellationPolicyListRepository.findById(1).orElse(null))
-                .build());
-        cancellationPolicyDetailList.add(CancellationPolicyDetail
+                .build();
+        cancellationPolicyDetailRepository.save(cancellationPolicyDetail);
+        cancellationPolicyDetailList.add(cancellationPolicyDetail);
+        cancellationPolicyDetail = CancellationPolicyDetail
                 .builder()
                 .house(house)
                 .cancellationPolicyList(cancellationPolicyListRepository.findById(9).orElse(null))
-                .build());
+                .build();
+        cancellationPolicyDetailRepository.save(cancellationPolicyDetail);
+        cancellationPolicyDetailList.add(cancellationPolicyDetail);
+
         return cancellationPolicyDetailList;
     }
 
