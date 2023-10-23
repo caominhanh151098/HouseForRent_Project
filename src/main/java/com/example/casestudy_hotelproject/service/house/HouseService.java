@@ -99,9 +99,11 @@ public class HouseService {
         return reponseList;
     }
 
+
     public void createHouse(HouseRequest houseRequest) {
         User user = userService.getCurrentUser();
         if (user.getRole() == Role.GUEST) {
+
             user.setRole(Role.HOST);
             userRepository.save(user);
         }
