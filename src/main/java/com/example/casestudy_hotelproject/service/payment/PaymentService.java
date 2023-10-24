@@ -40,7 +40,7 @@ public class PaymentService {
         String vnp_IpAddr = TransactionConfig.getIpAddress(httpServletRequest);
         String vnp_BankCode = "NCB";
 
-        long amount = reservation.getTotalPrice().longValue() * 100000;
+        long amount = reservation.getTotalPrice().longValue() * 2200000;
 
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", TransactionConfig.vnp_Version);
