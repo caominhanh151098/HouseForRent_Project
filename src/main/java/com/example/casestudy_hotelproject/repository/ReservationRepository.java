@@ -27,7 +27,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "WHERE u.id = :userId" +
             "            AND (p.status = 'SUCCESS' \n" +
             "            AND r.status = 'WAIT_FOR_CHECKIN' \n" +
-            "            AND( DATEDIFF(r.check_out_date, current_date()) = 1) or (r.complete_date is null and DATEDIFF(r.check_out_date, current_date()) <0))", nativeQuery = true)
+            "            AND( DATEDIFF(r.check_out_date, current_date()) = 1+2) or (r.complete_date is null and DATEDIFF(r.check_out_date, current_date()) <2))", nativeQuery = true)
     Page<Reservation> getReservationWillBookedPage(@Param("userId") int userId, Pageable pageable);
 
     @Query(value = "SELECT r.* FROM reservation r " +
@@ -37,7 +37,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "WHERE u.id = :userId" +
             "            AND p.status = 'SUCCESS' \n" +
             "            AND r.status = 'WAIT_FOR_CHECKIN' \n" +
-            "            AND( DATEDIFF(r.check_out_date, current_date()) = 1 or (r.complete_date is null and DATEDIFF(r.check_out_date, current_date()) <0))", nativeQuery = true)
+            "            AND( DATEDIFF(r.check_out_date, current_date()) = 3 or (r.complete_date is null and DATEDIFF(r.check_out_date, current_date()) <3))", nativeQuery = true)
     List<Reservation> getReservationWillBooked(@Param("userId") int userId);
 
     @Query(value = "SELECT r.* FROM reservation r " +
@@ -45,7 +45,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "where u.id= :userId AND p.status = 'SUCCESS'  and r.status ='WAIT_FOR_CHECKIN' and (((DATEDIFF( r.check_out_date,curdate())  >=0 and DATEDIFF( r.check_in_date,curdate())  <=0))  or (r.complete_date is null and DATEDIFF(r.check_out_date, current_date()) <0))  ", nativeQuery = true)
+            "where u.id= :userId AND p.status = 'SUCCESS'  and r.status ='WAIT_FOR_CHECKIN' and (((DATEDIFF( r.check_out_date,curdate())  >=2 and DATEDIFF( r.check_in_date,curdate())  <=2))  or (r.complete_date is null and DATEDIFF(r.check_out_date, current_date()) <2))  ", nativeQuery = true)
     List<Reservation> getReservationWelComing(@Param("userId") int userId);
 
     @Query(value = "SELECT r.* FROM reservation r " +
@@ -53,7 +53,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN'  and DATEDIFF( r.check_in_date,curdate()) = 1 ", nativeQuery = true)
+            "where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN'  and DATEDIFF( r.check_in_date,curdate()) = 3 ", nativeQuery = true)
     List<Reservation> getReservationComing(@Param("userId") int userId);
 
     @Query(value = "SELECT r.* FROM reservation r " +
@@ -61,7 +61,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) > 0 ", nativeQuery = true)
+            "where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) > 2 ", nativeQuery = true)
     List<Reservation> getReservationUpComing(@Param("userId") int userId);
 
     @Query(value = "SELECT r.* FROM reservation r " +
@@ -69,7 +69,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "where u.id= :userId AND p.status = 'SUCCESS' and DATEDIFF( r.check_in_date,curdate()) >= 0 and r.status ='AWAITING_APPROVAL'", nativeQuery = true)
+            "where u.id= :userId AND p.status = 'SUCCESS' and DATEDIFF( r.check_in_date,curdate()) >= 2 and r.status ='AWAITING_APPROVAL'", nativeQuery = true)
     List<Reservation> getReservationWaitApproval(@Param("userId") int userId);
 
     @Query(value = "SELECT r.* FROM reservation r " +
@@ -77,13 +77,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) >= 0  and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<0 "
+            "where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) >= 2  and DATEDIFF( r.check_in_date,:startDate ) >= 2  and DATEDIFF( r.check_in_date, :endDate )<2 "
             , countQuery = "SELECT count(*) FROM reservation r " +
             "            inner join house h " +
             "            on r.house_id= h.id " +
             "           inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "            where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) > 0=  and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<0 "
+            "            where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN' and DATEDIFF( r.check_in_date,curdate()) >=2  and DATEDIFF( r.check_in_date,:startDate ) >= 2 and DATEDIFF( r.check_in_date, :endDate )<2 "
 
             , nativeQuery = true)
     Page<Reservation> getReservationAllUpcoming(@Param("userId") int userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, Pageable pageable);
@@ -93,13 +93,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN'   and DATEDIFF( r.check_out_date,:startDate ) >= 0  and DATEDIFF( r.check_out_date, :endDate )<=0 "
+            "where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN'   and DATEDIFF( r.check_out_date,:startDate ) >= 2  and DATEDIFF( r.check_out_date, :endDate )<=2 "
             , countQuery = "SELECT count(*) FROM reservation r " +
             "            inner join house h " +
             "            on r.house_id= h.id " +
             "           inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "           where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN'   and DATEDIFF( r.check_out_date,:startDate ) >= 0  and DATEDIFF( r.check_out_date, :endDate )<=0  "
+            "           where u.id= :userId AND p.status = 'SUCCESS' and r.status ='WAIT_FOR_CHECKIN'   and DATEDIFF( r.check_out_date,:startDate ) >= 2  and DATEDIFF( r.check_out_date, :endDate )<=2  "
 
             , nativeQuery = true)
     Page<Reservation> getReservationAllFinished(@Param("userId") int userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, Pageable pageable);
@@ -109,13 +109,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "where u.id= :userId AND p.status = 'REFUND' and r.status ='CANCEL'   and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0 "
+            "where u.id= :userId AND p.status = 'REFUND' and r.status ='CANCEL'   and DATEDIFF( r.check_in_date,:startDate ) >=2  and DATEDIFF( r.check_in_date, :endDate )<=2 "
             , countQuery = "SELECT count(*) FROM reservation r " +
             "           inner join house h " +
             "          on r.house_id= h.id " +
             "         inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "           where u.id= :userId AND p.status = 'REFUND' and r.status ='CANCEL'   and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0  "
+            "           where u.id= :userId AND p.status = 'REFUND' and r.status ='CANCEL'   and DATEDIFF( r.check_in_date,:startDate ) >= 2  and DATEDIFF( r.check_in_date, :endDate )<=2  "
 
             , nativeQuery = true)
     Page<Reservation> getReservationAllCancled(@Param("userId") int userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, Pageable pageable);
@@ -124,13 +124,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "inner join house h " +
             "on r.house_id= h.id " +
             "inner join `user` u on u.id = h.user_id " +
-            "where u.id= :userId    and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0 "
+            "where u.id= :userId    and DATEDIFF( r.check_in_date,:startDate ) >= 2  and DATEDIFF( r.check_in_date, :endDate )<=2 "
             , countQuery = "SELECT count(*) FROM reservation r " +
             "            inner join house h " +
             "            on r.house_id= h.id " +
             "            inner join `user` u on u.id = h.user_id " +
             "INNER JOIN payment p ON p.id = r.payment_id " +
-            "            where u.id= :userId   and DATEDIFF( r.check_in_date,:startDate ) >= 0  and DATEDIFF( r.check_in_date, :endDate )<=0 "
+            "            where u.id= :userId   and DATEDIFF( r.check_in_date,:startDate ) >= 2  and DATEDIFF( r.check_in_date, :endDate )<=2 "
             , nativeQuery = true)
     Page<Reservation> getReservationAll(@Param("userId") int userId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, Pageable pageable);
 
