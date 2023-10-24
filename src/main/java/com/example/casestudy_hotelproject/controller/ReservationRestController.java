@@ -8,9 +8,11 @@ import com.example.casestudy_hotelproject.service.payment.request.GetRefundReque
 import com.example.casestudy_hotelproject.service.payment.response.InfoPaymentRefundResponse;
 import com.example.casestudy_hotelproject.service.reservation.ReservationService;
 import com.example.casestudy_hotelproject.service.reservation.request.SaveReservationRequest;
+import com.example.casestudy_hotelproject.service.reservation.response.ReservationHistoryResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ReversationBlockResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowListReservationResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowRevenue;
+import com.example.casestudy_hotelproject.util.AppUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -135,5 +138,21 @@ public class ReservationRestController {
     @GetMapping("/block/{houseId}")
     public List<ReversationBlockResponse> getReversationByHouseId(@PathVariable int houseId){
         return reservationService.getReversationByHouseId((houseId));
+    }
+
+    @GetMapping("/history")
+    public List<ReservationHistoryResponse> getReservationByUser(){
+        List<Reservation> reservations = reservationService.getReservationByUser();
+        return reservations.stream().map(e -> AppUtils.mapper.map(e, ReservationHistoryResponse.class)).collect(Collectors.toList());
+    }
+
+    @PatchMapping("/cancel/{reservationId}")
+    public ResponseEntity<String> cancelReservation(@PathVariable int reservationId){
+        try {
+            reservationService.cancelReservationById(reservationId);
+            return ResponseEntity.ok("Success");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error");
+        }
     }
 }

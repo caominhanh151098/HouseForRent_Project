@@ -236,9 +236,9 @@ public class ReservationService {
         List<ShowListReservationResponse> list = s.stream().map(e -> AppUtils.mapper.map(e, ShowListReservationResponse.class)).collect(Collectors.toList());
         return list;
     }
-    
-    public List<ReservationTest> showAll(){
-        return reservationRepository.showAllStatus().stream().map(e -> AppUtils.mapper.map(e , ReservationTest.class)).toList();
+
+    public List<ReservationTest> showAll() {
+        return reservationRepository.showAllStatus().stream().map(e -> AppUtils.mapper.map(e, ReservationTest.class)).toList();
     }
 
     public List<DataSocketResponse> findAllInday() {
@@ -345,7 +345,7 @@ public class ReservationService {
         reservationRepository.save(reservation);
     }
 
-    public boolean checkTransaction(int paymentId, String tnxRef,String vnp_TransactionNo, String vnp_PayDate) {
+    public boolean checkTransaction(int paymentId, String tnxRef, String vnp_TransactionNo, String vnp_PayDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         Payment payment = paymentRepository.findByIdAndTxnRef(paymentId, tnxRef).orElse(null);
 
@@ -356,8 +356,7 @@ public class ReservationService {
             payment.setUpdateDate(LocalDateTime.parse(vnp_PayDate, formatter));
             paymentRepository.save(payment);
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     public void changeStatus(int paymentId) {
@@ -388,17 +387,34 @@ public class ReservationService {
         List<Reservation> reservations = reservationRepository.findByHouseId((id));
         return reservations.stream().map(e -> AppUtils.mapper.map(e, ReversationBlockResponse.class)).collect(Collectors.toList());
     }
-
     public List<BlockingDateRangeResponse> getBlockingDateWithReservation(int houseID){
        List<Reservation>reservations= reservationRepository.findByHouseIdAndStatus(houseID,StatusReservation.WAIT_FOR_CHECKIN);
         List<BlockingDateRangeResponse> blockingDateRangeResponses= reservations.stream().map(e -> AppUtils.mapper.map(e, BlockingDateRangeResponse.class)).collect(Collectors.toList());
         return blockingDateRangeResponses;
     }
 
-    public void finishReservation(int reservationId){
-        Reservation reservation =reservationRepository.findById(reservationId);
+    public void finishReservation(int reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId);
         reservation.setCompleteDate(LocalDate.now());
         reservation.setStatus(StatusReservation.FINISH);
         reservationRepository.save(reservation);
+    }
+    public List<Reservation> getReservationByUser() {
+        User user = userService.getCurrentUser();
+        return reservationRepository.findByUser(user);
+    }
+
+
+    public void cancelReservationById(int reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId);
+        if (reservation != null &&
+        reservation.getStatus() == StatusReservation.WAIT_FOR_CHECKIN ||
+        reservation.getStatus() == StatusReservation.AWAITING_APPROVAL ||
+        reservation.getStatus() == StatusReservation.WAITING_FOR_TRANSACTION){
+            reservation.setStatus(StatusReservation.CANCEL);
+            reservationRepository.save(reservation);
+        } else {
+            throw new RuntimeException("Error");
+        }
     }
 }
