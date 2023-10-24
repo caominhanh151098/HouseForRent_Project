@@ -35,6 +35,13 @@ public class FeeHouse {
         this.price = price;
     }
 
+    public FeeHouse(House house, Fee fee, BigDecimal price, int other) {
+        this.house = house;
+        this.fee = fee;
+        this.price = price;
+        this.other = other;
+    }
+
     @Override
     public String toString() {
         return "";

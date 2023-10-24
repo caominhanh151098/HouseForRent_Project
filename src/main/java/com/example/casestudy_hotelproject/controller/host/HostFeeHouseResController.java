@@ -25,7 +25,7 @@ public class HostFeeHouseResController {
         feeService.editSurcharge(houseId,price,type);
     }
     @GetMapping("/editOther/{houseId}/{other}/{price}")
-    public void editOther(@PathVariable int houseId, int  other, @PathVariable BigDecimal price){
+    public void editOther(@PathVariable int houseId,@PathVariable int  other, @PathVariable BigDecimal price){
         feeService.editOther(houseId,price,other);
     }
 

@@ -32,8 +32,8 @@ public class FeeService {
         BookingFeeType feeType = BookingFeeType.valueOf(request.getFeeType());
 
         feeList.forEach(fee -> {
-            if(feeType == fee.getFeeType()) {
-                FeeHouse feeHouse = feeHouseRepository.findByFee_IdAndHouse_Id(fee.getId(),idHouse)
+            if (feeType == fee.getFeeType()) {
+                FeeHouse feeHouse = feeHouseRepository.findByFee_IdAndHouse_Id(fee.getId(), idHouse)
                         .orElse(FeeHouse.builder()
                                 .fee(fee)
                                 .house(houseRepository.findById(idHouse))
@@ -46,26 +46,33 @@ public class FeeService {
             }
         });
     }
-    public List<FeeHouseHostResponse> getFeeHouse(int houseId){
-       List<FeeHouse> feeHouses= feeHouseRepository.findByHouseId(houseId);
+
+    public List<FeeHouseHostResponse> getFeeHouse(int houseId) {
+        List<FeeHouse> feeHouses = feeHouseRepository.findByHouseId(houseId);
         List<FeeHouseHostResponse> feeHouseHostResponses = feeHouses.stream().map(e -> AppUtils.mapper.map(e, FeeHouseHostResponse.class)).collect(Collectors.toList());
         return feeHouseHostResponses;
     }
-    public void editSurcharge(int house,BigDecimal price,BookingFeeType type){
-       FeeHouse feeHouse=feeHouseRepository.findByHouseIdAndFee(house,feeRepository.findByFeeType(type));
-        if(feeHouse!=null){
+
+    public void editSurcharge(int house, BigDecimal price, BookingFeeType type) {
+        FeeHouse feeHouse = feeHouseRepository.findByHouseIdAndFee(house, feeRepository.findByFeeType(type));
+        if (feeHouse != null) {
             feeHouse.setPrice(price);
             feeHouseRepository.save(feeHouse);
-        }else {
-            feeHouseRepository.save(new FeeHouse(houseRepository.findById(house),feeRepository.findByFeeType(type),price));
+        } else {
+            feeHouseRepository.save(new FeeHouse(houseRepository.findById(house), feeRepository.findByFeeType(type), price));
         }
 
     }
-    public void editOther(int house,BigDecimal price,int  other){
-        FeeHouse feeHouse=feeHouseRepository.findByHouseIdAndFee(house,feeRepository.findByFeeType(BookingFeeType.EXTRA_GUESS));
-        feeHouse.setPrice(price);
-        feeHouse.setOther(other);
-        feeHouseRepository.save(feeHouse);
+
+    public void editOther(int house, BigDecimal price, int other) {
+        FeeHouse feeHouse = feeHouseRepository.findByHouseIdAndFee(house, feeRepository.findByFeeType(BookingFeeType.EXTRA_GUESS));
+        if (feeHouse != null) {
+            feeHouse.setPrice(price);
+            feeHouse.setOther(other);
+            feeHouseRepository.save(feeHouse);
+        } else {
+            feeHouseRepository.save(new FeeHouse(houseRepository.findById(house), feeRepository.findByFeeType(BookingFeeType.EXTRA_GUESS), price, other));
+        }
     }
 
 

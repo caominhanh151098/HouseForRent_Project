@@ -64,7 +64,6 @@ public class ReservationService {
         reservation.setStatus(StatusReservation.WAITING_FOR_TRANSACTION);
 
 
-
         BigDecimal totalPrice = getPrice(reservation).setScale(0, RoundingMode.HALF_UP);
         reservation.setTotalPrice(totalPrice);
 
@@ -81,7 +80,7 @@ public class ReservationService {
     }
 
     public List<BookingFee> getCurrentBookingFeesByHouse(Reservation reservation, House house) {
-        long daysBetween = reservation.getCheckInDate().until(reservation.getCheckOutDate(), ChronoUnit.DAYS);
+        long daysBetween = reservation.getCheckInDate().until(reservation.getCheckOutDate(), ChronoUnit.DAYS) + 1;
         List<BookingFee> bookingFees = new ArrayList<>();
         house.getFeeHouses().forEach(fee -> {
             BigDecimal price = fee.getPrice();
@@ -110,8 +109,8 @@ public class ReservationService {
             BigDecimal percent = BigDecimal.valueOf(surcharge.getPercent());
 
             bookingFees.add(new
-                    BookingFee(percent, other, surcharge.getType() == SurchargeType.TAX ?
-                    BookingFeeType.TAX : BookingFeeType.SERVICE_FEE, reservation));
+                    BookingFee(percent, other, surcharge.getType() == SurchargeType.SERVICE_FEE ?
+                    BookingFeeType.SERVICE_FEE : BookingFeeType.TAX, reservation));
         });
         return bookingFees;
     }
@@ -163,10 +162,11 @@ public class ReservationService {
         BigDecimal price = BigDecimal.valueOf(0);
         ZoneId zoneId = ZoneId.systemDefault();
         Calendar startCal = Calendar.getInstance();
-        startCal.setTime((Date.from(reservation.getCheckInDate().atStartOfDay(zoneId).toInstant())));
+        startCal.setTime(Date.from(reservation.getCheckInDate().atStartOfDay(zoneId).toInstant()));
 
         Calendar endCal = Calendar.getInstance();
-        endCal.setTime((Date.from(reservation.getCheckOutDate().atStartOfDay(zoneId).toInstant())));
+        endCal.setTime(Date.from(reservation.getCheckOutDate().atStartOfDay(zoneId).toInstant()));
+        endCal.add(Calendar.DAY_OF_MONTH,1);
 
         if (startCal.getTimeInMillis() == endCal.getTimeInMillis())
             return BigDecimal.ZERO;
@@ -279,7 +279,7 @@ public class ReservationService {
         return list;
     }
 
-    public void deleteReservation(int reservationId, InfoPaymentRefundResponse refundResponse ) {
+    public void deleteReservation(int reservationId, InfoPaymentRefundResponse refundResponse) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
         Reservation reservation = reservationRepository.findById(reservationId);
@@ -387,9 +387,10 @@ public class ReservationService {
         List<Reservation> reservations = reservationRepository.findByHouseId((id));
         return reservations.stream().map(e -> AppUtils.mapper.map(e, ReversationBlockResponse.class)).collect(Collectors.toList());
     }
-    public List<BlockingDateRangeResponse> getBlockingDateWithReservation(int houseID){
-       List<Reservation>reservations= reservationRepository.findByHouseIdAndStatus(houseID,StatusReservation.WAIT_FOR_CHECKIN);
-        List<BlockingDateRangeResponse> blockingDateRangeResponses= reservations.stream().map(e -> AppUtils.mapper.map(e, BlockingDateRangeResponse.class)).collect(Collectors.toList());
+
+    public List<BlockingDateRangeResponse> getBlockingDateWithReservation(int houseID) {
+        List<Reservation> reservations = reservationRepository.findByHouseIdAndStatus(houseID, StatusReservation.WAIT_FOR_CHECKIN);
+        List<BlockingDateRangeResponse> blockingDateRangeResponses = reservations.stream().map(e -> AppUtils.mapper.map(e, BlockingDateRangeResponse.class)).collect(Collectors.toList());
         return blockingDateRangeResponses;
     }
 
@@ -399,6 +400,7 @@ public class ReservationService {
         reservation.setStatus(StatusReservation.FINISH);
         reservationRepository.save(reservation);
     }
+
     public List<Reservation> getReservationByUser() {
         User user = userService.getCurrentUser();
         return reservationRepository.findByUser(user);
@@ -408,9 +410,9 @@ public class ReservationService {
     public void cancelReservationById(int reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId);
         if (reservation != null &&
-        reservation.getStatus() == StatusReservation.WAIT_FOR_CHECKIN ||
-        reservation.getStatus() == StatusReservation.AWAITING_APPROVAL ||
-        reservation.getStatus() == StatusReservation.WAITING_FOR_TRANSACTION){
+                reservation.getStatus() == StatusReservation.WAIT_FOR_CHECKIN ||
+                reservation.getStatus() == StatusReservation.AWAITING_APPROVAL ||
+                reservation.getStatus() == StatusReservation.WAITING_FOR_TRANSACTION) {
             reservation.setStatus(StatusReservation.CANCEL);
             reservationRepository.save(reservation);
         } else {
