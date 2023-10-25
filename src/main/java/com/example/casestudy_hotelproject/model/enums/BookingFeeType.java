@@ -6,5 +6,6 @@ public enum BookingFeeType {
     PET,
     EXTRA_GUESS,
     TAX,
-    SERVICE_FEE
+    SERVICE_FEE,
+    HOST_FEE
 }

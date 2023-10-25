@@ -107,10 +107,25 @@ public class ReservationService {
         surcharges.forEach(surcharge -> {
             int other = 1;
             BigDecimal percent = BigDecimal.valueOf(surcharge.getPercent());
+            BookingFeeType type = null;
+            switch (surcharge.getType()) {
+                case SERVICE_FEE:
+                    type = BookingFeeType.SERVICE_FEE;
+                    break;
+                case HOST_FEE:
+                    type = BookingFeeType.HOST_FEE;
+                    break;
+                case TAX:
+                    type = BookingFeeType.TAX;
+            }
 
-            bookingFees.add(new
-                    BookingFee(percent, other, surcharge.getType() == SurchargeType.SERVICE_FEE ?
-                    BookingFeeType.SERVICE_FEE : BookingFeeType.TAX, reservation));
+            bookingFees.add(BookingFee
+                    .builder()
+                    .value(percent)
+                    .other(other)
+                    .type(type)
+                    .reservation(reservation)
+                    .build());
         });
         return bookingFees;
     }

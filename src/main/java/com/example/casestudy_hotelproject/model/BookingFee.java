@@ -3,6 +3,7 @@ package com.example.casestudy_hotelproject.model;
 import com.example.casestudy_hotelproject.model.enums.BookingFeeType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class BookingFee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
