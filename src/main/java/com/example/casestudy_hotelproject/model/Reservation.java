@@ -46,7 +46,7 @@ public class Reservation {
     private Payment payment;
 
     @OneToOne
-    @JoinColumn(name = "reservation_id")
+    @JoinColumn(name = "cancellation_policy_id")
     private CancellationPolicyAtBooking cancellationPolicyAtBooking;
 
     @Override
