@@ -26,12 +26,12 @@ public class ClientUserRestController {
         return userService.getUserDetail(id, pageable);
     }
 
-    @GetMapping("/detail/review/{id}/1")
+    @GetMapping("/detail/review/1/{id}")
     public Page<ShowReviewHostDetailResponse> getReviewDetailByGuest(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 10) Pageable pageable) {
         return reviewService.getReviewDetailByGuest(id, pageable);
     }
 
-    @GetMapping("/detail/review/{id}/2")
+    @GetMapping("/detail/review/2/{id}")
     public Page<ContentReviewResponse> getReviewDetailByOtherHost(@PathVariable int id, @SortDefault(sort = "reviewDate", direction = Sort.Direction.DESC) @PageableDefault(size = 10) Pageable pageable) {
         return reviewService.getReviewDetailByOtherHost(id, pageable);
     }

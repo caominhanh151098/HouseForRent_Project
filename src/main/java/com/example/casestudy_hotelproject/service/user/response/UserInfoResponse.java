@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +25,5 @@ public class UserInfoResponse {
     public String avatar;
     public IdentityPaper identity;
     public Role role;
+    public LocalDate createDate;
 }
