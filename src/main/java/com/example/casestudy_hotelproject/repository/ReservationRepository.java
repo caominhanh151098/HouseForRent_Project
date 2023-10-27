@@ -208,6 +208,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
     Reservation findByPayment(Payment payment);
 
     List<Reservation> findByHouseId(int house_id);
+    @Query(value = "SELECT r.* FROM reservation r WHERE r.house_id = :house_id AND r.status NOT IN ('CANCEL', 'WAITING_FOR_TRANSACTION')",  nativeQuery = true)
+    List<Reservation> findByHouse_IdAndNotStatus(int house_id);
     List<Reservation> findByHouseIdAndStatus(int house_id, StatusReservation status);
     List<Reservation> findByUser(User user);
 }

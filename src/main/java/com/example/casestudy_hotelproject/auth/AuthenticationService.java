@@ -7,6 +7,8 @@ import com.example.casestudy_hotelproject.repository.UserRepository;
 import com.example.casestudy_hotelproject.service.authentication.request.AuthenticationRequest;
 import com.example.casestudy_hotelproject.service.authentication.response.AuthenticationResponse;
 import com.example.casestudy_hotelproject.service.authentication.request.RegisterRequest;
+import com.example.casestudy_hotelproject.service.user.response.UserInfoResponse;
+import com.example.casestudy_hotelproject.util.AppUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,8 +58,8 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .userInfo(AppUtils.mapper.map(user, UserInfoResponse.class))
                 .build();
-
     }
 
     public AuthenticationResponse authentication(AuthenticationRequest request) {

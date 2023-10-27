@@ -64,7 +64,7 @@ public class ReservationService {
         reservation.setStatus(StatusReservation.WAITING_FOR_TRANSACTION);
 
 
-        BigDecimal totalPrice = getPrice(reservation).setScale(0, RoundingMode.HALF_UP);
+        BigDecimal totalPrice = getPrice(reservation).setScale(-3, RoundingMode.HALF_UP);
         reservation.setTotalPrice(totalPrice);
 
         Payment payment = Payment.builder()
@@ -181,7 +181,6 @@ public class ReservationService {
 
         Calendar endCal = Calendar.getInstance();
         endCal.setTime(Date.from(reservation.getCheckOutDate().atStartOfDay(zoneId).toInstant()));
-        endCal.add(Calendar.DAY_OF_MONTH,1);
 
         if (startCal.getTimeInMillis() == endCal.getTimeInMillis())
             return BigDecimal.ZERO;
@@ -400,7 +399,7 @@ public class ReservationService {
     }
 
     public List<ReversationBlockResponse> getReversationByHouseId(int id) {
-        List<Reservation> reservations = reservationRepository.findByHouseId((id));
+        List<Reservation> reservations = reservationRepository.findByHouse_IdAndNotStatus(id);
         return reservations.stream().map(e -> AppUtils.mapper.map(e, ReversationBlockResponse.class)).collect(Collectors.toList());
     }
 
