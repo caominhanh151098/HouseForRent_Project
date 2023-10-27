@@ -38,4 +38,5 @@ public class ShowHouseDetailResponse {
     private ShowHostAvatarResponse user;
     private String price;
     private List<ShowCancellationPolicyListResponse> cancellationPolicyDetailList;
+    private String status;
 }
