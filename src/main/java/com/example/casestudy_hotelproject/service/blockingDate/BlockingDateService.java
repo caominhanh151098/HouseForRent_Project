@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class BlockingDateService {
     private final BlockingDateRepository blockingDateRepository;
     public List<BlockingDateResponse> findBlockingDateByHouseId(int houseId){
-        List<BlockingDate> blockingDates= blockingDateRepository.findByHouseId(houseId);
+        List<BlockingDate> blockingDates= blockingDateRepository.findBlockingDate(houseId);
         List<BlockingDateResponse> blockingDateResponses=blockingDates.stream().map(e-> AppUtils.mapper.map(e, BlockingDateResponse.class)).collect(Collectors.toList());
         return blockingDateResponses;
     }
