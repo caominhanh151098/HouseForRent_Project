@@ -125,7 +125,7 @@ public class PaymentService {
         String vnp_TmnCode = TransactionConfig.vnp_TmnCode;
         String vnp_TransactionType = request.getTransactionType();
         String vnp_TxnRef = payment.getTxnRef();
-        String vnp_Amount = String.valueOf((payment.getAmount().multiply(BigDecimal.valueOf(100000)).intValue()));
+        String vnp_Amount = String.valueOf((payment.getAmount().multiply(BigDecimal.valueOf(100)).intValue()));
         String vnp_OrderInfo = "Hoan tien don hang: " + vnp_TxnRef;
         String vnp_TransactionNo = payment.getTransactionNo();
         String vnp_TransactionDate = payment.getCreateDate().format(formatter);

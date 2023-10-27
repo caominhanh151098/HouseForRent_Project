@@ -69,7 +69,7 @@ public class HostReservationResController {
     @GetMapping("/delete/{reservationID}")
     public void deleteReservation(HttpServletRequest httpServletRequest,@PathVariable int reservationID) throws NoSuchAlgorithmException {
         InfoPaymentRefundResponse refundResponse = paymentService.refundTransaction(httpServletRequest, new GetRefundRequest(reservationID+"","Host","02") );
-        if (refundResponse != null) ;
+        if (refundResponse != null)
         reservationService.deleteReservation(reservationID, refundResponse);
     }
 

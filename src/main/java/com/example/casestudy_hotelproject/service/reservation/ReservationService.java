@@ -414,7 +414,7 @@ public class ReservationService {
         reservation.setCompleteDate(LocalDate.now());
         reservation.setStatus(StatusReservation.FINISH);
         reservationRepository.save(reservation);
-    }
+    }   
 
     public List<Reservation> getReservationByUser() {
         User user = userService.getCurrentUser();
