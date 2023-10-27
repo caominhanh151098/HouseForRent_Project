@@ -190,7 +190,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Intege
             "where (r.status = 'FINISH') " +
             "and (b.type = 'SERVICE_FEE') " +
             "and (h.status = 'ACCEPTED') " +
-            "and (r.completeDate = :dateNow) order by r.id DESC")
+            "and (r.completeDate = :dateNow) order by r.id ASC")
     List<Reservation> findAllListHouseProfitsInDay(LocalDate dateNow);
 
     @Query(value = "select r,h,u,b from Reservation r " +

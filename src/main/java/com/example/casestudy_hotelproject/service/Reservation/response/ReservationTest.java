@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ReservationTest {
     private String id;
     private String status;
+    private String completeDate;
     private String totalPrice;
 }
 

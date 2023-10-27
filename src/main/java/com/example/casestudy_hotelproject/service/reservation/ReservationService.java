@@ -237,10 +237,11 @@ public class ReservationService {
     }
 
     @Transactional
-    public void updateStatus(String id, String status) {
+    public void updateStatus(String id, String status , String completeDate) {
         int newId = Integer.parseInt(id);
         Reservation reservation = reservationRepository.findById(newId);
         reservation.setStatus(StatusReservation.valueOf(status));
+        reservation.setCompleteDate(LocalDate.parse(completeDate));
 
         reservationRepository.save(reservation);
     }

@@ -40,7 +40,7 @@ public class AdminProfitRestController {
 
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateData (@PathVariable String id , @RequestBody ReservationTestRequest request){
-        reservationService.updateStatus(id , request.getStatus());
+        reservationService.updateStatus(id , request.getStatus() , request.getCompleteDate());
         return ResponseEntity.ok("Success");
     }
 

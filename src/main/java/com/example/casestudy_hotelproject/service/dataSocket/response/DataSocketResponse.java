@@ -15,6 +15,7 @@ import java.util.List;
 public class DataSocketResponse {
     private String id;
     private String totalPrice;
+    private String completeDate;
     private List<BookingFeeResponse> bookingFees = new ArrayList<>();
     private HouseResponse house;
     private UserResponse user;
