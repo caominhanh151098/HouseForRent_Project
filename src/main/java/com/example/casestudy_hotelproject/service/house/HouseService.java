@@ -6,6 +6,7 @@ import com.example.casestudy_hotelproject.repository.*;
 import com.example.casestudy_hotelproject.service.cancellation_policy.response.ShowCancellationPolicyListResponse;
 import com.example.casestudy_hotelproject.service.cancellation_policy.response.ShowCancellationPolicyResponse;
 import com.example.casestudy_hotelproject.service.comfortable.response.ShowComfortableDetailResponse;
+import com.example.casestudy_hotelproject.service.location.response.ShowLocationListHouseResponse;
 import com.example.casestudy_hotelproject.service.reservation.response.ShowPriceAndFeeByHouseResponse;
 import com.example.casestudy_hotelproject.service.ShowBedDetailResponse;
 import com.example.casestudy_hotelproject.service.bed.BedRequest;
@@ -32,6 +33,7 @@ import com.example.casestudy_hotelproject.util.AppUtils;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -82,14 +85,45 @@ public class HouseService {
             if (numReview > 1)
                 houseResp.setReview(String.format("%s (%s)", house.getAvgReviewPoint(), numReview));
             else houseResp.setReview("Mới");
-            List<ComfortableDetail> comfortableDetails = comfortableDetailRepository.findAllByHouse_Id(house.getId());
-            List<ShowComfortableDetailResponse> showComfortableDetailResponses = comfortableDetails.stream()
-                    .map(comfortableDetail -> AppUtils.mapper.map(comfortableDetail.getComfortable(), ShowComfortableDetailResponse.class))
-                    .collect(Collectors.toList());
-            houseResp.setComfortables(showComfortableDetailResponses);
+//            List<ComfortableDetail> comfortableDetails = comfortableDetailRepository.findAllByHouse_Id(house.getId());
+//            List<ShowComfortableDetailResponse> showComfortableDetailResponses = comfortableDetails.stream()
+//                    .map(comfortableDetail -> AppUtils.mapper.map(comfortableDetail.getComfortable(), ShowComfortableDetailResponse.class))
+//                    .collect(Collectors.toList());
+//            houseResp.setComfortables(showComfortableDetailResponses);
         }
 
         return listPageHouse;
+    }
+    public Page<ShowListHouseResponse> showListHouseResponsePage(Pageable pageable){
+        List<HouseDetailResponse> listHouse = houseRepository.findAllWithImage();
+
+        List<ShowListHouseResponse> houseResponses = new ArrayList<>();
+        for (int index = 0; index < listHouse.size(); index++) {
+            HouseDetailResponse house = listHouse.get(index);
+            ShowListHouseResponse houseResp = new ShowListHouseResponse();
+            houseResp.setQuantityOfBeds(house.getQuantity_Of_Beds());
+            houseResp.setId(house.getId());
+            houseResp.setQuantityOfBathrooms(house.getQuantity_Of_Bathrooms());
+            houseResp.setLocation(new ShowLocationListHouseResponse(house.getAddress(), house.getLongitude(), house.getLatitude()));
+            houseResp.setPrice(house.getPrice());
+            houseResp.setHotelName(house.getHotel_Name());
+            houseResp.setImages(Arrays.stream(house.getImgs().split(" ")).map(e -> new ShowImgListResponse(e, null)).collect(Collectors.toList()));
+            String typeHouse = house.getCategory_House_Name();
+            String addressHouse = house.getAddress();
+            houseResp.setTitle(String.format("%s Tại %s", typeHouse, addressHouse));
+            int numReview = house.getCount_Review();
+            if (numReview > 1)
+                houseResp.setReview(String.format("%s (%s)", house.getAvg_Review_Point(), numReview));
+            else houseResp.setReview("Mới");
+            houseResponses.add(houseResp);
+//            List<ComfortableDetail> comfortableDetails = comfortableDetailRepository.findAllByHouse_Id(house.getId());
+//            List<ShowComfortableDetailResponse> showComfortableDetailResponses = comfortableDetails.stream()
+//                    .map(comfortableDetail -> AppUtils.mapper.map(comfortableDetail.getComfortable(), ShowComfortableDetailResponse.class))
+//                    .collect(Collectors.toList());
+//            houseResp.setComfortables(showComfortableDetailResponses);
+        }
+
+        return new PageImpl<>(houseResponses);
     }
 
     public List<HouseOfHostReponse> showHouseOfHost() {
@@ -602,4 +636,3 @@ public class HouseService {
         return responses;
     }
 }
-

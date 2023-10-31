@@ -62,7 +62,7 @@ public class HouseRestController {
 
     @GetMapping()
     public Page<ShowListHouseResponse> showDisplayHome(@PageableDefault(size = 50) Pageable pageable) {
-        return houseService.showDisplayHome(pageable);
+        return houseService.showListHouseResponsePage(pageable);
     }
 
     @PostMapping
@@ -270,4 +270,3 @@ public class HouseRestController {
         return reviewService.showReviews(id, pageable);
     }
 }
-
