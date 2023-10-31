@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/host/convenient")
-@CrossOrigin(origins = "http://localhost:3000")
 public class HostConvenientRestController {
     public final ConvenientService convenientService;
     @GetMapping

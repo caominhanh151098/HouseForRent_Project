@@ -82,11 +82,11 @@ public class HouseService {
             if (numReview > 1)
                 houseResp.setReview(String.format("%s (%s)", house.getAvgReviewPoint(), numReview));
             else houseResp.setReview("Mới");
-            List<ComfortableDetail> comfortableDetails = comfortableDetailRepository.findAllByHouse_Id(house.getId());
-            List<ShowComfortableDetailResponse> showComfortableDetailResponses = comfortableDetails.stream()
-                    .map(comfortableDetail -> AppUtils.mapper.map(comfortableDetail.getComfortable(), ShowComfortableDetailResponse.class))
-                    .collect(Collectors.toList());
-            houseResp.setComfortables(showComfortableDetailResponses);
+//            List<ComfortableDetail> comfortableDetails = comfortableDetailRepository.findAllByHouse_Id(house.getId());
+//            List<ShowComfortableDetailResponse> showComfortableDetailResponses = comfortableDetails.stream()
+//                    .map(comfortableDetail -> AppUtils.mapper.map(comfortableDetail.getComfortable(), ShowComfortableDetailResponse.class))
+//                    .collect(Collectors.toList());
+//            houseResp.setComfortables(showComfortableDetailResponses);
         }
 
         return listPageHouse;

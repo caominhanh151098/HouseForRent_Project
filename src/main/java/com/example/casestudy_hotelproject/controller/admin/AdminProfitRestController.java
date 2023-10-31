@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/admin/profits")
-@CrossOrigin(origins = "http://localhost:3000")
 public class AdminProfitRestController {
 
     private final ReservationService reservationService;

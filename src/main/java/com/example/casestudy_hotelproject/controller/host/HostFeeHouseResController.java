@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/host/feeHouse")
-@CrossOrigin(origins = "http://localhost:3000")
 public class HostFeeHouseResController {
     private FeeService feeService;
     @GetMapping("/getFeeHouse/{houseId}")

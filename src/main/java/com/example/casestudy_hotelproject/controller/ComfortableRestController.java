@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Data
 @RequestMapping("/api/comfortable")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ComfortableRestController {
     private final ComfortableService comfortableService;
     private final ComfortableDetailRepository comfortableDetailRepository;

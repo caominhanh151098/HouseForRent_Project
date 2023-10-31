@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/categories")
-@CrossOrigin(origins = "http://localhost:3000")
 public class CategoryResController {
     private final CategoryRepository categoryRepository;
     @GetMapping
