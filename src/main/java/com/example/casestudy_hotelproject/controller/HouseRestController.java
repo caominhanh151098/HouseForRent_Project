@@ -61,7 +61,7 @@ public class HouseRestController {
     private final FavoritesListService favoritesListService;
 
     @GetMapping()
-    public Page<ShowListHouseResponse> showDisplayHome(Pageable pageable) {
+    public Page<ShowListHouseResponse> showDisplayHome(@PageableDefault(size = 50) Pageable pageable) {
         return houseService.showDisplayHome(pageable);
     }
 
