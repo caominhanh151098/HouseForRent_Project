@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/host/surcharge")
-@CrossOrigin(origins = "http://localhost:3000")
 public class HostSurchargeResController {
     private final SurchargeService service;
     @GetMapping("getServiceFee")

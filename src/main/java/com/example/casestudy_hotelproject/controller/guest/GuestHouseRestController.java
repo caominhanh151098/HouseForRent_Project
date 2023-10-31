@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/guest/house")
-@CrossOrigin(origins = "http://localhost:3000")
 public class GuestHouseRestController {
     private final FavoriteService favoriteService;
 

@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @RequestMapping("/api/rule")
-@CrossOrigin(origins = "http://localhost:3000")
 public class RuleRestController {
     private final RuleService ruleService;
     @GetMapping("/getRule/{houseID}")

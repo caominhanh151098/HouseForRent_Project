@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/reservation")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ReservationRestController {
     private final ReservationService reservationService;
     private final GuestDetailService guestDetailService;

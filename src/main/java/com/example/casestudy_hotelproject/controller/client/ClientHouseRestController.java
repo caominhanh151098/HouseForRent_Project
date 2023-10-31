@@ -24,7 +24,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/client/house")
-@CrossOrigin(origins = "http://localhost:3000")
 public class ClientHouseRestController {
     private final HouseService houseService;
     private final ComfortableService comfortableService;

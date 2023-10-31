@@ -20,7 +20,6 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/guest/user")
-@CrossOrigin(origins = "http://localhost:3000")
 public class GuestUserRestController {
     private final UserService userService;
     private final ReviewService reviewService;

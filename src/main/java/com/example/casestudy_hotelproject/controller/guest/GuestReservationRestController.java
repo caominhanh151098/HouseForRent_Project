@@ -21,7 +21,6 @@ import java.security.NoSuchAlgorithmException;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/guest/reservation")
-@CrossOrigin(origins = "http://localhost:3000")
 public class GuestReservationRestController {
     private final ReservationService reservationService;
     private final GuestDetailService guestDetailService;

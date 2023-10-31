@@ -30,7 +30,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/host/reservation")
-@CrossOrigin(origins = "http://localhost:3000")
 public class HostReservationResController {
     private final HouseService houseService;
     private final ComfortableService comfortableService;

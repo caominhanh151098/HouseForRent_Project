@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/house")
-@CrossOrigin(origins = "http://localhost:3000")
 public class HouseRestController {
     private final HouseService houseService;
     private final ComfortableService comfortableService;

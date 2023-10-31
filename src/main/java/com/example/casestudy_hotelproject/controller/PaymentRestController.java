@@ -18,7 +18,6 @@ import java.util.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api/payment")
-@CrossOrigin(origins = "http://localhost:3000")
 public class PaymentRestController {
     private final ReservationService reservationService;
 

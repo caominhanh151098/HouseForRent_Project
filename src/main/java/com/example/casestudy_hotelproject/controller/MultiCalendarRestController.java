@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/multiCalendars")
-@CrossOrigin(origins = "http://localhost:3000")
 public class MultiCalendarRestController {
     private final CalendarService calendarService;
     private final BlockingDateService blockingDateService;

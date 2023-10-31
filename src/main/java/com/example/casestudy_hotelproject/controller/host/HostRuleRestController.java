@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/host/rule")
-@CrossOrigin(origins = "http://localhost:3000")
 public class HostRuleRestController {
     private final RuleService ruleService;
     @GetMapping("/getRule/{houseID}")
